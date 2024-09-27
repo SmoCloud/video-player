@@ -1,0 +1,13 @@
+body {
+	background-color: gray;
+}
+
+.flex_class {
+	display: flex;
+	flex-direction: column;
+	flex-wrap: wrap;
+}
+
+#vp {
+	flex-grow: 8;
+}
