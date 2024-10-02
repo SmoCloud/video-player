@@ -2,7 +2,7 @@
 Our video player project.
 
 # 1. Get everyone into the GitHub repo (contributors)
-LoganZ3, zc1778, HunterWillis12, SmoCloud
+LoganZ3, zc1778, HunterWillis12, SmoCloud, Neptunes22
 
 # 2. Divide workload
 I was thinking that maybe we could do teams where one team is responsible for one portion of the project.
