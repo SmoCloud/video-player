@@ -8,6 +8,28 @@ body {
 	flex-wrap: wrap;
 }
 
+/* Navbar container */
+.navbar {
+    overflow: hidden;
+    background-color: #791919;
+    font-family: Arial;
+}
+
+/* Navbar links */
+.navbar a {
+    float: right;
+    font-size: 16px;
+    color: rgb(228, 221, 17);
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+}
+
+/* Change background color of navbar links on mouse hover */
+.navbar a:hover {
+    background-color: red;
+}
+
 #vp {
 	flex-grow: 8;
 }
