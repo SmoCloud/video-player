@@ -32,18 +32,19 @@ body {
 
 /* Search bar container */
 .searchbar {
-    display: block;
+    display: inline-flex;
     text-align: center;
-    width: auto;
-    margin-top: 10px;
+    float: right;
+    width: 90%;
+    margin: 10px;
+    background-size: auto;
 }
 
 /* Container for recommended categories */
 .recommendations, .categories {
-    display: flex;
+    display: inline-flex;
     text-align: center;
-    width: 90%;
-    padding: 40px;
+    width: 100%;
     background-size: auto;
     background-repeat: no-repeat;
     margin: auto;
@@ -57,11 +58,10 @@ body {
 }
 
 .cat_1, .cat_2, .cat_3 {
-    display: flex;
+    display: inline-flex;
     text-align: center;
-    width: 90%;
-    margin-left: 10px;
-    margin-right: 10px;
+    width: 100%;
+    margin: 20px;
     padding-bottom: 400px;
     border-radius: 16px; /* rounded corners */
     box-shadow: inset 0 8px 16px rgba(0, 0, 0, 0.2); /* subtle shadow */
