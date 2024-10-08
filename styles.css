@@ -93,3 +93,7 @@ body {
 #vp {
 	flex-grow: 8;
 }
+
+#fruitninja:hover {
+    cursor: pointer;
+}
