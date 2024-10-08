@@ -8,6 +8,13 @@ body {
 	flex-wrap: wrap;
 }
 
+.border {
+    display: inline-block;
+    width: 100%;
+    justify-content: space-evenly;
+    align-items: center;
+}
+
 /* Navbar container */
 .navbar {
     overflow: hidden;
@@ -19,7 +26,7 @@ body {
     width: auto;
     padding-top: 5px;
     padding-left: 5px;
-    height: 40px;
+    height: 35px;
 }
 
 /* Navbar links */
@@ -39,7 +46,7 @@ body {
 
 /* Search bar container */
 .searchbar {
-    display: inline-flex;
+    display: flex;
     flex-wrap: nowrap;
     justify-content: center;
     width: 100%;
