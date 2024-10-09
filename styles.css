@@ -44,6 +44,24 @@ body {
     background-color: red;
 }
 
+.login-box {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    margin: 10px;
+}
+
+.username, .password {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    width: 100%;
+    margin: 10px;
+}
+
 /* Search bar container */
 .searchbar {
     display: flex;
