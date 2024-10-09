@@ -33,7 +33,7 @@ body {
 .navbar a {
     float: right;
     font-size: 16px;
-    color: rgb(228, 221, 17);
+    color: rgb(218, 247, 166);
     text-align: center;
     padding: 14px 16px;
     text-decoration: none;
@@ -130,4 +130,22 @@ body {
 
 #fruitninja:hover {
     cursor: pointer;
+}
+
+.uploading {
+    background-color: #791919;
+    border: 1px solid black;
+    border-radius: 5px;
+    width: 20%;
+    margin-left: 40%;
+    margin-top: 5%;
+}
+
+input {
+    color: rgb(218, 247, 166);
+    background-color: #791919;
+}
+
+form {
+    color: rgb(218, 247, 166);
 }
