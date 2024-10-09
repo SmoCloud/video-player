@@ -10,20 +10,16 @@ loginBtn.onclick = function() {
     console.log(username);  // log username to console for testing
 
     // while username field is empty
-    while(username === ""|| username === null) {
+    if(username === ""|| username === null) {
         window.alert("Username field cannot be empty!");    // alert that username cannot be empty
-        // logic to allow another attempt to enter a username here
-        // still have to research that part
     }
 
     password = document.getElementById("pwd").value;    // get entered password
     console.log(password);  // log password to console for testing
 
     // while password field is empty
-    while(password === "" || password === null) {
+    if(password === "" || password === null) {
         window.alert("Password field cannot be empty!");    // alert that password cannot be empty
-        // logic to allow another attempt to enter a password here
-        // still have to research that part
     }
 
     // if username and password both not empty
