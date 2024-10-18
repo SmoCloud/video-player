@@ -72,6 +72,10 @@ body {
     background-size: auto;
 }
 
+#videoTitle {
+    text-align: right;
+}
+
 /* Container for recommended categories */
 .recommendations {
     display: inline-flex;
