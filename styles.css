@@ -163,6 +163,14 @@ body {
     margin-top: 5%;
 }
 
+.account-btns {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    font-size: 1.2rem;
+    padding: 10px;
+}
+
 input {
     color: rgb(218, 247, 166);
     background-color: #791919;

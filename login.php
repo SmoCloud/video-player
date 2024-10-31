@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOCTYPE php>
 <html lang="en">
     <head>
         <meta charset="UTF-8">
@@ -18,14 +18,16 @@
         <form class="login-box" action="login.php" method="post">
             <div class="username">
                 <label for="usr">Username: </label>
-                <input id="usr" name="usr" style="width: 50%;">
+                <input type="text" id="usr" name="usr" style="width: 50%;">
             </div>
             <div class="password">
                 <label for="pwd">Password: </label>
-                <input id="pwd" name="pwd" style="width: 50%;">
+                <input type="password" id="pwd" name="pwd" style="width: 50%;">
             </div>
-            <button id="login-btn" name="login" style="border-radius: 5px;" value="Login"></button>
-            <button id="create-acct-btn" name="create" style="border-radius: 5px;" value="Create Account"></button>
+            <div class="account-btns">
+                <button id="login-btn" name="login" style="border-radius: 5px;" value="Login">Login</button>
+                <button id="create-acct-btn" name="create" style="border-radius: 5px;" value="Create Account">Create Account</button>
+            </div>
         </form>
         <script src="scripts/login.js"></script>
     </body>
@@ -93,14 +95,12 @@
         echo 'SQL file imported successfully.<br>';
     */
 
-    $sql = 'SELECT id, username, password FROM accounts'; // gets all video ids' titles, and urls from the videos database
+    $sql = 'SELECT id, username FROM accounts'; // gets all video ids' titles, and urls from the videos database
     $result = $conn->query($sql);   // select query will return a mapped object containing the results of the query
-    $usernames = [];   // empty array to append usernames
-    $ids = [];  // empty array to append user ids
+    $users = [];   // empty array to append usernames
     if($result->num_rows > 0) { // if the number of rows of the sql result is greater than 0
         while($row = $result->fetch_assoc()) {  // fetch the next associated row from the current read position (starts at row 0, the first row from the query select results)
-            array_push($usernames, $row['username']);   // push url from the current row into $usernames array
-            array_push($ids, $row['id']);   // push id from current row into $ids array
+            $users[$row['username']] = $row['id'];   // push url from the current row into $usernames array
         }
     }
     else {  // else query had no results
@@ -111,27 +111,37 @@
     $login = $login === 'Login' ? true : false; // ternary statement checks if submit was clicked and sets true if it was, false if not
     if($login) {   // if submit button of form was clicked
         @$usr = $_POST['usr'];   // get the entered username
-        @$pwd = $_POST['pwd'];  // get the entered password
         if(!strlen($usr) > 0) { // if they didn't enter a name
             // display a message indicating that a username is required
             echo "<br><hr><p style='font-size:1.5rem'>Error: Username field cannot be empty!</p><hr>";
         }
         else {  // else a username was entered
-            foreach($usernames as $user) {
-                if($usr === $user) {    // if entered username is found in database (is valid)
-                    $query = "SELECT id, password FROM accounts WHERE id = {$id}";
+            @$pwd = $_POST['pwd'];  // get the entered password
+            $password = '';
+            $found = false;
+            foreach($users as $userId) {
+                if(@$users[$usr] === $userId) {    // if entered username is found in database (is valid)
+                    $found = true;
+                    $query = "SELECT id, password FROM accounts WHERE id = {$userId}";
                     $result = $conn->query($query);
-                    $password = $result['password'];
+                    if($result->num_rows > 0) {
+                        while($row = $result->fetch_assoc()) {
+                            $password = $row['password'];
+                        }
+                    }
+
                     if($pwd === $password) {
                         echo "<p style='font-size:1.5rem;'>Welcome, {$usr}</p><br>";
+                        break;
                     }
                     else {
                         echo "<p style='font-size:1.5rem;'>Invalid password for account {$usr}. Try again</p><br>";
-                    }
+                        break;
+                    }  
                 }
-                else {  // else entered username not valid
-                    echo "<p style='font-size:1.5rem;'>Account {$usr} does not exist.</p><br>";
-                }
+            }
+            if(!$found) {
+                echo "<p style='font-size:1.5rem;'>Account {$usr} does not exist.</p><br>";
             }
         }
     }
