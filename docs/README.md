@@ -1,21 +1,28 @@
 # video-player
 Our video player project.
 
-# Note:
-Download the Live Server extension for VS Code ane use it to test our code (will run code in a browser instead of 
-a live preview window. This allows for the <video> tag to function as intended). To launch a Live Server instance,
-open the .html file you want to run in VS Code's text editor, then press ALT+L+O. This will launch a Live Server
-through your browser and allow for more robust functionality testing.
-
-# 1. Get everyone into the GitHub repo (contributors)
+# Contributors:
 LoganZ3, zc1778, HunterWillis12, SmoCloud, Neptunes22
 
-# 2. Divide workload
-I was thinking that maybe we could do teams where one team is responsible for one portion of the project.
-By this, I mean the project is going to be using HTML, CSS, and JS (presumably), so I was thinking that
-we divide the workload based on that. One team responsible for the HTML, one for the CSS, and one for the JS.
+# Note:
+All of the node modules can be installed using powershell or git BASH. This can be done from within the VS Code integratd terminal window or independently using the Windows PowerShell or Git BASH that is included with the git download (these shells use linux-like commands, rather than Windows commands, and offer more functionality and ease of use).
 
-# 3. Assign Tasks
-There's front-end page layout and scripting work to be done (assigned to Mikel Cox) as well as back-end database 
-and web socket work to be done (unassigned).
+# Dependencies
+- Node.js : 
+    - comes with npm
+    - installed at 'https://nodejs.org/en'
+- Nodemon : 
+    - a node module installed through the console using 'npm i nodemon' 
+    **RECOMMENDED** 
+        - Install nodemon globally. This adds nodemon to your PATH variables, so it can be called from the command line anywhere on your system by just typing 'nodemon {filename}'. To install nodemon globally, run the command 'npm i nodemon -g' in the console
 
+# Get Started:
+- Run server.js from the command line using 'node server' or 'nodemon server'. Additionally, you could also do 'npm start' as an equivalent to 'node server' or 'npm run dev' as an equivalent to 'nodemon server'. The console will output a message displaying what port the server is listening on. From there, open your browser and type 'localhost:SERVER-PORT' where 'SERVER-PORT' is the port number in the console window, and voila!
+
+# TODO
+- Rewrite login.php to function with node.js
+    - Learn how to query a sql database with node.js
+- Improve styling of front-end pages
+- Interact with YouTube API (likely using node.js)
+- Introduce some secutiry/encryption of data passed from the front-end to the back-end and stored in database (user account passwords, mainly)
+- Implement video uploading functionality on server-side.

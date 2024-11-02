@@ -3,13 +3,13 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel="stylesheet" href="styles.css">
+        <link rel="stylesheet" href="../css/styles.css">
         <title>Login</title>
     </head>
     <body>
         <section class="border">
             <div class="navbar">
-                <img src="imgs/basic logo.jpeg">
+                <img src="../imgs/basic logo.jpeg">
                 <a href="login.php">Login</a>
                 <a href="index.html">Home</a>
             </div>
@@ -29,7 +29,7 @@
                 <button id="create-acct-btn" name="create" style="border-radius: 5px;" value="Create Account">Create Account</button>
             </div>
         </form>
-        <script src="scripts/login.js"></script>
+        <script src="../scripts/login.js"></script>
     </body>
 </html>
 
