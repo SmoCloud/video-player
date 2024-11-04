@@ -1,6 +1,7 @@
 const http = require('http');
 const path = require('path');
 const fs = require('fs');
+const { exec } = require('child_process');
 const promises = require('fs').promises;
 const logger = require('./logger');
 const EventEmit = require('events');
@@ -22,7 +23,9 @@ const serve = async (filePath, contentType, response) => {
             { 'Content-Type': contentType }
         );
         response.end(
-            contentType === 'application/json' ? JSON.stringify(data) : data
+            contentType === 'application/json' 
+                ? JSON.stringify(data) 
+                : data
         );
     } catch (error) {
         console.log(error);
@@ -60,9 +63,6 @@ const server = http.createServer((request, response) => {
         case '.txt':
             contentType = 'text/plain';
             break;
-        case '.php':
-            contentType = 'text/php';
-            break;
         case '.mp4':
             contentType = 'video/mp4';
             break;
@@ -88,7 +88,7 @@ const server = http.createServer((request, response) => {
         serve(filePath, contentType, response);
     } else {
         switch(path.parse(filePath).base) {
-            case 'www-page.html':
+            case 'our-clone.html':
                 response.writeHead(301, { 'Location': '/' });
                 break;
             default:
