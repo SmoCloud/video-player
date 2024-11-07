@@ -1,99 +1,76 @@
-const http = require('http');
+const express = require('express');
+const app = express();
 const path = require('path');
-const fs = require('fs');
-const promises = require('fs').promises;
-const logger = require('./logger');
-const EventEmit = require('events');
+const cors = require('cors');
+const mysql = require('mysql');
+const { logger } = require('./middleware/logger');
 
-class Emitter extends EventEmit { };
-const emitter = new Emitter();
-emitter.on('log', (msg, fileName) => logger(msg, fileName));
-const PORT = process.env.PORT || 3306;
+const PORT = process.env.PORT || 8080;
 
-const serve = async (filePath, contentType, response) => {
-    try {
-        const raw = await promises.readFile(
-            filePath, 
-            !(contentType.includes('image') || contentType.includes('video')) ? 'utf8' : ''
-        );
-        const data = contentType === 'application/json' ? JSON.parse(raw) : raw;
-        response.writeHead(
-            filePath.includes('404.html') ? 404 : 200,
-            { 'Content-Type': contentType }
-        );
-        response.end(
-            contentType === 'application/json' ? JSON.stringify(data) : data
-        );
-    } catch (error) {
-        console.log(error);
-        emitter.emit('log', `${error.name}: ${error.message}`, 'errorLog.txt');
-        response.statusCode = 500;
-        response.end();
-    }
-}
+app.use(logger);
 
-const server = http.createServer((request, response) => {
-    console.log(request.url, request.method);
-    emitter.emit('log', `${request.url}\t${request.method}`, 'requestLog.txt');
+// Cross-Origin Resource Sharing (will allow for functionality in multiple browsers easier)
+app.use(cors());
 
-    const ext = path.extname(request.url);
-    let contentType;
-    switch(ext) {
-        case '.css':
-            contentType = 'text/css';
-            break;
-        case '.js':
-            contentType = 'text/javascript';
-            break;
-        case '.json':
-            contentType = 'application/json';
-            break;
-        case '.jpeg':
-            contentType = 'image/jpeg';
-            break;
-        case '.png':
-            contentType = 'image/png';
-            break;
-        case '.ico':
-            contentType = 'image/icon';
-            break;
-        case '.txt':
-            contentType = 'text/plain';
-            break;
-        case '.php':
-            contentType = 'text/php';
-            break;
-        case '.mp4':
-            contentType = 'video/mp4';
-            break;
-        default:
-            contentType = 'text/html';
-            break;
-    }
+app.use(express.static(path.join(__dirname, 'public')));
 
-    let filePath = 
-        contentType === 'text/html' && request.url === '/'
-            ? path.join(__dirname, 'views', 'index.html')
-            : contentType === 'text/html' && request.url.slice(-1) === '/'
-                ? path.join(__dirname, 'views', request.url, 'index.html')
-                : contentType === 'text/html'
-                    ? path.join(__dirname, 'views', request.url)
-                    : path.join(__dirname, request.url);
+app.use(express.urlencoded({ extended: true }));
 
-    if(!ext && request.url.slice(-1) !== '/') filePath += '.html';
+const dbServer = mysql.createConnection({
+    host: 'localhost',       // Database host (use your DB host if not localhost)
+    user: 'guest',            // Your database username
+    password: '',    // Your database password
+    database: 'accounts', // The name of your database
+    port: 3306               // The port for the database (default is 3306 for MariaDB)
+  });
 
-    const fileExists = fs.existsSync(filePath);
+app.route('^/$|/index(.html)?')
+    .get((request, response) => {
+        response.sendFile(path.join(__dirname, 'views', 'index.html'));
+    })
+    .post((request, response) => {
+        console.log(`${request.method}\t${request.headers.origin}\t${request.url}`);
+        // TODO: query videos database with input from search bar on index page
+    });
 
-    if(fileExists) {
-        serve(filePath, contentType, response);
-    } else {
-        switch(path.parse(filePath).base) {
-            case 'www-page.html':
-                response.writeHead(301, { 'Location': '/' });
-                break;
-            default:
-                serve(path.join(__dirname, 'views/error', '404.html'), 'text/html', response);
-        }
-    }
+app.route('/player(.html)?')
+    .get((request, response) => {
+        response.sendFile(path.join(__dirname, 'views', 'player.html'));
+    })
+    .post((request, response) => {
+        console.log(`${request.method}\t${request.headers.orign}\t${request.url}`);
+        // TODO: query videos database with inut from search bar on player page
+    })
+
+app.route('/upload(.html)?')
+    .get((request, response) => {
+        response.sendFile(path.join(__dirname, 'views', 'upload.html'));
+    })
+    .post((request, response) => {
+        console.log(`${request.method}\t${request.headers.origin}\t${request.url}`);
+        // TODO: upload video file to video database (video should also have a title)
+    })
+
+// login.php needs to be redone to work with node.js, so the php code has been removed
+// the php code does still exist in the php-test branch, though, if you want to see it.
+app.route('/login(.html)?')
+    .get((request, response) => {
+        response.sendFile(path.join(__dirname, 'views', 'login.html'));
+    })
+    .post((request, response) => {
+        console.log(`${request.method}\t${request.headers.origin}\t${request.url}`);
+        // TODO: query database to ensure account exists and for authentication
+        const username = request.body.usr;
+        console.log(username);
+        const password = request.body.pwd;
+
+        const query = dbServer.query('SELECT * FROM accounts WHERE username=(?)', [username]);
+        console.log(`${query}\t${typeof(query)}`);
+        response.send(`Hello ${username}`);
+    });
+
+app.get('/*', (request, response) => {
+    response.status(404).sendFile(path.join(__dirname, 'views/error', '404.html'));
 });
-server.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

@@ -8,9 +8,6 @@ tstThumb.onclick = function() {
     window.location.href = "player.html";
 }
 
-// get element for search button on search bar
-const search = document.getElementById("searchButton");
-
 // function is called when search button is clicked
 search.onclick = function() {
 

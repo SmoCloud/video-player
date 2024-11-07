@@ -63,7 +63,7 @@ body {
 }
 
 /* Search bar container */
-.searchbar {
+.searchbar, .searchbar form {
     display: flex;
     flex-wrap: nowrap;
     justify-content: center;

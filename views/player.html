@@ -3,24 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="../css/styles.css">
+    <link rel="stylesheet" href="css/styles.css">
     <title>Video Player</title>
 </head>
 <body>
     <div class="navbar">
-        <img src="../imgs/basic logo.jpeg">
+        <img src="imgs/basic logo.jpeg">
         <a href="index.html">Home</a>
         <a href="upload.html">Upload</a>
     </div>
     <div class="searchbar">
-        <input type="text" id="videoTitle" style="width: 60%;">
-        <button id="searchButton" style="border-radius: 5px;">Search</button>
+        <form action="player.html" method="post">
+            <input type="text" id="videoTitle" style="width: 60%;">
+            <button id="searchButton" style="border-radius: 5px;">Search</button>
+        </form>
     </div>
     <div class="video_area">
         <video id="vp" style="height: auto;" controls>
-            <source src="../videos/PHP local server.mp4" type="video/mp4">
+            <source src="videos/PHP local server.mp4" type="video/mp4">
         </video>
     </div>
-    <script src="../scripts/player.js"></script>
+    <script src="scripts/player.js"></script>
 </body>
 </html>
