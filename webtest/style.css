@@ -1,166 +1,98 @@
 body {
-	background-color: gray;
 	font-family: 'Arial', sans-serif;
-	color: maroon;
+	color: black;
 	margin: 0;
+	background: linear-gradient(-45deg, maroon, white, gray, black);
+	background-size: 400% 400%;
+	animation: gradientBackground 15s ease infinite;
 }
+
+@keyframes gradientBackground {
+	0% { background-position: 0% 50%; }
+	50% { background-position: 100% 50%; }
+	100% { background-position: 0% 50%; }
+}
+
 header {
+	width: 100%;
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
 	padding: 10px 20px;
 	background-color: maroon;
+	box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+	position: fixed;
+	top: 0;
+	left: 0;
+	z-index: 1000;
 }
 
+/* Sidebar container */
+.sidebar {
+	margin-top: 70px; /* Adjust this value based on the height of the header */
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 200px;
+	height: calc(100% - 70px); /* Adjust this value based on the height of the header */
+	background-color: maroon;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	padding-top: 20px;
+	box-shadow: 2px 0 5px rgba(0, 0, 0, 0.5);
+}
+
+/* Sidebar buttons */
+.sidebar-button, .like-button, .dislike-button, #submit-comment {
+	background-color: white;
+	color: maroon;
+	border: none;
+	padding: 10px 20px;
+	font-size: 1em;
+	margin: 10px 0;
+	cursor: pointer;
+	border-radius: 5px;
+	width: 150px;
+	text-align: center;
+	transition: background-color 0.3s, transform 0.3s;
+}
+
+.sidebar-button:hover, .like-button:hover, .dislike-button:hover, #submit-comment:hover {
+	background-color: #d3d3d3;
+	transform: scale(1.1);
+}
+
+/* Adjust the main content to not overlap with the sidebar */
+#main-content {
+	margin-left: 220px; /* Adjust this value according to the width of the sidebar */
+	margin-top: 100px; /* Adjust this value based on the height of the header */
+}
+
+/* Logo styling */
 .logo img {
 	height: 40px;
 }
 
+/* Search bar styling */
 .search-bar {
 	display: flex;
 	align-items: center;
+	background-color: white;
+	border-radius: 5px;
+	padding: 5px;
+	box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
 }
 
 .search-bar input[type="text"] {
 	padding: 5px;
 	font-size: 1em;
-	border: 1px solid white;
+	border: none;
 	border-radius: 5px;
 	margin-right: 10px;
+	flex-grow: 1;
 }
 
 .search-bar button {
-	background-color: white;
-	color: maroon;
-	border: none;
-	padding: 5px 10px;
-	font-size: 1em;
-	cursor: pointer;
-	border-radius: 5px;
-}
-
-.search-bar button:hover {
-	background-color: #d3d3d3;
-}
-#video-container {
-	position: relative;
-	top: 0;
-	left: 0;
-	width: 640px;
-	margin: 0;
-}
-
-#video-title {
-	text-align: center;
-	font-size: 1.5em;
-	color: #ffffff;
-}
-
-.vjs-matrix.video-js {
-	color: maroon;
-	font-size: 1.2em;
-}
-
-.vjs-matrix .vjs-control {
-	color: #ffffff;
-}
-
-.vjs-matrix .vjs-big-play-button {
-	border-color: #ffffff;
-	background: #800000;
-}
-
-.vjs-matrix .vjs-play-progress,
-.vjs-matrix .vjs-volume-level {
-	background: #800000;
-}
-
-.vjs-matrix .vjs-control:hover {
-	color: black;
-}
-
-.vjs-matrix .vjs-big-play-button:hover {
-	background: black;
-}
-
-.vjs-matrix .vjs-progress-holder {
-	background: #ffffff;
-}
-
-.vjs-matrix .vjs-load-progress {
-	background: #d3d3d3;
-}
-
-.vjs-matrix .vjs-play-progress {
-	background: #800000;
-}
-
-
-.button-container {
-	text-align: left;
-	margin-top: 20px;
-	margin-left: 20px;
-}
-
-.like-button, .dislike-button {
-	background-color: #800000;
+	background-color: maroon;
 	color: white;
-	border: none;
-	padding: 10px 20px;
-	font-size: 1em;
-	margin: 5px;
-	cursor: pointer;
-	border-radius: 5px;
-}
-
-.like-button:hover, .dislike-button:hover {
-	background-color: black;
-}
-
-.comment-section {
-	margin-top: 20px;
-	margin-left: 20px;
-	color: maroon;
-	max-width: 640px;
-}
-
-.comment-section h3 {
-	font-size: 1.5em;
-	margin-bottom: 10px;
-}
-
-#comment-input {
-	width: 100%;
-	height: 100px;
-	margin-bottom: 10px;
-	padding: 10px;
-	border-radius: 5px;
-	border: 1px solid #800000;
-	font-size: 1em;
-}
-
-#submit-comment {
-	background-color: #800000;
-	color: white;
-	border: none;
-	padding: 10px 20px;
-	font-size: 1em;
-	cursor: pointer;
-	border-radius: 5px;
-}
-
-#submit-comment:hover {
-	background-color: black;
-}
-
-#comments-container {
-	margin-top: 20px;
-}
-
-.comment {
-	background-color: #f0f0f0;
-	padding: 10px;
-	margin-bottom: 10px;
-	border-radius: 5px;
-	border: 1px solid #800000;
-}

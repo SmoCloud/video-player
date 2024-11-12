@@ -1,4 +1,7 @@
 <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Website</title>
   <link href="https://vjs.zencdn.net/8.16.1/video-js.css" rel="stylesheet" />
   <script src="https://vjs.zencdn.net/8.16.1/video.min.js"></script>
   <link rel="stylesheet" href="style.css">
@@ -6,7 +9,6 @@
   <!-- If you'd like to support IE8 (for Video.js versions prior to v7) -->
   <!-- <script src="https://vjs.zencdn.net/ie8/1.1.2/videojs-ie8.min.js"></script> -->
 </head>
-
 <body>
 <header>
   <div class="logo">
@@ -17,21 +19,28 @@
     <button type="submit">Search</button>
   </div>
 </header>
-<div id="video-container" class="vjs-matrix">
-  <video id="my-video" class="video-js" controls preload="auto" width="640" height="440" data-setup="{}">
-    <source src="cool.mp4" type="video/mp4" />
-  </video>
-  <div id="video-title">Your Video Title Here</div>
+<div class="sidebar">
+  <button class="sidebar-button">Home</button>
+  <button class="sidebar-button">Liked Videos</button>
+  <button class="sidebar-button">Watched Videos</button>
 </div>
-<div class="button-container">
-  <button class="like-button">Like</button>
-  <button class="dislike-button">Dislike</button>
-</div>
-<div class="comment-section">
-  <h3>Comments</h3>
-  <textarea id="comment-input" placeholder="Write a comment..."></textarea>
-  <button id="submit-comment">Submit</button>
-  <div id="comments-container"></div>
+<div id="main-content">
+  <div id="video-container" class="vjs-matrix">
+    <video id="my-video" class="video-js" controls preload="auto" width="640" height="440" data-setup="{}">
+      <source src="cool.mp4" type="video/mp4" />
+    </video>
+    <div id="video-title">Your Video Title Here</div>
+  </div>
+  <div class="button-container">
+    <button class="like-button">Like</button>
+    <button class="dislike-button">Dislike</button>
+  </div>
+  <div class="comment-section">
+    <h3>Comments</h3>
+    <textarea id="comment-input" placeholder="Write a comment..."></textarea>
+    <button id="submit-comment">Submit</button>
+    <div id="comments-container"></div>
+  </div>
 </div>
 <script type="text/javascript" src="script.js"></script>
 </body>
