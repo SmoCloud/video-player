@@ -6,13 +6,11 @@ body {
 	background-size: 400% 400%;
 	animation: gradientBackground 15s ease infinite;
 }
-
 @keyframes gradientBackground {
 	0% { background-position: 0% 50%; }
 	50% { background-position: 100% 50%; }
 	100% { background-position: 0% 50%; }
 }
-
 header {
 	width: 100%;
 	display: flex;
@@ -26,7 +24,6 @@ header {
 	left: 0;
 	z-index: 1000;
 }
-
 /* Sidebar container */
 .sidebar {
 	margin-top: 50px;
@@ -42,8 +39,6 @@ header {
 	padding-top: 20px;
 	box-shadow: 2px 0 5px rgba(0, 0, 0, 0.5);
 }
-
-
 .sidebar-button, .like-button, .dislike-button, #submit-comment {
 	background-color: maroon;
 	color: white;
