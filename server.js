@@ -7,11 +7,10 @@ const { logger } = require('./middleware/logger');
 
 const PORT = process.env.PORT || 8080;
 
+app.set('view engine', 'ejs');
 app.use(logger);
-
 // Cross-Origin Resource Sharing (will allow for functionality in multiple browsers easier)
 app.use(cors());
-
 app.use(express.static(path.join(__dirname, '/public')));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -20,7 +19,7 @@ const dbServer = mysql.createConnection({
     host: 'localhost',       // Database host (use your DB host if not localhost)
     user: 'guest',            // Your database username
     password: '',    // Your database password
-    database: 'accounts', // The name of your database
+    database: 'z_squared', // The name of your database
     port: 3306               // The port for the database (default is 3306 for MariaDB)
 });
 
@@ -40,11 +39,14 @@ app.route('^/$|/index(.html)?')
     })
     .post((request, response) => {
         console.log(`${request.body.srch}\t${request.method}\t${request.headers.origin}\t${request.url}`);
-        dbServer.query('SELECT * FROM accounts', (error, results, fields) => {
-            if (error) 
-                throw (error);
-            console.log(`${results}\t${fields}`);
-        });
+        if (typeof(request.body.srch) !== "undefined" && request.body.srch) {
+            const searchQuery = "'%" + request.body.srch + "%'";
+            dbServer.query(`SELECT * FROM videos WHERE title LIKE ${searchQuery}`, (error, results, fields) => {
+                if (error) 
+                    throw (error);
+                response.render(path.join(__dirname, 'views', 'pages/index'), [results]);
+            });
+        }
         // TODO: query videos database with input from search bar on index page
     });
 
