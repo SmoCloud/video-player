@@ -44,7 +44,7 @@ app.route('^/$|/index(.html)?')
             dbServer.query(`SELECT * FROM videos WHERE title LIKE ${searchQuery}`, (error, results, fields) => {
                 if (error) 
                     throw (error);
-                response.render(path.join(__dirname, 'views', 'pages/index'), [results]);
+                response.json(results);
             });
         }
         // TODO: query videos database with input from search bar on index page

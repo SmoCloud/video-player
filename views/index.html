@@ -16,16 +16,16 @@
   <div class="search-bar">
     <form action="index.html" method="post">
       <input type="text" name="srch" placeholder="Search..." />
-      <button type="submit">Search</button>
+      <button id="search-btn" type="submit">Search</button>
     </form>
   </div>
 </header>
 <form action="index.html" method="post">
   <div class="sidebar">
-    <button class="sidebar-button" name="home">Home</button>
-    <button class="sidebar-button" name="login">Login</button>
-    <button class="sidebar-button" name="liked-vids">Liked Videos</button>
-    <button class="sidebar-button" name="history">Watched Videos</button>
+    <button class="sidebar-button" id="home-btn" name="home">Home</button>
+    <button class="sidebar-button" id="login-btn" name="login">Login</button>
+    <button class="sidebar-button" id="liked-videos-btn" name="liked-vids">Liked Videos</button>
+    <button class="sidebar-button" id="history-btn" name="history">Watched Videos</button>
   </div>
 </form>
 <div id="main-content">
@@ -37,8 +37,8 @@
   </div>
   <form action="index.html" method="post">
     <div class="button-container">
-      <button class="like-button">Like</button>
-      <button class="dislike-button">Dislike</button>
+      <button id="like-btn" class="like-button">Like</button>
+      <button id="dislike-btn" class="dislike-button">Dislike</button>
     </div>
   </form>
   <form action="index.html" method="post">
@@ -50,6 +50,6 @@
     </div>
   </form>
 </div>
-<script type="text/javascript" src="scripts/script.js"></script>
+<script type="text/javascript" src="scripts/index.js"></script>
 </body>
 </html>
