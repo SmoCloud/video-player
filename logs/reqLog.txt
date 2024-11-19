@@ -237,3 +237,10 @@
 2024-11-18	13:45:13	01934097-da8e-749a-a4d2-00c4872b07d1	GET	undefined	/scripts/script.js
 2024-11-18	13:45:14	01934097-daf0-748a-a71c-ac7103c46d3c	GET	undefined	/videos/cool.mp4
 2024-11-18	13:46:06	01934098-a858-70ca-aaa1-7b696f311722	GET	undefined	/videos/cool.mp4
+2024-11-18	13:54:14	019340a0-1a57-7438-b220-fa0b3b914dce	GET	undefined	/
+2024-11-18	13:54:14	019340a0-1a6d-77c4-b534-37a4b9479e48	GET	undefined	/css/styles.css
+2024-11-18	13:54:14	019340a0-1a6e-773b-b053-1860c927373c	GET	undefined	/imgs/basicLogo.jpeg
+2024-11-18	13:54:14	019340a0-1a6f-713d-af2c-dddb723ebf47	GET	undefined	/scripts/script.js
+2024-11-18	13:54:14	019340a0-1b6f-741e-975b-f1dfbb1f6437	GET	undefined	/videos/cool.mp4
+2024-11-18	13:54:14	019340a0-1b77-775e-8989-ec08bb2571fd	GET	undefined	/videos/cool.mp4
+2024-11-18	13:54:14	019340a0-1bb8-741a-a776-50d2ed88f150	GET	undefined	/favicon.ico

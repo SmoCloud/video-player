@@ -15,14 +15,18 @@
     <img src="imgs/basicLogo.jpeg" alt="Logo" />
   </div>
   <div class="search-bar">
-    <input type="text" placeholder="Search..." />
-    <button type="submit">Search</button>
+    <form action="index.html" method="post">
+      <input type="text" placeholder="Search..." />
+      <button type="submit">Search</button>
+    </form>
   </div>
 </header>
 <div class="sidebar">
-  <button class="sidebar-button">Home</button>
-  <button class="sidebar-button">Liked Videos</button>
-  <button class="sidebar-button">Watched Videos</button>
+  <form action="index.html" method="post">
+    <button class="sidebar-button">Home</button>
+    <button class="sidebar-button">Liked Videos</button>
+    <button class="sidebar-button">Watched Videos</button>
+  </form>
 </div>
 <div id="main-content">
   <div id="video-container" class="vjs-matrix">
@@ -32,13 +36,17 @@
     <div id="video-title">Your Video Title Here</div>
   </div>
   <div class="button-container">
-    <button class="like-button">Like</button>
-    <button class="dislike-button">Dislike</button>
+    <form action="index.html" method="post">
+      <button class="like-button">Like</button>
+      <button class="dislike-button">Dislike</button>
+    </form>
   </div>
   <div class="comment-section">
     <h3>Comments</h3>
-    <textarea id="comment-input" placeholder="Write a comment..."></textarea>
-    <button id="submit-comment">Submit</button>
+    <form action="index.html" method="post">
+      <textarea id="comment-input" placeholder="Write a comment..."></textarea>
+      <button id="submit-comment">Submit</button>
+    </form>
     <div id="comments-container"></div>
   </div>
 </div>

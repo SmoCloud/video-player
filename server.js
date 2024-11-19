@@ -22,7 +22,17 @@ const dbServer = mysql.createConnection({
     password: '',    // Your database password
     database: 'accounts', // The name of your database
     port: 3306               // The port for the database (default is 3306 for MariaDB)
-  });
+});
+
+dbServer.connect((err) => {
+    if (err) {
+        console.error("Error connecting: " + err.stack);
+        return;
+    }
+    else {
+        console.log("Connected as id " + dbServer.threadId);
+    }
+});
 
 app.route('^/$|/index(.html)?')
     .get((request, response) => {
