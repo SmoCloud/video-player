@@ -13,7 +13,7 @@ app.use(logger);
 app.use(cors());
 
 app.use(express.static(path.join(__dirname, '/public')));
-
+app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 const dbServer = mysql.createConnection({
@@ -39,7 +39,12 @@ app.route('^/$|/index(.html)?')
         response.sendFile(path.join(__dirname, 'views', 'index.html'));
     })
     .post((request, response) => {
-        console.log(`${request.method}\t${request.headers.origin}\t${request.url}`);
+        console.log(`${request.body.srch}\t${request.method}\t${request.headers.origin}\t${request.url}`);
+        dbServer.query('SELECT * FROM accounts', (error, results, fields) => {
+            if (error) 
+                throw (error);
+            console.log(`${results}\t${fields}`);
+        });
         // TODO: query videos database with input from search bar on index page
     });
 

@@ -16,18 +16,18 @@
   </div>
   <div class="search-bar">
     <form action="index.html" method="post">
-      <input type="text" placeholder="Search..." />
+      <input type="text" name="srch" placeholder="Search..." />
       <button type="submit">Search</button>
     </form>
   </div>
 </header>
-<div class="sidebar">
-  <form action="index.html" method="post">
+<form action="index.html" method="post">
+  <div class="sidebar">
     <button class="sidebar-button">Home</button>
     <button class="sidebar-button">Liked Videos</button>
     <button class="sidebar-button">Watched Videos</button>
-  </form>
-</div>
+  </div>
+</form>
 <div id="main-content">
   <div id="video-container" class="vjs-matrix">
     <video id="my-video" class="video-js" controls preload="auto" width="640" height="440" data-setup="{}">
@@ -35,20 +35,20 @@
     </video>
     <div id="video-title">Your Video Title Here</div>
   </div>
-  <div class="button-container">
-    <form action="index.html" method="post">
+  <form action="index.html" method="post">
+    <div class="button-container">
       <button class="like-button">Like</button>
       <button class="dislike-button">Dislike</button>
-    </form>
-  </div>
-  <div class="comment-section">
-    <h3>Comments</h3>
-    <form action="index.html" method="post">
+    </div>
+  </form>
+  <form action="index.html" method="post">
+    <div class="comment-section">
+      <h3>Comments</h3>
       <textarea id="comment-input" placeholder="Write a comment..."></textarea>
       <button id="submit-comment">Submit</button>
-    </form>
-    <div id="comments-container"></div>
-  </div>
+      <div id="comments-container"></div>
+    </div>
+  </form>
 </div>
 <script type="text/javascript" src="scripts/script.js"></script>
 </body>
