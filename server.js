@@ -92,6 +92,11 @@ app.route('/login(.html)?')
         response.send(`Hello ${username}`);
     });
 
+    app.route('/register(.html)?')
+    .get((request, response) => {
+        response.sendFile(path.join(__dirname, 'views', 'login.html'));
+    })
+
 app.get('/*', (request, response) => {
     response.status(404).sendFile(path.join(__dirname, 'views/error', '404.html'));
 });
