@@ -58,7 +58,8 @@ app.route('/player(.html)?')
         console.log(`player.html post1: ${request.method}\t${request.headers.origin}\t${request.url}`);
         if (typeof(request.body.jsonData) !== "undefined" && request.body.jsonData) {
             const data = request.body.jsonData;
-            response.render('pages/player', { data });
+            const key = request.body.thumber;
+            response.render('pages/player', { key, data });
             //console.log(`player.html post2: \t${data}\t${request.method}\t${request.headers.origin}\t${request.url}`);
         // TODO: query videos database with inut from search bar on player page
         }
