@@ -29,34 +29,23 @@
     </div>
 </form>
 <div id="main-content">
-    <div id="video-container" class="vjs-matrix">
+    <div id="results-container" class="results">
         <table>
-            <tr>
-                <td>
-                    <video id="my-video" class="video-js" controls preload="auto" width="640" height="440" data-setup="{}">
-                        <source src="videos/cool.mp4" type="video/mp4" />
-                    </video>
-                </td>
-                <td>
-                    <div class="results">
-                        <pre id="results-output">
-
-                        </pre>
-                    </div>
-                </td>
-            </tr>
+            <div class="results-loop">
+                <p id="json-data" hidden><%= JSON.stringify(results) %></p>
+                <% for (const key in results) { %>
+                <tr>
+                    <td>
+                        <hr>
+                        <div id="video-title"><%= results[key].title %></div>
+                        <br>
+                        <img id="<%= results[key].url %>" class="thumbnails" src="<%= results[key].thumbnail %>" title="<%= results[key].title %>" width="480" height="320">
+                        <hr>
+                    </td>
+                </tr>
+                <% } %>
+            </div>
         </table>
-        <div id="video-title">Your Video Title Here</div>
-        <div class="button-container">
-            <button id="like-btn" class="like-button">Like</button>
-      <button id="dislike-btn" class="dislike-button">Dislike</button>
-        </div>
-        <div class="comment-section">
-            <h3>Comments</h3>
-            <textarea id="comment-input" placeholder="Write a comment..."></textarea>
-            <button id="submit-comment">Submit</button>
-            <div id="comments-container"></div>
-        </div>
     </div>
 </div>
 <script type="text/javascript" src="scripts/index.js"></script>

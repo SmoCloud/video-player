@@ -20,22 +20,29 @@
     </form>
   </div>
 </header>
-<form action="index.html" method="post">
-  <div class="sidebar">
-    <button class="sidebar-button" id="home-btn" name="home">Home</button>
-    <button class="sidebar-button" id="login-btn" name="login">Login</button>
-    <button class="sidebar-button" id="liked-videos-btn" name="liked-vids">Liked Videos</button>
-    <button class="sidebar-button" id="history-btn" name="history">Watched Videos</button>
-  </div>
-</form>
+<div class="sidebar">
+  <button class="sidebar-button" id="home-btn" name="home">Home</button>
+  <button class="sidebar-button" id="login-btn" name="login">Login</button>
+  <button class="sidebar-button" id="liked-videos-btn" name="liked-vids">Liked Videos</button>
+  <button class="sidebar-button" id="history-btn" name="history">Watched Videos</button>
+</div>
 <div id="main-content">
   <div id="video-container" class="vjs-matrix">
     <video id="my-video" class="video-js" controls preload="auto" width="640" height="440" data-setup="{}">
-      <source src="videos/cool.mp4" type="video/mp4" />
+      <source id="z-source" src="videos/cool.mp4" type="video/mp4" />
     </video>
-    <div id="video-title">Your Video Title Here</div>
+    <table>
+      <tr>
+          <td>
+              <video id="z-video" class="video-js" controls preload="auto" width="640" height="440" data-setup="{}">
+                  <source id="z-source" src="videos/cool.mp4" type="video/mp4" />
+              </video>
+          </td>
+      </tr>
+  </table>
+  <div id="video-title">Your Video Title Here</div>
   </div>
-  <form action="index.html" method="post">
+  <form action="index.html" method="get">
     <div class="button-container">
       <button id="like-btn" class="like-button">Like</button>
       <button id="dislike-btn" class="dislike-button">Dislike</button>

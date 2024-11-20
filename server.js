@@ -44,7 +44,7 @@ app.route('^/$|/index(.html)?')
             dbServer.query(`SELECT * FROM videos WHERE title LIKE ${searchQuery}`, (error, results, fields) => {
                 if (error) 
                     throw (error);
-                response.json(results);
+                response.render('pages/index', { results });
             });
         }
         // TODO: query videos database with input from search bar on index page
@@ -55,7 +55,7 @@ app.route('/player(.html)?')
         response.sendFile(path.join(__dirname, 'views', 'player.html'));
     })
     .post((request, response) => {
-        console.log(`${request.method}\t${request.headers.orign}\t${request.url}`);
+        console.log(`${request.method}\t${request.headers.origin}\t${request.url}`);
         // TODO: query videos database with inut from search bar on player page
     })
 
