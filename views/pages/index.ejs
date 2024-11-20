@@ -32,18 +32,24 @@
     <div id="results-container" class="results">
         <table>
             <div class="results-loop">
-                <p id="json-data" hidden><%= JSON.stringify(results) %></p>
-                <% for (const key in results) { %>
-                <tr>
-                    <td>
-                        <hr>
-                        <div id="video-title"><%= results[key].title %></div>
-                        <br>
-                        <img id="<%= results[key].url %>" class="thumbnails" src="<%= results[key].thumbnail %>" title="<%= results[key].title %>" width="480" height="320">
-                        <hr>
-                    </td>
-                </tr>
-                <% } %>
+                <form action="player.html" method="post">
+                    <input name="jsonData" type="hidden" id="json-data" value="<%= JSON.parse(JSON.stringify(results)) %>"/>
+                    <% 
+                    console.log(JSON.parse(JSON.stringify(results)));
+                    for (const key in results) { 
+                        console.log(key + ": " + JSON.parse(JSON.stringify(results[key])))%>
+                    <tr>
+                        <td>
+                            <input name="jsonKey" type="hidden" id="json-key" value="<%= key %>"/>
+                            <hr>
+                            <div id="video-title"><%= results[key].title %></div>
+                            <br>
+                            <button name="thumber" type="submit" ><img id="<%= results[key].url %>" class="thumbnails" src="<%= results[key].thumbnail %>" title="<%= results[key].title %>" width="480" height="320"></button>
+                            <hr>
+                        </td>
+                    </tr>
+                    <% } %>
+                </form>
             </div>
         </table>
     </div>

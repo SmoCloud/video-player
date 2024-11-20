@@ -38,7 +38,7 @@ app.route('^/$|/index(.html)?')
         response.sendFile(path.join(__dirname, 'views', 'index.html'));
     })
     .post((request, response) => {
-        console.log(`${request.body.srch}\t${request.method}\t${request.headers.origin}\t${request.url}`);
+        console.log(`index.html post1:${request.body.srch}\t${request.method}\t${request.headers.origin}\t${request.url}`);
         if (typeof(request.body.srch) !== "undefined" && request.body.srch) {
             const searchQuery = "'%" + request.body.srch + "%'";
             dbServer.query(`SELECT * FROM videos WHERE title LIKE ${searchQuery}`, (error, results, fields) => {
@@ -55,18 +55,23 @@ app.route('/player(.html)?')
         response.sendFile(path.join(__dirname, 'views', 'player.html'));
     })
     .post((request, response) => {
-        console.log(`${request.method}\t${request.headers.origin}\t${request.url}`);
+        console.log(`player.html post1: ${request.method}\t${request.headers.origin}\t${request.url}`);
+        if (typeof(request.body.jsonData) !== "undefined" && request.body.jsonData) {
+            const data = request.body.jsonData;
+            response.render('pages/player', { data });
+            //console.log(`player.html post2: \t${data}\t${request.method}\t${request.headers.origin}\t${request.url}`);
         // TODO: query videos database with inut from search bar on player page
-    })
+        }
+    });
 
 app.route('/upload(.html)?')
     .get((request, response) => {
         response.sendFile(path.join(__dirname, 'views', 'upload.html'));
     })
     .post((request, response) => {
-        console.log(`${request.method}\t${request.headers.origin}\t${request.url}`);
+        console.log(`upload.html post1: ${request.method}\t${request.headers.origin}\t${request.url}`);
         // TODO: upload video file to video database (video should also have a title)
-    })
+    });
 
 // login.php needs to be redone to work with node.js, so the php code has been removed
 // the php code does still exist in the php-test branch, though, if you want to see it.
@@ -75,7 +80,7 @@ app.route('/login(.html)?')
         response.sendFile(path.join(__dirname, 'views', 'login.html'));
     })
     .post((request, response) => {
-        console.log(`${request.method}\t${request.headers.origin}\t${request.url}`);
+        console.log(`login.html post1: ${request.method}\t${request.headers.origin}\t${request.url}`);
         // TODO: query database to ensure account exists and for authentication
         const username = request.body.usr;
         console.log(username);
