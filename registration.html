@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="registrationStyles.css">
+    <script src="scripts/registration.js" async></script>
+    <title>Register</title>
+</head>
+<body>
+    <section class="border">
+        <div class="navbar">
+            <img src="imgs/basic logo.jpeg">
+            <a href="login.html">Login</a>
+            <a href="index.html">Home</a>
+        </div>
+        <h1 style="text-align: center;">Register</h1>
+    </section>
+    <form class="registration">
+        <div id="formContent">
+            <div id="formInputs">
+                <div class="inputField">
+                    <label class="inputFieldLabel" for="email">Email: </label>
+                    <input id="email" required>
+                </div>
+                <div class="inputField">
+                    <label class="inputFieldLabel" for="username">Username: </label>
+                    <input id="username" required>
+                </div>
+                <div class="inputField">
+                    <label class="inputFieldLabel" for="password">Password: </label>
+                    <input id="password" required autocomplete="off">
+                </div>
+                <div class="inputField">
+                    <label class="inputFieldLabel" for="confirmPassword">Confirm Password: </label>
+                    <input id="confirmPassword" required autocomplete="off">
+                </div>
+            </div>
+            <button id="register-btn">Register</button>
+        </div>
+    </form>
+</body>
+</html>
