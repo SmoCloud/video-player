@@ -22,7 +22,7 @@ header {
 	position: fixed;
 	top: 0;
 	left: 0;
-	z-index: 1000;
+    z-index: 1;
 }
 .registration {
     display: flex;
@@ -72,18 +72,18 @@ input {
 }
 /* Sidebar container */
 .sidebar {
-	margin-top: 50px;
 	position: fixed;
 	top: 0;
 	left: 0;
 	width: 200px;
-	height: calc(100% - 70px);
+	height: 100%;
 	background-color: black;
 	display: flex;
 	flex-direction: column;
 	align-items: center;
 	padding-top: 20px;
 	box-shadow: 2px 0 5px rgba(0, 0, 0, 0.5);
+    z-index: 2;
 }
 .sidebar-button, .like-button, .dislike-button, #submit-comment {
 	background-color: maroon;
@@ -104,6 +104,13 @@ input {
 	transform: scale(1.1);
 }
 
+.sidebar img {
+    border-radius: 50px;
+}
+
+#login-btn {
+    background-color: black;
+}
 
 #main-content {
     display: grid;

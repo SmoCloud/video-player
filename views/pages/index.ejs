@@ -15,44 +15,44 @@
         </div>
         <div class="searchbar">
             <form action="index.html" method="post">
-            <input type="text" name="srch" placeholder="Search..." />
-            <button id="searchbtn" type="submit">Search</button>
+                <input type="text" name="srch" placeholder="Search..." />
+                <button id="searchbtn" type="submit">Search</button>
             </form>
         </div>
     </header>
-<form action="index.html" method="post">
-    <div class="sidebar">
-        <button class="sidebar-button" id="home-btn" name="home">Home</button>
-    <button class="sidebar-button" id="login-btn" name="login">Login</button>
-    <button class="sidebar-button" id="liked-videos-btn" name="liked-vids">Liked Videos</button>
-    <button class="sidebar-button" id="history-btn" name="history">Watched Videos</button>
+    <form action="index.html" method="get">
+        <div class="sidebar">
+            <button type="submit" class="sidebar-button" id="home-btn" name="home" value="1">Home</button>
+            <button type="submit" class="sidebar-button" id="login-btn" name="login" value="1">Login</button>
+            <button type="submit" class="sidebar-button" id="liked-videos-btn" name="liked-vids" value="1">Liked Videos</button>
+            <button type="submit" class="sidebar-button" id="history-btn" name="history" value="1">Watched Videos</button>
+        </div>
+    </form>
+    <div id="main-content">
+        <div id="results-container" class="results">
+            <table>
+                <div class="results-loop">
+                    <form action="player.html" method="post">
+                        <input name="jsonData" type="hidden" id="json-data" value="<%= JSON.stringify(results) %>"/>
+                        <% 
+                        console.log(results);
+                        for (const key in results) { 
+                            console.log(key + ": " + JSON.stringify(results[key]))%>
+                        <tr>
+                            <td>
+                                <hr>
+                                <div id="video-title"><%= results[key].title %></div>
+                                <br>
+                                <button name="thumber" type="submit" value="<%= key %>"><img id="<%= results[key].url %>" class="thumbnails" src="<%= results[key].thumbnail %>" title="<%= results[key].title %>" width="480" height="320"></button>
+                                <hr>
+                            </td>
+                        </tr>
+                        <% } %>
+                    </form>
+                </div>
+            </table>
+        </div>
     </div>
-</form>
-<div id="main-content">
-    <div id="results-container" class="results">
-        <table>
-            <div class="results-loop">
-                <form action="player.html" method="post">
-                    <input name="jsonData" type="hidden" id="json-data" value="<%= JSON.stringify(results) %>"/>
-                    <% 
-                    console.log(results);
-                    for (const key in results) { 
-                        console.log(key + ": " + JSON.stringify(results[key]))%>
-                    <tr>
-                        <td>
-                            <hr>
-                            <div id="video-title"><%= results[key].title %></div>
-                            <br>
-                            <button name="thumber" type="submit" value="<%= key %>"><img id="<%= results[key].url %>" class="thumbnails" src="<%= results[key].thumbnail %>" title="<%= results[key].title %>" width="480" height="320"></button>
-                            <hr>
-                        </td>
-                    </tr>
-                    <% } %>
-                </form>
-            </div>
-        </table>
-    </div>
-</div>
 <script type="text/javascript" src="scripts/index.js"></script>
 </body>
 </html>

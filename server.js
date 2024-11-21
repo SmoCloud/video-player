@@ -13,7 +13,7 @@ app.use(logger);
 app.use(cors());
 app.use(express.static(path.join(__dirname, '/public')));
 app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(express.urlencoded({ extended: false }));
 
 const dbServer = mysql.createConnection({
     host: 'localhost',       // Database host (use your DB host if not localhost)
@@ -35,10 +35,11 @@ dbServer.connect((err) => {
 
 app.route('^/$|/index(.html)?')
     .get((request, response) => {
+        console.log(`${request.method}\t${request.headers.origin}\t${request.url}`);
         response.sendFile(path.join(__dirname, 'views', 'index.html'));
     })
     .post((request, response) => {
-        console.log(`index.html post1:${request.body.srch}\t${request.method}\t${request.headers.origin}\t${request.url}`);
+        console.log(`${request.method}\t${request.headers.origin}\t${request.url}`);
         if (typeof(request.body.srch) !== "undefined" && request.body.srch) {
             const searchQuery = "'%" + request.body.srch + "%'";
             dbServer.query(`SELECT * FROM videos WHERE title LIKE ${searchQuery}`, (error, results, fields) => {
@@ -81,24 +82,32 @@ app.route('/login(.html)?')
         response.sendFile(path.join(__dirname, 'views', 'login.html'));
     })
     .post((request, response) => {
-        console.log(`login.html post1: ${request.method}\t${request.headers.origin}\t${request.url}`);
+        console.log(`${request.method}\t${request.headers.origin}\t${request.url}`);
         // TODO: query database to ensure account exists and for authentication
         const username = request.body.usr;
         console.log(username);
         const password = request.body.pwd;
 
-        const query = dbServer.query('SELECT * FROM accounts WHERE username=(?)', [username]);
-        console.log(`${query}\t${typeof(query)}`);
-        response.send(`Hello ${username}`);
+        dbServer.query(`SELECT * FROM accounts WHERE username='${username}'`, (error, results, fields) => {
+            if (error) 
+                throw (error);
+            if (password === results[0].password) {
+                response.sendFile(path.join(__dirname, 'views', 'index.html'));
+            }
+            console.log(results[0].password);
+            //response.render('pages/index', { results });
+        });
+        // console.log(`${query}\t${typeof(query)}`);
+        // response.send(`Hello ${username}`);
     });
 
-    app.route('/register(.html)?')
+app.route('/register(.html)?')
     .get((request, response) => {
         response.sendFile(path.join(__dirname, 'views', 'login.html'));
     })
 
 app.get('/*', (request, response) => {
-    response.status(404).sendFile(path.join(__dirname, 'views/error', '404.html'));
+    response.status(404).sendFile(path.join(__dirname, 'views', '404.html'));
 });
 
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
