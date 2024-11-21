@@ -3,41 +3,48 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="styles.css">
-    <link rel="stylesheet" href="registrationStyles.css">
+    <link rel="stylesheet" href="css/styles.css">
     <script src="scripts/registration.js" async></script>
     <title>Register</title>
 </head>
 <body>
     <section class="border">
         <div class="navbar">
-            <img src="imgs/basic logo.jpeg">
+            <img src="imgs/basicLogo.jpeg">
             <a href="login.html">Login</a>
             <a href="index.html">Home</a>
         </div>
         <h1 style="text-align: center;">Register</h1>
     </section>
-    <form class="registration">
-        <div id="formContent">
-            <div id="formInputs">
-                <div class="inputField">
-                    <label class="inputFieldLabel" for="email">Email: </label>
-                    <input id="email" required>
-                </div>
-                <div class="inputField">
-                    <label class="inputFieldLabel" for="username">Username: </label>
-                    <input id="username" required>
-                </div>
-                <div class="inputField">
-                    <label class="inputFieldLabel" for="password">Password: </label>
-                    <input id="password" required autocomplete="off">
-                </div>
-                <div class="inputField">
-                    <label class="inputFieldLabel" for="confirmPassword">Confirm Password: </label>
-                    <input id="confirmPassword" required autocomplete="off">
-                </div>
-            </div>
-            <button id="register-btn">Register</button>
+    <form class="registration" action="registration.html" method="post">
+        <div class="inputField">
+            <table>
+                <tr>
+                    <td>
+                        <label class="inputFieldLabel" for="email">Email: </label>
+                        <input type="email" id="email" name="email" required>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <label class="inputFieldLabel" for="username">Username: </label>
+                        <input id="username" name="username" required>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <label class="inputFieldLabel" for="password">Password: </label>
+                        <input type="password" id="password" name="password" required autocomplete="off">
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <label class="inputFieldLabel" for="confirmPassword">Confirm Password: </label>
+                        <input type="password" id="confirmPassword" name="confirmPassword" required autocomplete="off">
+                    </td>
+                </tr>
+                <tr><td><button type="submit" id="register-btn" name="register-btn">Register</button></td></tr>
+            </table>
         </div>
     </form>
 </body>

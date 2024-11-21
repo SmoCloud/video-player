@@ -48,7 +48,6 @@ app.route('^/$|/index(.html)?')
                 response.render('pages/index', { results });
             });
         }
-        // TODO: query videos database with input from search bar on index page
     });
 
 app.route('/player(.html)?')
@@ -61,7 +60,6 @@ app.route('/player(.html)?')
             const data = request.body.jsonData;
             const key = request.body.thumber;
             response.render('pages/player', { key, data });
-            //console.log(`player.html post2: \t${data}\t${request.method}\t${request.headers.origin}\t${request.url}`);
         // TODO: query videos database with inut from search bar on player page
         }
     });
@@ -72,38 +70,37 @@ app.route('/upload(.html)?')
     })
     .post((request, response) => {
         console.log(`upload.html post1: ${request.method}\t${request.headers.origin}\t${request.url}`);
-        // TODO: upload video file to video database (video should also have a title)
     });
 
-// login.php needs to be redone to work with node.js, so the php code has been removed
-// the php code does still exist in the php-test branch, though, if you want to see it.
 app.route('/login(.html)?')
     .get((request, response) => {
         response.sendFile(path.join(__dirname, 'views', 'login.html'));
     })
     .post((request, response) => {
         console.log(`${request.method}\t${request.headers.origin}\t${request.url}`);
-        // TODO: query database to ensure account exists and for authentication
-        const username = request.body.usr;
-        console.log(username);
-        const password = request.body.pwd;
-
-        dbServer.query(`SELECT * FROM accounts WHERE username='${username}'`, (error, results, fields) => {
-            if (error) 
-                throw (error);
-            if (password === results[0].password) {
-                response.sendFile(path.join(__dirname, 'views', 'index.html'));
-            }
-            console.log(results[0].password);
-            //response.render('pages/index', { results });
-        });
-        // console.log(`${query}\t${typeof(query)}`);
-        // response.send(`Hello ${username}`);
+        if (typeof(request.query.create) !== "undefined") {
+            response.sendFile(path.join(__dirname, 'views', 'registration.html'));
+        }
+        else if (typeof(request.query.login) !== "undefined") {
+            const username = request.body.usr;
+            const password = request.body.pwd;
+            dbServer.query(`SELECT * FROM accounts WHERE username='${username}'`, (error, results, fields) => {
+                if (error) 
+                    throw (error);
+                if (password === results[0].password) {
+                    response.sendFile(path.join(__dirname, 'views', 'index.html'));
+                }
+            });
+        }
     });
 
-app.route('/register(.html)?')
+app.route('/registration(.html)?')
     .get((request, response) => {
-        response.sendFile(path.join(__dirname, 'views', 'login.html'));
+        response.sendFile(path.join(__dirname, 'views', 'registration.html'));
+    })
+    .post((request, response) => {
+        console.log(`${request.method}\t${request.headers.origin}\t${request.url}`);
+        console.log(`${request.body.email}\t${request.body.username}\t`);
     })
 
 app.get('/*', (request, response) => {
