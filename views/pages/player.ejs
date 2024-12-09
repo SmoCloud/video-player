@@ -30,7 +30,6 @@
     <div id="video-container" class="vjs-matrix">
         <% const jsonData = JSON.parse(data);
         const jsonKey = key;
-        console.log(jsonData[key]);
         %>
         <video id="my-video" class="video-js" controls preload="auto" width="640" height="440" data-setup="{}">
             <source id="z-source" src="<%= jsonData[key].url %>" type="video/mp4" />
@@ -39,15 +38,19 @@
     </div>
     <form action="player.html" method="get">
         <div class="button-container">
-        <button id="like-btn" class="like-button">Like</button>
-        <button id="dislike-btn" class="dislike-button">Dislike</button>
+            <input name="jsonData" type="hidden" id="json-data" value="<%= data %>"/>
+            <input name="jsonID" type="hidden" id="json-data-id" value="<%= key %>"/>
+            <button id="like-btn" class="like-button">Like</button>
+            <button id="dislike-btn" class="dislike-button">Dislike</button>
         </div>
     </form>
     <form action="player.html" method="post">
         <div class="comment-section">
-        <h3>Comments</h3>
-        <textarea id="comment-input" placeholder="Write a comment..."></textarea>
-        <button id="submit-comment">Submit</button>
+            <h3>Comments</h3>
+            <input name="jsonData" type="hidden" id="json-data" value="<%=  data  %>"/>
+            <input name="jsonID" type="hidden" id="json-data-id" value="<%= key %>"/>
+            <textarea id="comment-input" placeholder="Write a comment..."></textarea>
+            <button id="submit-comment">Submit</button>
         <div id="comments-container"></div>
         </div>
     </form>

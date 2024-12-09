@@ -13,7 +13,7 @@ app.use(logger);
 app.use(cors());
 app.use(express.static(path.join(__dirname, '/public')));
 app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+app.use(express.urlencoded({ extended: true }));
 
 const dbServer = mysql.createConnection({
     host: 'localhost',       // Database host (use your DB host if not localhost)
@@ -52,10 +52,17 @@ app.route('^/$|/index(.html)?')
 
 app.route('/player(.html)?')
     .get((request, response) => {
-        response.sendFile(path.join(__dirname, 'views', 'player.html'));
+        console.log(request.query);
+        if (typeof(request.query.jsonData) !== "undefined" && request.query.jsonData) {
+            const data = request.query.jsonData;
+            const key = request.query.jsonID;
+            response.render('pages/player', { key, data });
+        } else {
+            response.sendFile(path.join(__dirname, 'views', 'player.html'));
+        }
     })
     .post((request, response) => {
-        console.log(`player.html post1: ${request.method}\t${request.headers.origin}\t${request.url}`);
+        console.log(`${request.method}\t${request.headers.origin}\t${request.url}`);
         if (typeof(request.body.jsonData) !== "undefined" && request.body.jsonData) {
             const data = request.body.jsonData;
             const key = request.body.thumber;
@@ -69,7 +76,7 @@ app.route('/upload(.html)?')
         response.sendFile(path.join(__dirname, 'views', 'upload.html'));
     })
     .post((request, response) => {
-        console.log(`upload.html post1: ${request.method}\t${request.headers.origin}\t${request.url}`);
+        console.log(`${request.method}\t${request.headers.origin}\t${request.url}`);
     });
 
 app.route('/login(.html)?')
@@ -78,10 +85,10 @@ app.route('/login(.html)?')
     })
     .post((request, response) => {
         console.log(`${request.method}\t${request.headers.origin}\t${request.url}`);
-        if (typeof(request.query.create) !== "undefined") {
+        if (typeof(request.body.create) !== "undefined") {
             response.sendFile(path.join(__dirname, 'views', 'registration.html'));
         }
-        else if (typeof(request.query.login) !== "undefined") {
+        else if (typeof(request.body.login) !== "undefined") {
             const username = request.body.usr;
             const password = request.body.pwd;
             dbServer.query(`SELECT * FROM accounts WHERE username='${username}'`, (error, results, fields) => {

@@ -35,9 +35,7 @@
                     <form action="player.html" method="post">
                         <input name="jsonData" type="hidden" id="json-data" value="<%= JSON.stringify(results) %>"/>
                         <% 
-                        console.log(results);
-                        for (const key in results) { 
-                            console.log(key + ": " + JSON.stringify(results[key]))%>
+                        for (const key in results) {%>
                         <tr>
                             <td>
                                 <hr>
