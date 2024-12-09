@@ -21,25 +21,22 @@
     </div>
     </header>
     <div class="sidebar">
-    <button class="sidebar-button" id="home-btn" name="home">Home</button>
-    <button class="sidebar-button" id="login-btn" name="login">Login</button>
-    <button class="sidebar-button" id="liked-videos-btn" name="liked-vids">Liked Videos</button>
-    <button class="sidebar-button" id="history-btn" name="history">Watched Videos</button>
+        <form action="index.html" method="get"><button type="submit" class="sidebar-button" id="home-btn">Home</button></form>
+        <form action="upload.html" method="get"><button type="submit" class="sidebar-button" id="home-btn">Upload</button></form>
+        <form action="liked.html" method="get"><button type="submit" class="sidebar-button" id="liked-videos-btn">Liked Videos</button></form>
+        <form action="history.html" method="get"><button type="submit" class="sidebar-button" id="history-btn">Watched Videos</button></form>
     </div>
     <div id="main-content">
     <div id="video-container" class="vjs-matrix">
-        <% const jsonData = JSON.parse(data);
-        const jsonKey = key;
-        %>
         <video id="my-video" class="video-js" controls preload="auto" width="640" height="440" data-setup="{}">
-            <source id="z-source" src="<%= jsonData[key].url %>" type="video/mp4" />
+            <source id="z-source" src="<%= vURL %>" type="video/mp4" />
         </video>
-    <div id="video-title"><%= jsonData[key].title %></div>
+    <div id="video-title"><%= title %></div>
     </div>
     <form action="player.html" method="get">
         <div class="button-container">
-            <input name="jsonData" type="hidden" id="json-data" value="<%= data %>"/>
-            <input name="jsonID" type="hidden" id="json-data-id" value="<%= key %>"/>
+            <input name="title" type="hidden" id="video-title" value="<%= title %>"/>
+            <input name="vurl" type="hidden" id="video-url" value="<%= vURL %>"/>
             <button id="like-btn" class="like-button">Like</button>
             <button id="dislike-btn" class="dislike-button">Dislike</button>
         </div>
@@ -47,8 +44,8 @@
     <form action="player.html" method="post">
         <div class="comment-section">
             <h3>Comments</h3>
-            <input name="jsonData" type="hidden" id="json-data" value="<%=  data  %>"/>
-            <input name="jsonID" type="hidden" id="json-data-id" value="<%= key %>"/>
+            <input name="title" type="hidden" id="video-title" value="<%= title %>"/>
+            <input name="vurl" type="hidden" id="video-url" value="<%= vURL %>"/>
             <textarea id="comment-input" placeholder="Write a comment..."></textarea>
             <button id="submit-comment">Submit</button>
         <div id="comments-container"></div>

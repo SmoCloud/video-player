@@ -52,11 +52,10 @@ app.route('^/$|/index(.html)?')
 
 app.route('/player(.html)?')
     .get((request, response) => {
-        console.log(request.query);
-        if (typeof(request.query.jsonData) !== "undefined" && request.query.jsonData) {
-            const data = request.query.jsonData;
-            const key = request.query.jsonID;
-            response.render('pages/player', { key, data });
+        if (typeof(request.query.title) !== "undefined" && request.query.title) {
+            const title = request.query.title;
+            const vURL = request.query.vurl;
+            response.render('pages/player', { title, vURL });
         } else {
             response.sendFile(path.join(__dirname, 'views', 'player.html'));
         }
@@ -64,10 +63,12 @@ app.route('/player(.html)?')
     .post((request, response) => {
         console.log(`${request.method}\t${request.headers.origin}\t${request.url}`);
         if (typeof(request.body.jsonData) !== "undefined" && request.body.jsonData) {
-            const data = request.body.jsonData;
+            const data = JSON.parse(request.body.jsonData);
             const key = request.body.thumber;
-            response.render('pages/player', { key, data });
-        // TODO: query videos database with inut from search bar on player page
+            const title = data[key].title;
+            const vURL = data[key].url;
+            response.render('pages/player', { title, vURL });
+        // TODO: query videos database with input from search bar on player page
         }
     });
 
@@ -108,7 +109,22 @@ app.route('/registration(.html)?')
     .post((request, response) => {
         console.log(`${request.method}\t${request.headers.origin}\t${request.url}`);
         console.log(`${request.body.email}\t${request.body.username}\t`);
-    })
+        dbServer.query(`SELECT COUNT(*) AS count FROM accounts WHERE username='${request.body.username}'`, (error, results, fields) => {
+            if (error) 
+                throw (error);
+            if (results[0].count === 0) {
+                dbServer.query(`INSERT INTO accounts (email, username, password) VALUES ('${request.body.email}', '${request.body.username}', '${request.body.password}')`, (error, results, fields) => {
+                    if (error)
+                        throw (error);
+                    response.sendFile(path.join(__dirname, 'views', 'index.html'));
+                });
+            }
+            console.log(results[0].count);
+            // if (password === results[0].password) {
+            //     response.sendFile(path.join(__dirname, 'views', 'index.html'));
+            // }
+        });
+    });
 
 app.get('/*', (request, response) => {
     response.status(404).sendFile(path.join(__dirname, 'views', '404.html'));
