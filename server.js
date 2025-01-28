@@ -4,6 +4,7 @@ const path = require('path');
 const cors = require('cors');
 const mysql = require('mysql');
 const { logger } = require('./middleware/logger');
+const {hashMake, hashCheck} = require('./public/scripts/hasher')
 
 const PORT = process.env.PORT || 8080;
 
@@ -95,7 +96,7 @@ app.route('/login(.html)?')
             dbServer.query(`SELECT * FROM accounts WHERE username='${username}'`, (error, results, fields) => {
                 if (error) 
                     throw (error);
-                if (password === results[0].password) {
+                if (hashCheck(password, results[0].password)) {
                     response.sendFile(path.join(__dirname, 'views', 'index.html'));
                 }
             });
@@ -113,7 +114,7 @@ app.route('/registration(.html)?')
             if (error) 
                 throw (error);
             if (results[0].count === 0) {
-                dbServer.query(`INSERT INTO accounts (email, username, password) VALUES ('${request.body.email}', '${request.body.username}', '${request.body.password}')`, (error, results, fields) => {
+                dbServer.query(`INSERT INTO accounts (email, username, password) VALUES ('${request.body.email}', '${request.body.username}', '${hashMake(request.body.password)}')`, (error, results, fields) => {
                     if (error)
                         throw (error);
                     response.sendFile(path.join(__dirname, 'views', 'index.html'));
