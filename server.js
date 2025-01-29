@@ -70,6 +70,13 @@ app.route('/player(.html)?')
             const vURL = data[key].url;
             response.render('pages/player', { title, vURL });
         // TODO: query videos database with input from search bar on player page
+        } else if (typeof(request.body.srch) !== "undefined" && request.body.srch) {
+            const searchQuery = "'%" + request.body.srch + "%'";
+            dbServer.query(`SELECT * FROM videos WHERE title LIKE ${searchQuery}`, (error, results, fields) => {
+                if (error) 
+                    throw (error);
+                response.render('pages/index', { results });
+            });
         }
     });
 
