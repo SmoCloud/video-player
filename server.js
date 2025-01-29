@@ -101,10 +101,13 @@ app.route('/login(.html)?')
             const username = request.body.usr;
             const password = request.body.pwd;
             dbServer.query(`SELECT * FROM accounts WHERE username='${username}'`, (error, results, fields) => {
+                const pwdMatch = password === hashCheck(password, results[0].password)
                 if (error) 
                     throw (error);
                 if (hashCheck(password, results[0].password)) {
                     response.sendFile(path.join(__dirname, 'views', 'index.html'));
+                } else {
+                    response.render('pages/login', { pwdMatch })
                 }
             });
         }

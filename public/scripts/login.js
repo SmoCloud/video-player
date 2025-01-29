@@ -22,9 +22,5 @@ loginBtn.onclick = function() {
         window.alert("Password field cannot be empty!");    // alert that password cannot be empty
     }
 
-    // if username and password both not empty
-    // else {
-    //     window.alert("Username and password fields were filled.");  // alert for testing purposes
-    //     window.location.href = "index.html";    // change window location to home page
-    // }
+    
 }
