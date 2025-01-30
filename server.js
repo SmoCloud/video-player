@@ -4,7 +4,7 @@ const path = require('path');
 const cors = require('cors');
 const mysql = require('mysql');
 const { logger } = require('./middleware/logger');
-const {hashMake, hashCheck} = require('./public/scripts/hasher')
+const { hashMake, hashCheck } = require('./public/scripts/hasher')
 
 const PORT = process.env.PORT || 8080;
 
@@ -100,17 +100,24 @@ app.route('/login(.html)?')
         else if (typeof(request.body.login) !== "undefined") {
             const username = request.body.usr;
             const password = request.body.pwd;
+            const usrMatch = false;
+            const pwdMatch = false;
             dbServer.query(`SELECT * FROM accounts WHERE username='${username}'`, (error, results, fields) => {
-                const pwdMatch = password === hashCheck(password, results[0].password)
                 if (error) 
                     throw (error);
-                if (hashCheck(password, results[0].password)) {
-                    response.sendFile(path.join(__dirname, 'views', 'index.html'));
+                if (results.length > 0) {
+                    const pwdMatch = password === hashCheck(password, results[0].password);
+                    if (hashCheck(password, results[0].password)) {
+                        response.sendFile(path.join(__dirname, 'views', 'index.html'));
+                    } else {
+                        response.render('pages/login', { usrMatch, pwdMatch })
+                    }
                 } else {
-                    response.render('pages/login', { pwdMatch })
+                    const usrMatch = false;
+                    response.render('pages/login', { usrMatch, pwdMatch })
                 }
-            });
-        }
+            }
+        )};
     });
 
 app.route('/registration(.html)?')

@@ -17,4 +17,3 @@ function hashCheck(p1, p2) {
 }
 
 module.exports = {hashMake, hashCheck};
-

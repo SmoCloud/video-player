@@ -15,7 +15,7 @@
             </div>
             <h1 style="text-align: center;">Login/Create Account</h1>
         </section>
-        <% if (!pwdMatch) { %>
+        <% if (!pwdMatch || !usrMatch) { %>
         <h3 style="text-align: center;">Invalid login. Please try again</h3>
         <%
         } %>
