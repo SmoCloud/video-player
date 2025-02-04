@@ -1,4 +1,5 @@
 const express = require('express');
+const session = require('express-session');
 const app = express();
 const path = require('path');
 const cors = require('cors');
@@ -15,6 +16,12 @@ app.use(cors());
 app.use(express.static(path.join(__dirname, '/public')));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+app.use(session({
+    secret: 'testing-testing-123-456',
+    resave: false,
+    saveUninitialized: false,
+    cookie: { secure: true }
+}));
 
 const dbServer = mysql.createConnection({
     host: 'localhost',       // Database host (use your DB host if not localhost)
@@ -46,7 +53,8 @@ app.route('^/$|/index(.html)?')
             dbServer.query(`SELECT * FROM videos WHERE title LIKE ${searchQuery}`, (error, results, fields) => {
                 if (error) 
                     throw (error);
-                response.render('pages/index', { results });
+                console.log(request.session.username);
+                response.render('pages/search', { "username": request.session.username, results });
             });
         }
     });
@@ -91,6 +99,9 @@ app.route('/upload(.html)?')
 app.route('/login(.html)?')
     .get((request, response) => {
         response.sendFile(path.join(__dirname, 'views', 'login.html'));
+        if (typeof(request.session.username) !== "undefined") {
+            response.render('pages/profile', { "username": request.session.username });
+        }
     })
     .post((request, response) => {
         console.log(`${request.method}\t${request.headers.origin}\t${request.url}`);
@@ -99,6 +110,7 @@ app.route('/login(.html)?')
         }
         else if (typeof(request.body.login) !== "undefined") {
             const username = request.body.usr;
+            request.session.username = username;
             const password = request.body.pwd;
             const usrMatch = false;
             const pwdMatch = false;
@@ -108,7 +120,10 @@ app.route('/login(.html)?')
                 if (results.length > 0) {
                     const pwdMatch = password === hashCheck(password, results[0].password);
                     if (hashCheck(password, results[0].password)) {
-                        response.sendFile(path.join(__dirname, 'views', 'index.html'));
+                        if (typeof(request.session.username) !== "undefined") {
+                            console.log(request.session.username);
+                            response.render('pages/index', { "username": request.session.username });
+                        }
                     } else {
                         response.render('pages/login', { usrMatch, pwdMatch })
                     }
