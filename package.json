@@ -26,6 +26,7 @@
     "date-fns": "^4.1.0",
     "ejs": "^3.1.10",
     "express": "^4.21.2",
+    "express-session": "^1.18.1",
     "mysql": "^2.18.1",
     "uuid": "^11.0.2",
     "video.js": "^8.19.1"
