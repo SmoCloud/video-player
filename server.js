@@ -28,7 +28,7 @@ app.use(session({
 const dbServer = mysql.createConnection({
     host: 'localhost',       // Database host (use your DB host if not localhost)
     user: 'guest',            // Your database username
-    password: 'x',    // Your database password
+    password: '',    // Your database password
     database: 'z_squared', // The name of your database
     port: 3306               // The port for the database (default is 3306 for MariaDB)
 });
@@ -102,8 +102,15 @@ app.route('/upload(.html)?')
               next(err);
               return;
             }
+
+            const allowedTypes = ["video/mp4"];
+            if (!allowedTypes.includes(files.fileToUpload[0].mimetype)) {
+                response.end("Invalid File Type");
+                return;
+            }
+    
             var t_path = files.fileToUpload[0].filepath;
-            var n_path = '/home/zach/Desktop/' + files.fileToUpload.originalFileName; //THIS IS DEPENDENT ON HOST MACHINE
+            var n_path = 'C:\\Users\\yourWindowsName\\Desktop\\' + files.fileToUpload.originalFileName; //THIS IS DEPENDENT ON HOST MACHINE
 
             //CURRENTLY SETS VIDEO FILE NAME TO UNDEFINED, NEEDS FIXED
             fs.copyFile(t_path, n_path, function (err) {
