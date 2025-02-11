@@ -13,7 +13,8 @@ const createLog = async (msg, logFile) => {
         }
         await promises.appendFile(path.join(__dirname, '..', 'logs', logFile), log);
     } catch (error) {
-        console.log(error);
+        console.log(error)
+        await promises.appendFile(path.join(__dirname, '..', 'logs', 'errorLog.txt'), error)
     }
 };
 
