@@ -1,5 +1,7 @@
 const express = require('express');
 const session = require('express-session');
+const formidable = require('formidable');
+const fs = require('fs')
 const app = express();
 const path = require('path');
 const cors = require('cors');
@@ -108,6 +110,29 @@ app.route('/upload(.html)?')
     })
     .post((request, response) => {
         console.log(`${request.method}\t${request.headers.origin}\t${request.url}`);
+        const form = new formidable.IncomingForm();
+        form.parse(request, (err, fields, files) => {
+            if (err) {
+              next(err);
+              return;
+            }
+
+            const allowedTypes = ["video/mp4"];
+            if (!allowedTypes.includes(files.fileToUpload[0].mimetype)) {
+                response.end("Invalid File Type");
+                return;
+            }
+    
+            var t_path = files.fileToUpload[0].filepath;
+            var n_path = 'C:\\Users\\yourWindowsName\\Desktop\\' + files.fileToUpload.originalFileName; //THIS IS DEPENDENT ON HOST MACHINE
+
+            //CURRENTLY SETS VIDEO FILE NAME TO UNDEFINED, NEEDS FIXED
+            fs.copyFile(t_path, n_path, function (err) {
+                if (err) throw err;
+                response.write('File uploaded and moved!');
+                response.end();
+              });
+          });
     });
 
 app.route('/login(.html)?')
