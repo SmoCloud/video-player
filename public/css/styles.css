@@ -1,16 +1,26 @@
+
+html {
+    --s: 50px;
+    --c: #191b22;
+    --_s: calc(2*var(--s)) calc(2*var(--s));
+    --_g: 35.36% 35.36% at;
+    --_c: #0000 66%,#20222a 68% 70%,#0000 72%;
+    background: 
+      radial-gradient(var(--_g) 100% 25%,var(--_c)) var(--s) var(--s)/var(--_s), 
+      radial-gradient(var(--_g) 0 75%,var(--_c)) var(--s) var(--s)/var(--_s), 
+      radial-gradient(var(--_g) 100% 25%,var(--_c)) 0 0/var(--_s), 
+      radial-gradient(var(--_g) 0 75%,var(--_c)) 0 0/var(--_s), 
+      repeating-conic-gradient(var(--c) 0 25%,#0000 0 50%) 0 0/var(--_s), 
+      radial-gradient(var(--_c)) 0 calc(var(--s)/2)/var(--s) var(--s) var(--c);
+    background-attachment: fixed;
+  }
 body {
 	font-family: 'Arial', sans-serif;
 	color: black;
 	margin: 0;
-	background: linear-gradient(-45deg, maroon, white, gray, black);
-	background-size: 400% 400%;
-	animation: gradientBackground 15s ease infinite;
-}
-
-@keyframes gradientBackground {
-	0% { background-position: 0% 50%; }
-	50% { background-position: 100% 50%; }
-	100% { background-position: 0% 50%; }
+	background-size: cover;
+	background-repeat: repeat;
+    animation: movePattern 10s linear infinite;
 }
 
 header {
@@ -28,7 +38,7 @@ header {
 }
 
 form {
-    color: orangered;
+    color: white;
 }
 
 .registration {
@@ -88,7 +98,20 @@ input {
 }
 
 .sidebar-button, .like-button, .dislike-button, #submit-comment {
-	background-color: maroon;
+	background:linear-gradient(to right, maroon, white);
+	color: white;
+	border: none;
+	padding: 10px 20px;
+	font-size: 1em;
+	margin: 10px 0;
+	cursor: pointer;
+	border-radius: 5px;
+	width: 150px;
+	text-align: center;
+	transition: background-color 0.3s, transform 0.3s;
+}
+.like-button, .dislike-button, #submit-comment {
+    background: maroon;
 	color: white;
 	border: none;
 	padding: 10px 20px;
@@ -102,7 +125,7 @@ input {
 }
 
 .sidebar-button:hover, .like-button:hover, .dislike-button:hover, #submit-comment:hover {
-	background-color: #d3d3d3;
+	background:linear-gradient(to right, white, maroon);
 	transform: scale(1.1);
 }
 
@@ -120,6 +143,13 @@ input {
 	margin-left: 220px;
 	margin-top: 100px;
     width: 100%;
+}
+#commment-section {
+    width: 800px;
+    height:300px;
+    margin: auto;
+    resize: none;
+
 }
 
 .logo img {
@@ -148,7 +178,7 @@ input {
 }
 
 .searchbar button {
-	background-color: maroon;
+	background:linear-gradient(to right, maroon, white);
 	color: white;
 	border: none;
 	padding: 5px 10px;
@@ -159,7 +189,7 @@ input {
 }
 
 .searchbar button:hover {
-	background-color: black;
+	background: linear-gradient(to right, white, maroon);
 	transform: scale(1.1);
 }
 
@@ -327,3 +357,5 @@ input {
     font-size: 1.2rem;
     padding: 10px;
 }
+
+
