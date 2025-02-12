@@ -8,14 +8,26 @@ const cors = require('cors');
 const mysql = require('mysql2');
 const { randomUUID } = require('crypto');
 const { logger } = require('./middleware/logger');
+const errorHandler = require('./middleware/errorHandler')
 const { hashMake, hashCheck } = require('./public/scripts/hasher')
 
 const PORT = process.env.PORT || 8080;
 
 app.set('view engine', 'ejs');
 app.use(logger);
-// Cross-Origin Resource Sharing (will allow for functionality in multiple browsers easier)
-app.use(cors());
+// Cross Origin Resource Sharing (will allow for functionality in multiple browsers easier)
+const whitelist = ['https://www.google.com', 'http://127.0.0.1:8080', 'http://localhost:8080'];
+const corsOptions = {
+    origin: (origin, callback) => {
+        if (whitelist.indexOf(origin) !== -1 || !origin) { // !origin must be removed before final release
+            callback(null, true);
+        } else {
+            callback(new Error('Not allowed by CORS'));
+        }
+    }, 
+    optionsSuccessStatus: 200
+}
+app.use(cors(corsOptions));
 app.use(express.static(path.join(__dirname, '/public')));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -195,8 +207,17 @@ app.route('/registration(.html)?')
         });
     });
 
-app.get('/*', (request, response) => {
-    response.status(404).sendFile(path.join(__dirname, 'views', '404.html'));
+app.all('*', (request, response) => {
+    response.status(404);
+    if (request.accepts('html')) {
+        response.sendFile(path.join(__dirname, 'views', '404.html'));
+    } else if (request.accepts('json')) {
+        response.json({ error: "404 Not Found" });
+    } else {
+        response.type('txt').send("404 Not Found");
+    }
 });
+
+app.use(errorHandler);
 
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
