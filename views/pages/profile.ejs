@@ -9,5 +9,28 @@
   <link rel="stylesheet" href="css/styles.css" type="text/css" />
 </head>
 <body>
-    
+  <header>
+    <div class="logo">
+        <img src="imgs/basicLogo.jpeg" alt="Logo" />
+    </div>
+    <div class="searchbar">
+        <form action="player.html" method="post">
+        <input type="text" name="srch" placeholder="Search..." />
+        <button id="searchbtn" type="submit">Search</button>
+        </form>
+    </div>
+  </header>
+    <div class="sidebar">
+        <form action="login.html" method="get"><button type="submit" class="sidebar-button" id="acct-btn"><img src="imgs/default_avatar.png" alt="Account Login" width="100px" height="auto"/></button></form>
+        <br>
+        <p style="color:white;"><%= username; %></p>
+        <br>
+        <form action="index.html" method="get"><button type="submit" class="sidebar-button" id="home-btn">Home</button></form>
+        <form action="upload.html" method="get"><button type="submit" class="sidebar-button" id="home-btn">Upload</button></form>
+        <form action="liked.html" method="get"><button type="submit" class="sidebar-button" id="liked-videos-btn">Liked Videos</button></form>
+        <form action="history.html" method="get"><button type="submit" class="sidebar-button" id="history-btn">Watched Videos</button></form>
+    </div>
+    <div style="display: block; position: relative; justify-content: center; align-items: center; margin-top: 50px; padding: 50px;">
+      <h1 style="text-align: center;">Hello there <%= username %></h1>
+    </div>
 </body>

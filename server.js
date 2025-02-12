@@ -5,7 +5,8 @@ const fs = require('fs')
 const app = express();
 const path = require('path');
 const cors = require('cors');
-const mysql = require('mysql');
+const mysql = require('mysql2');
+const { randomUUID } = require('crypto');
 const { logger } = require('./middleware/logger');
 const { hashMake, hashCheck } = require('./public/scripts/hasher')
 
@@ -18,11 +19,19 @@ app.use(cors());
 app.use(express.static(path.join(__dirname, '/public')));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-app.use(session({
-    secret: 'testing-testing-123-456',
-    resave: false,
-    saveUninitialized: false,
-    cookie: { secure: true }
+app.use(session({   // session settings found in the expressjs.com docs
+    genid               : function(req) {
+        return randomUUID();
+    },
+    secret              : 'The Power of Z-Squared.',
+    resave              : false,
+    saveUninitialized   : false,
+    cookie: { 
+        path        : '/',
+        httpOnly    : true,
+        secure      : false,
+        maxAge      : null,
+    },
 }));
 
 const dbServer = mysql.createConnection({
@@ -46,7 +55,12 @@ dbServer.connect((err) => {
 app.route('^/$|/index(.html)?')
     .get((request, response) => {
         console.log(`${request.method}\t${request.headers.origin}\t${request.url}`);
-        response.sendFile(path.join(__dirname, 'views', 'index.html'));
+        if (typeof(request.session.username) !== "undefined") {
+            response.render('pages/index', {"username": request.session.username})
+        }
+        else {
+            response.sendFile(path.join(__dirname, 'views', 'index.html'));
+        }
     })
     .post((request, response) => {
         console.log(`${request.method}\t${request.headers.origin}\t${request.url}`);
@@ -55,7 +69,7 @@ app.route('^/$|/index(.html)?')
             dbServer.query(`SELECT * FROM videos WHERE title LIKE ${searchQuery}`, (error, results, fields) => {
                 if (error) 
                     throw (error);
-                console.log(request.session.username);
+                // console.log(request.session.username);
                 response.render('pages/search', { "username": request.session.username, results });
             });
         }
@@ -66,7 +80,7 @@ app.route('/player(.html)?')
         if (typeof(request.query.title) !== "undefined" && request.query.title) {
             const title = request.query.title;
             const vURL = request.query.vurl;
-            response.render('pages/player', { title, vURL });
+            response.render('pages/player', { "username": request.session.username, title, vURL });
         } else {
             response.sendFile(path.join(__dirname, 'views', 'player.html'));
         }
@@ -78,7 +92,7 @@ app.route('/player(.html)?')
             const key = request.body.thumber;
             const title = data[key].title;
             const vURL = data[key].url;
-            response.render('pages/player', { title, vURL });
+            response.render('pages/player', { "username": request.session.username, title, vURL });
         // TODO: query videos database with input from search bar on player page
         } else if (typeof(request.body.srch) !== "undefined" && request.body.srch) {
             const searchQuery = "'%" + request.body.srch + "%'";
@@ -123,9 +137,11 @@ app.route('/upload(.html)?')
 
 app.route('/login(.html)?')
     .get((request, response) => {
-        response.sendFile(path.join(__dirname, 'views', 'login.html'));
         if (typeof(request.session.username) !== "undefined") {
             response.render('pages/profile', { "username": request.session.username });
+        }
+        else {
+            response.sendFile(path.join(__dirname, 'views', 'login.html'));
         }
     })
     .post((request, response) => {
@@ -145,19 +161,14 @@ app.route('/login(.html)?')
                 if (results.length > 0) {
                     const pwdMatch = password === hashCheck(password, results[0].password);
                     if (hashCheck(password, results[0].password)) {
-                        if (typeof(request.session.username) !== "undefined") {
-                            console.log(request.session.username);
-                            response.render('pages/index', { "username": request.session.username });
-                        }
-                    } else {
-                        response.render('pages/login', { usrMatch, pwdMatch })
+                        response.render('pages/index', { "username": request.session.username });
                     }
                 } else {
                     const usrMatch = false;
                     response.render('pages/login', { usrMatch, pwdMatch })
                 }
             }
-        )};
+        )}
     });
 
 app.route('/registration(.html)?')
