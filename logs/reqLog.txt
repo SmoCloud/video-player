@@ -50,6 +50,7 @@
 2025-02-11	18:50:01	0194f76b-72d7-7109-af80-0e2779373e8a	GET	undefined	/css/styles.css
 2025-02-11	18:50:01	0194f76b-72d7-7109-af80-10971facb9bc	GET	undefined	/imgs/basicLogo.jpeg
 2025-02-11	18:50:01	0194f76b-72d8-73e2-ace2-018b598e0fa0	GET	undefined	/imgs/default_avatar.png
+<<<<<<< Updated upstream
 2025-02-12	11:31:33	0194fb00-61a8-77bb-b087-ada2000e0f0b	GET	undefined	/
 2025-02-12	11:31:33	0194fb00-61b6-77c5-b5a4-0dde29375652	GET	undefined	/css/styles.css
 2025-02-12	11:31:33	0194fb00-61b7-7204-8cbd-ec599652fa35	GET	undefined	/imgs/basicLogo.jpeg
@@ -239,3 +240,14 @@
 2025-02-12	11:49:36	0194fb10-e747-7290-938b-2a422bdbb547	GET	undefined	/scripts/index.js
 2025-02-12	11:49:36	0194fb10-e8aa-7471-b960-b79cd8d1866e	GET	undefined	/videos/cool.mp4
 2025-02-12	11:49:36	0194fb10-e8b2-716b-bf57-a678c9800b6e	GET	undefined	/videos/cool.mp4
+=======
+2025-02-18	09:26:46	01951974-4b68-768d-b6f2-55b3bf6c3ac3	GET	undefined	/
+2025-02-18	09:26:46	01951974-4b88-73af-b3bf-8a9695252bdb	GET	undefined	/css/styles.css
+2025-02-18	09:26:46	01951974-4b8d-70af-8bfc-d92f389484f7	GET	undefined	/imgs/basicLogo.jpeg
+2025-02-18	09:26:46	01951974-4b8e-73be-868a-0bb34ba44f90	GET	undefined	/imgs/default_avatar.png
+2025-02-18	09:26:46	01951974-4bbe-777a-a108-ac2bb5e07603	GET	undefined	/scripts/index.js
+2025-02-18	09:26:47	01951974-4cee-7732-84ff-5abe04e51b4b	GET	undefined	/videos/cool.mp4
+2025-02-18	09:26:47	01951974-4d0a-707e-9300-ff07915a58fd	GET	undefined	/videos/cool.mp4
+2025-02-18	09:26:47	01951974-4d10-7248-8382-218cbacbace2	GET	undefined	/videos/cool.mp4
+2025-02-18	09:26:47	01951974-4d99-71c8-9324-0d3ad283d62b	GET	undefined	/favicon.ico
+>>>>>>> Stashed changes
