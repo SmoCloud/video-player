@@ -136,9 +136,10 @@ app.route('/upload(.html)?')
             }
     
             var t_path = files.fileToUpload[0].filepath;
-            var n_path = 'C:\\Users\\yourWindowsName\\Desktop\\' + files.fileToUpload.originalFileName; //THIS IS DEPENDENT ON HOST MACHINE
+            var n_path = 'C:\\Users\\yourWindowsName\\Desktop\\' + files.fileToUpload[0].originalFilename; //THIS IS DEPENDENT ON HOST MACHINE
 
-            //CURRENTLY SETS VIDEO FILE NAME TO UNDEFINED, NEEDS FIXED
+            dbServer.query(`INSERT INTO videos (title, description) VALUES ('${fields.v_title?.[0]}', '${fields.v_description?.[0]}')`);
+
             fs.copyFile(t_path, n_path, function (err) {
                 if (err) throw err;
                 response.write('File uploaded and moved!');
