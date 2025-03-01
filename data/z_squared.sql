@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Dec 11, 2024 at 07:05 PM
--- Server version: 8.0.39
--- PHP Version: 8.2.25
+-- Generation Time: Mar 01, 2025 at 08:17 PM
+-- Server version: 8.3.0
+-- PHP Version: 8.2.27
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -30,8 +30,8 @@ SET time_zone = "+00:00";
 CREATE TABLE `accounts` (
   `user_id` int NOT NULL,
   `email` varchar(127) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs NOT NULL,
-  `username` varchar(32) COLLATE utf8mb4_general_ci NOT NULL,
-  `password` varchar(32) COLLATE utf8mb4_general_ci NOT NULL
+  `username` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `password` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -39,7 +39,25 @@ CREATE TABLE `accounts` (
 --
 
 INSERT INTO `accounts` (`user_id`, `email`, `username`, `password`) VALUES
-(1, 'guest@guest_guest.guest', 'guest', '1234');
+(1, 'guest@guest_guest.guest', 'guest', '03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `likes`
+--
+
+CREATE TABLE `likes` (
+  `user_id` int NOT NULL,
+  `liked_videos` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Dumping data for table `likes`
+--
+
+INSERT INTO `likes` (`user_id`, `liked_videos`) VALUES
+(1, 'cool');
 
 -- --------------------------------------------------------
 
@@ -80,6 +98,12 @@ ALTER TABLE `accounts`
   ADD PRIMARY KEY (`user_id`);
 
 --
+-- Indexes for table `likes`
+--
+ALTER TABLE `likes`
+  ADD KEY `like_id` (`user_id`);
+
+--
 -- Indexes for table `videos`
 --
 ALTER TABLE `videos`
@@ -105,6 +129,12 @@ ALTER TABLE `videos`
 --
 -- Constraints for dumped tables
 --
+
+--
+-- Constraints for table `likes`
+--
+ALTER TABLE `likes`
+  ADD CONSTRAINT `like_id` FOREIGN KEY (`user_id`) REFERENCES `accounts` (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `videos`

@@ -1,1 +1,10 @@
 2025-02-11	21:38:09	0194f805-5f8e-74d1-af36-5a843c9b06bb	Error: Not allowed by CORS
+2025-03-01	15:09:24	01955353-f08c-741b-a781-babd5d4308b6	ReferenceError: C:\Program Files\Ampps\www\video-player\views\pages\index.ejs:26
+    24|   <form action="login.html" method="get"><button type="submit" class="sidebar-button" id="acct-btn"><img src="imgs/default_avatar.png" alt="Account Login" width="100px" height="auto"/></button></form>
+    25|   <br>
+ >> 26|   <p style="color:white;"><%= username; %></p>
+    27|   <br>
+    28|   <form action="index.html" method="get"><button type="submit" class="sidebar-button" id="home-btn">Home</button></form>
+    29|   <form action="upload.html" method="get"><button type="submit" class="sidebar-button" id="home-btn">Upload</button></form>
+
+username is not defined

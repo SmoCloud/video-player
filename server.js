@@ -92,7 +92,16 @@ app.route('/player(.html)?')
         if (typeof(request.query.title) !== "undefined" && request.query.title) {
             const title = request.query.title;
             const vURL = request.query.vurl;
-            response.render('pages/player', { "username": request.session.username, title, vURL });
+            dbServer.query(`SELECT * FROM likes WHERE user_id LIKE ${request.session.userID} AND liked_videos LIKE '${title}'`, (error, results, fields) => {
+                if (error)
+                    throw (error);
+                if (results.length > 0) {
+                    console.log(`${title} already liked by ${request.session.username}`)
+                    response.render('pages/player', { "username": request.session.username, title, vURL, "isLiked": true })
+                } else {
+                    response.render('pages/player', { "username": request.session.username, title, vURL, "isLiked": false })
+                }
+            });
         } else {
             response.sendFile(path.join(__dirname, 'views', 'player.html'));
         }
@@ -113,6 +122,22 @@ app.route('/player(.html)?')
                     throw (error);
                 response.render('pages/index', { results });
             });
+        } else if (typeof(request.body.liked) !== "undefined" && request.body.liked) {
+            if (typeof(request.session.userID) !== "undefined" && request.session.userID) {
+                dbServer.query(`SELECT * FROM likes WHERE user_id LIKE ${request.session.userID} AND liked_videos='${title}'`, (error, results, fields) => {
+                    if (error)
+                        throw (error);
+                    if (results.length > 0) {
+                        console.log(`${title} already liked by ${request.session.username}`)
+                        response.render('pages/player', { "username": request.session.username, title, vURL, "isLiked": true })
+                    } else {
+                        console.log("Attempting to insert like...");
+                        dbServer.query(`INSERT INTO likes (user_id, liked_videos) VALUES (${request.session.userID}, '${title}');`)
+                    }
+                });
+            } else {   
+                response.render('pages/player', { "username": request.session.username, title, vURL, "isLiked": false })
+            } 
         }
     });
 
@@ -164,7 +189,6 @@ app.route('/login(.html)?')
         }
         else if (typeof(request.body.login) !== "undefined") {
             const username = request.body.usr;
-            request.session.username = username;
             const password = request.body.pwd;
             const usrMatch = false;
             const pwdMatch = false;
@@ -174,6 +198,8 @@ app.route('/login(.html)?')
                 if (results.length > 0) {
                     const pwdMatch = password === hashCheck(password, results[0].password);
                     if (hashCheck(password, results[0].password)) {
+                        request.session.username = username;
+                        request.session.userID = results[0].user_id;
                         response.render('pages/index', { "username": request.session.username });
                     }
                 } else {
