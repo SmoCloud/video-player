@@ -188,7 +188,7 @@ app.route('/upload(.html)?')
 
 app.route('/login(.html)?')
     .get((request, response) => {
-        if (typeof(request.session.username) !== "undefined") {
+        if (typeof(request.session.username) !== "undefined" && request.session.username) {
             response.render('pages/profile', { "username": request.session.username });
         }
         else {
@@ -197,10 +197,10 @@ app.route('/login(.html)?')
     })
     .post((request, response) => {
         console.log(`${request.method}\t${request.headers.origin}\t${request.url}`);
-        if (typeof(request.body.create) !== "undefined") {
+        if (typeof(request.body.create) !== "undefined" && request.body.create) {
             response.sendFile(path.join(__dirname, 'views', 'registration.html'));
         }
-        else if (typeof(request.body.login) !== "undefined") {
+        else if (typeof(request.body.login) !== "undefined" && request.body.login) {
             const username = request.body.usr;
             const password = request.body.pwd;
             const usrMatch = false;
