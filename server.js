@@ -67,8 +67,8 @@ dbServer.connect((err) => {
 app.route('^/$|/index(.html)?')
     .get((request, response) => {
         console.log(`${request.method}\t${request.headers.origin}\t${request.url}`);
-        if (typeof(request.session.username) !== "undefined") {
-            response.render('pages/index', {"username": request.session.username})
+        if (typeof(request.session.username) !== "undefined" && request.session.username) {
+            response.render('pages/index', { "username": request.session.username })
         }
         else {
             response.sendFile(path.join(__dirname, 'views', 'index.html'));
@@ -135,6 +135,14 @@ app.route('/player(.html)?')
             console.log("Like detected.");
             console.log(`${typeof(request.body.liked)}`)
             if (typeof(request.body.liked) !== "undefined" && request.body.liked) {
+                dbServer.query(`SELECT * FROM dislikes WHERE user_id LIKE ${request.session.userID} AND disliked_videos=${request.body.vid};`,(error, results, fields) => {
+                    if (error)
+                        throw (error);
+                    if (results.length > 0) {
+                        console.log("Removing from dislikes...");
+                        dbServer.query(`DELETE FROM dislikes WHERE disliked_videos=${request.body.vid};`)
+                    }
+                });
                 dbServer.query(`SELECT * FROM likes WHERE user_id LIKE ${request.session.userID} AND liked_videos=${request.body.vid};`, (error, results, fields) => {
                     if (error)
                         throw (error);
@@ -147,30 +155,41 @@ app.route('/player(.html)?')
                         dbServer.query(`INSERT INTO likes (user_id, liked_videos) VALUES (${request.session.userID}, ${request.body.vid});`);
                     }
                 });
-
             } else if (typeof(request.body.disliked) !== "undefined" && request.body.disliked) {
+                dbServer.query(`SELECT * FROM likes WHERE user_id LIKE ${request.session.userID} AND liked_videos=${request.body.vid};`,(error, results, fields) => {
+                    if (error)
+                        throw (error);
+                    if (results.length > 0) {
+                        console.log("Removing from likes...");
+                        dbServer.query(`DELETE FROM likes WHERE liked_videos=${request.body.vid};`)
+                    }
+                });
                 dbServer.query(`SELECT * FROM dislikes WHERE user_id LIKE ${request.session.userID} AND disliked_videos=${request.body.vid};`, (error, results, fields) => {
                     if (error)
                         throw (error);
                     if (results.length > 0) {
                         console.log(`${request.body.title} already disliked by ${request.session.username}`)
                         response.render('pages/player', { "username": request.session.username, "title": request.body.title,
-                            "vURL": request.body.vurl, "vid": request.body.vid, "isDisliked": true })
+                            "vURL": request.body.vurl, "vid": request.body.vid, "isDisliked": true });
                     } else {
                         console.log("Attempting to insert dislike...");
                         dbServer.query(`INSERT INTO dislikes (user_id, disliked_videos) VALUES (${request.session.userID}, ${request.body.vid});`);
                     }
-            });
-
+                });
+            } else if (typeof(request.body.commented) !== "undefined" && request.body.commented) {
+                console.log(`Comment received, maybe?\n${request.session.userID}\t${request.body.commented}\t${request.body.vid}`);
+                dbServer.query(`INSERT INTO comments (user_id, video_id, comment) VALUES (${request.session.userID}, ${request.body.vid}, '${request.body.commented}');`);
+                response.render('pages/player', { "username": request.session.username, "title": request.body.title,
+                    "vURL": request.body.vurl, "vid": request.body.vid, "isDisliked": true });
             } else { 
-                console.log("Like failed?");
+                console.log("Failed?");
                 response.render('pages/player', { "username": request.session.username, "title": request.body.title, 
-                    "vURL": request.body.vurl, "vid": request.body.vid, "isLiked": false })
+                    "vURL": request.body.vurl, "vid": request.body.vid, "isLiked": false });
             } 
         } else { 
             console.log("Are you logged in?");
             response.render('pages/player', { "username": request.session.username, "title": request.body.title, "vURL": request.body.vurl,
-                "vid": request.body.vid, "isLiked": false })
+                "vid": request.body.vid, "isLiked": false });
         } 
     });
 
@@ -250,7 +269,7 @@ app.route('/registration(.html)?')
     .post((request, response) => {
         console.log(`${request.method}\t${request.headers.origin}\t${request.url}`);
         console.log(`${request.body.email}\t${request.body.username}\t`);
-        dbServer.query(`SELECT COUNT(*) AS count FROM accounts WHERE username='${request.body.username};'`, (error, results, fields) => {
+        dbServer.query(`SELECT COUNT(*) AS count FROM accounts WHERE username='${request.body.username}';`, (error, results, fields) => {
             if (error) 
                 throw (error);
             if (results[0].count === 0) {
@@ -260,10 +279,7 @@ app.route('/registration(.html)?')
                     response.sendFile(path.join(__dirname, 'views', 'index.html'));
                 });
             }
-            console.log(results[0].count);
-            // if (password === results[0].password) {
-            //     response.sendFile(path.join(__dirname, 'views', 'index.html'));
-            // }
+            // console.log(results[0].count);
         });
     });
 

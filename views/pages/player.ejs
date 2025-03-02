@@ -49,9 +49,10 @@
     <form action="player.html" method="post">
         <div class="comment-section">
             <h3>Comments</h3>
+            <input name="vid" type="hidden" id="video-id" value="<%= vid %>">
             <input name="title" type="hidden" id="video-title" value="<%= title %>"/>
             <input name="vurl" type="hidden" id="video-url" value="<%= vURL %>"/>
-            <textarea id="comment-input" placeholder="Write a comment..."></textarea>
+            <textarea name="commented" id="comment-input" placeholder="Write a comment..."></textarea>
             <button id="submit-comment">Submit</button>
             <div id="comments-container"></div>
         </div>

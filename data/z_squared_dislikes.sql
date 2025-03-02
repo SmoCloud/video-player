@@ -16,29 +16,28 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Table structure for table `accounts`
+-- Table structure for table `dislikes`
 --
 
-DROP TABLE IF EXISTS `accounts`;
+DROP TABLE IF EXISTS `dislikes`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `accounts` (
-  `user_id` int NOT NULL AUTO_INCREMENT,
-  `email` varchar(127) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs NOT NULL,
-  `username` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
-  `password` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
-  PRIMARY KEY (`user_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+CREATE TABLE `dislikes` (
+  `user_id` int NOT NULL,
+  `disliked_videos` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs NOT NULL,
+  KEY `dislike_id` (`user_id`),
+  CONSTRAINT `dislike_id` FOREIGN KEY (`user_id`) REFERENCES `accounts` (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `accounts`
+-- Dumping data for table `dislikes`
 --
 
-LOCK TABLES `accounts` WRITE;
-/*!40000 ALTER TABLE `accounts` DISABLE KEYS */;
-INSERT INTO `accounts` VALUES (1,'guest@guest_guest.guest','guest','03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4');
-/*!40000 ALTER TABLE `accounts` ENABLE KEYS */;
+LOCK TABLES `dislikes` WRITE;
+/*!40000 ALTER TABLE `dislikes` DISABLE KEYS */;
+INSERT INTO `dislikes` VALUES (1,'6');
+/*!40000 ALTER TABLE `dislikes` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
