@@ -247,6 +247,23 @@ app.route('/registration(.html)?')
         });
     });
 
+app.route('/liked(.html)?')
+    .get((request, response) => {
+        console.log(`${request.method}\t${request.headers.origin}\t${request.url}`);
+        if (request.session.username !== "undefined" && request.session.username) {
+            dbServer.query(`SELECT * FROM likes l JOIN videos v ON v.video_id=l.liked_videos;`, (error, results, fields) => {
+                if (error)
+                    throw (error);
+                if (results.length > 0) {
+                    response.render('pages/liked', { "username": request.session.username, })
+                }
+            })
+        }
+    })
+    .post((request, response) => {
+
+    });
+
 app.all('*', (request, response) => {
     response.status(404);
     if (request.accepts('html')) {
