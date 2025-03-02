@@ -111,6 +111,7 @@ app.route('/player(.html)?')
     })
     .post((request, response) => {
         console.log(`${request.method}\t${request.headers.origin}\t${request.url}`);
+        console.log(request.session.userID);
         if (typeof(request.body.jsonData) !== "undefined" && request.body.jsonData) {
             const data = JSON.parse(request.body.jsonData);
             const key = request.body.thumber;
@@ -143,6 +144,21 @@ app.route('/player(.html)?')
                         dbServer.query(`INSERT INTO likes (user_id, liked_videos) VALUES (${request.session.userID}, '${request.body.title}');`);
                     }
                 });
+
+            } else if (typeof(request.body.disliked) !== "undefined" && request.body.disliked) {
+                dbServer.query(`SELECT * FROM dislikes WHERE user_id LIKE ${request.session.userID} AND disliked_videos='${request.body.title}'`, (error, results, fields) => {
+                    if (error)
+                        throw (error);
+                    if (results.length > 0) {
+                        console.log(`${request.body.title} already disliked by ${request.session.username}`)
+                        response.render('pages/player', { "username": request.session.username, 
+                            "title": request.body.title, "vURL": request.body.vurl, "isDisliked": true })
+                    } else {
+                        console.log("Attempting to insert dislike...");
+                        dbServer.query(`INSERT INTO dislikes (user_id, disliked_videos) VALUES (${request.session.userID}, '${request.body.title}');`);
+                    }
+            });
+
             } else { 
                 console.log("Like failed?");
                 response.render('pages/player', { "username": request.session.username, "title": request.body.title, 
