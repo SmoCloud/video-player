@@ -8,3 +8,43 @@
     29|   <form action="upload.html" method="get"><button type="submit" class="sidebar-button" id="home-btn">Upload</button></form>
 
 username is not defined
+2025-03-01	23:00:44	01955503-71ff-77f9-9f31-867c695ca96e	ReferenceError: C:\Program Files\Ampps\www\video-player\views\pages\index.ejs:26
+    24|   <form action="login.html" method="get"><button type="submit" class="sidebar-button" id="acct-btn"><img src="imgs/default_avatar.png" alt="Account Login" width="100px" height="auto"/></button></form>
+    25|   <br>
+ >> 26|   <p style="color:white;"><%= username; %></p>
+    27|   <br>
+    28|   <form action="index.html" method="get"><button type="submit" class="sidebar-button" id="home-btn">Home</button></form>
+    29|   <form action="upload.html" method="get"><button type="submit" class="sidebar-button" id="home-btn">Upload</button></form>
+
+username is not defined
+2025-03-01	23:46:20	0195552d-31ab-70da-b1a8-d43ab051c081	ReferenceError: title is not defined
+2025-03-01	23:47:05	0195552d-e20f-7562-aa36-9b8469f1f104	ReferenceError: title is not defined
+2025-03-01	23:48:02	0195552e-bfe3-717a-987e-ae42dab80dda	ReferenceError: title is not defined
+2025-03-01	23:50:09	01955530-b0d5-73a1-8830-1dae19bf19de	ReferenceError: title is not defined
+2025-03-01	23:51:25	01955531-daf3-710d-ac9c-6e3933039a6b	ReferenceError: title is not defined
+2025-03-01	23:52:38	01955532-f9a4-74ca-ad73-fa5c715a8298	ReferenceError: title is not defined
+2025-03-01	23:56:35	01955536-968d-7258-ab1c-ac8e6c0e77ef	ReferenceError: title is not defined
+2025-03-01	23:57:19	01955537-3feb-71fe-ac65-46db34c2bb8e	ReferenceError: title is not defined
+2025-03-01	23:59:54	01955539-9fcc-736b-a466-3ccc9448ed23	ReferenceError: title is not defined
+2025-03-02	00:00:32	0195553a-323e-7218-a1c0-7d268c905e57	ReferenceError: title is not defined
+2025-03-02	00:02:07	0195553b-a792-7728-a182-d2d7f2154e9a	ReferenceError: title is not defined
+2025-03-02	00:07:03	01955540-2c95-70be-877f-9f5cc3beb8d5	ReferenceError: C:\Program Files\Ampps\www\video-player\views\pages\player.ejs:36
+    34|     <div id="video-container" class="vjs-matrix">
+    35|         <video id="my-video" class="video-js" controls preload="auto" width="640" height="440" data-setup="{}">
+ >> 36|             <source id="z-source" src="<%= vURL %>" type="video/mp4" />
+    37|         </video>
+    38|     <div id="video-title"><%= title %></div>
+    39|     </div>
+
+vURL is not defined
+2025-03-02	00:07:03	01955540-2c9d-72df-888d-92fb474ee886	URIError: Failed to decode param '/%3C%=%20vURL%20%%3E'
+2025-03-02	00:08:08	01955541-2972-7769-b4f2-68bc05b380a6	ReferenceError: C:\Program Files\Ampps\www\video-player\views\pages\player.ejs:36
+    34|     <div id="video-container" class="vjs-matrix">
+    35|         <video id="my-video" class="video-js" controls preload="auto" width="640" height="440" data-setup="{}">
+ >> 36|             <source id="z-source" src="<%= vURL %>" type="video/mp4" />
+    37|         </video>
+    38|     <div id="video-title"><%= title %></div>
+    39|     </div>
+
+vURL is not defined
+2025-03-02	00:08:08	01955541-297a-76fd-b8dc-54fd82ee29ff	URIError: Failed to decode param '/%3C%=%20vURL%20%%3E'

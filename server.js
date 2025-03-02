@@ -92,7 +92,10 @@ app.route('/player(.html)?')
         if (typeof(request.query.title) !== "undefined" && request.query.title) {
             const title = request.query.title;
             const vURL = request.query.vurl;
+            console.log("Get request detected.");
+        } else if (typeof(request.session.userID) !== "undefined" && request.session.userID) {
             dbServer.query(`SELECT * FROM likes WHERE user_id LIKE ${request.session.userID} AND liked_videos LIKE '${title}'`, (error, results, fields) => {
+                console.log("Looking for likes.");
                 if (error)
                     throw (error);
                 if (results.length > 0) {
@@ -113,32 +116,42 @@ app.route('/player(.html)?')
             const key = request.body.thumber;
             const title = data[key].title;
             const vURL = data[key].url;
+            console.log("JSON data detected.");
             response.render('pages/player', { "username": request.session.username, title, vURL });
-        // TODO: query videos database with input from search bar on player page
         } else if (typeof(request.body.srch) !== "undefined" && request.body.srch) {
             const searchQuery = "'%" + request.body.srch + "%'";
+            console.log("Search detected.")
             dbServer.query(`SELECT * FROM videos WHERE title LIKE ${searchQuery}`, (error, results, fields) => {
                 if (error) 
                     throw (error);
-                response.render('pages/index', { results });
+                console.log("Rendering player page with search results...");
+                response.render('pages/search', { results, "username": request.session.username });
             });
-        } else if (typeof(request.body.liked) !== "undefined" && request.body.liked) {
-            if (typeof(request.session.userID) !== "undefined" && request.session.userID) {
-                dbServer.query(`SELECT * FROM likes WHERE user_id LIKE ${request.session.userID} AND liked_videos='${title}'`, (error, results, fields) => {
+        } else if (typeof(request.session.userID) !== "undefined" && request.session.userID) {
+            console.log("Like detected.");
+            console.log(`${typeof(request.body.liked)}`)
+            if (typeof(request.body.liked) !== "undefined" && request.body.liked) {
+                dbServer.query(`SELECT * FROM likes WHERE user_id LIKE ${request.session.userID} AND liked_videos='${request.body.title}'`, (error, results, fields) => {
                     if (error)
                         throw (error);
                     if (results.length > 0) {
-                        console.log(`${title} already liked by ${request.session.username}`)
-                        response.render('pages/player', { "username": request.session.username, title, vURL, "isLiked": true })
+                        console.log(`${request.body.title} already liked by ${request.session.username}`)
+                        response.render('pages/player', { "username": request.session.username, 
+                            "title": request.body.title, "vURL": request.body.vurl, "isLiked": true })
                     } else {
                         console.log("Attempting to insert like...");
-                        dbServer.query(`INSERT INTO likes (user_id, liked_videos) VALUES (${request.session.userID}, '${title}');`)
+                        dbServer.query(`INSERT INTO likes (user_id, liked_videos) VALUES (${request.session.userID}, '${request.body.title}');`);
                     }
                 });
-            } else {   
-                response.render('pages/player', { "username": request.session.username, title, vURL, "isLiked": false })
+            } else { 
+                console.log("Like failed?");
+                response.render('pages/player', { "username": request.session.username, "title": request.body.title, 
+                    "vURL": request.body.vurl, "isLiked": false })
             } 
-        }
+        } else { 
+            console.log("Are you logged in?");
+            response.render('pages/player', { "username": request.session.username, "title": request.body.title, "vURL": request.body.vurl, "isLiked": false })
+        } 
     });
 
 app.route('/upload(.html)?')
