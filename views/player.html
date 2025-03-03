@@ -21,10 +21,11 @@
     </div>
     </header>
     <div class="sidebar">
-    <button class="sidebar-button" id="home-btn" name="home">Home</button>
-    <button class="sidebar-button" id="login-btn" name="login">Login</button>
-    <button class="sidebar-button" id="liked-videos-btn" name="liked-vids">Liked Videos</button>
-    <button class="sidebar-button" id="history-btn" name="history">Watched Videos</button>
+        <form action="login.html" method="get"><button type="submit" class="sidebar-button" id="acct-btn"><img src="imgs/default_avatar.png" alt="Account Login" width="100px" height="auto"/></button></form>
+        <form action="index.html" method="get"><button type="submit" class="sidebar-button" id="home-btn">Home</button></form>
+        <form action="upload.html" method="get"><button type="submit" class="sidebar-button" id="home-btn">Upload</button></form>
+        <form action="liked.html" method="get"><button type="submit" class="sidebar-button" id="liked-videos-btn">Liked Videos</button></form>
+        <form action="history.html" method="get"><button type="submit" class="sidebar-button" id="history-btn">Watched Videos</button></form>
     </div>
     <div id="main-content">
     <div id="video-container" class="vjs-matrix">
@@ -33,13 +34,13 @@
         </video>
     <div id="video-title">Your Video Title Here</div>
     </div>
-    <form action="index.html" method="get">
+    <form action="player.html" method="post">
         <div class="button-container">
-        <button id="like-btn" class="like-button">Like</button>
-        <button id="dislike-btn" class="dislike-button">Dislike</button>
+        <button id="like-btn" name="liked" class="like-button" value="true">Like</button>
+        <button id="dislike-btn" name="disliked" class="dislike-button" value="true">Dislike</button>
         </div>
     </form>
-    <form action="index.html" method="post">
+    <form action="player.html" method="post">
         <div class="comment-section">
         <h3>Comments</h3>
         <textarea class="comment-input" placeholder="Write a comment..."></textarea>
