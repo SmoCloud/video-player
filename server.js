@@ -119,9 +119,13 @@ app.route('/player(.html)?')
             const title = data[key].title;
             const vURL = data[key].url;
             const vID = data[key].video_id;
+            dbServer.query(`SELECT * FROM comments WHERE video_id LIKE ${vID};`, (error, comments, fields) => {
+                if (error)
+                    throw (error);
+                response.render('pages/player', { "username": request.session.username, "title": title,
+                    "vURL": vURL, "vid": vID, comments });
+            });
             console.log(`JSON data detected.\t${vID}`);
-            response.render('pages/player', { "username": request.session.username, "title": title,
-                "vURL": vURL, "vid": vID });
         } else if (typeof(request.body.srch) !== "undefined" && request.body.srch) {
             const searchQuery = "'%" + request.body.srch + "%'";
             console.log("Search detected.")
@@ -180,7 +184,7 @@ app.route('/player(.html)?')
                 console.log(`Comment received, maybe?\n${request.session.userID}\t${request.body.commented}\t${request.body.vid}`);
                 dbServer.query(`INSERT INTO comments (user_id, video_id, comment) VALUES (${request.session.userID}, ${request.body.vid}, '${request.body.commented}');`);
                 response.render('pages/player', { "username": request.session.username, "title": request.body.title,
-                    "vURL": request.body.vurl, "vid": request.body.vid, "isDisliked": true });
+                    "vURL": request.body.vurl, "vid": request.body.vid });
             } else { 
                 console.log("Failed?");
                 response.render('pages/player', { "username": request.session.username, "title": request.body.title, 
