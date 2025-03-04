@@ -161,6 +161,8 @@ app.route('/player(.html)?')
                     } else {
                         console.log("Attempting to insert like...");
                         dbServer.query(`INSERT INTO likes (user_id, liked_videos) VALUES (${request.session.userID}, ${request.body.vid});`);
+                        response.render('pages/player', { "username": request.session.username, 
+                            "title": request.body.title, "vURL": request.body.vurl, "vid": request.body.vid, "isLiked": false, comments });
                     }
                 });
             } else if (typeof(request.body.disliked) !== "undefined" && request.body.disliked) {
