@@ -32,6 +32,7 @@ All of the node modules can be installed using powershell or git BASH. This can 
 - From there, open your browser and type 'localhost:SERVER-PORT' where 'SERVER-PORT' is the port number in the console window, and voila! You have launched a local server.
 
 # TODO
+- Find a place to host website and acquire unique domain name
 - Improve styling of front-end pages
     - Design user account profile page
     - Improve search UI
