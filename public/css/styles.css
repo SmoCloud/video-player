@@ -110,11 +110,12 @@ input {
     z-index: 2;
 }
 
+
 .sidebar-right {
     position: fixed;
     top: 0;
     right: 0;
-    width: 200px;
+    width: 400px;
     height: 100%;
     background-color: black;
     display: flex;
@@ -124,6 +125,57 @@ input {
     box-shadow: -2px 0 5px rgba(0, 0, 0, 0.5);
     z-index: 999;
 }
+
+
+.sidebar-right button {
+    margin-bottom: 20px;
+    background-color: maroon;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    font-size: 1em;
+    cursor: pointer;
+    border-radius: 5px;
+    width: 80%;
+    transition: background-color 0.3s, transform 0.3s;
+}
+
+.sidebar-right button:hover {
+    background: linear-gradient(to right, white, maroon);
+    transform: scale(1.1);
+}
+
+
+.recommended-videos {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    padding: 10px;
+    overflow-y: auto;
+}
+
+
+.recommended-video {
+    display: block;
+    margin-bottom: 15px;
+    width: 80%; 
+    text-align: center;
+}
+
+.recommended-thumbnail {
+    width: 100%; 
+    max-width: 150px; 
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+    transition: transform 0.3s;
+}
+
+
+.recommended-video:hover .recommended-thumbnail {
+    transform: scale(1.05);
+}
+
 .comment-section {
     width: auto; 
     height: auto; 
@@ -140,13 +192,20 @@ input {
     bottom:auto;
 }
 
+.comment-input {
+    resize: none; 
+    width: 800px;
+    height: 100px;
+}
+
+
 .cat_1, .cat_2, .cat_3 {
     width: 300px; 
     height: 600px; 
 }
 
 
-.sidebar-button, .like-button, .dislike-button, #submit-comment {
+.sidebar-button, .like-button, .dislike-button, .submit-comment {
 	background:maroon;
 	color: white;
 	border: none;
@@ -159,7 +218,7 @@ input {
 	text-align: center;
 	transition: background-color 0.3s, transform 0.3s;
 }
-.like-button, .dislike-button, #submit-comment {
+.like-button, .dislike-button, .submit-comment {
     background: maroon;
 	color: white;
 	border: none;
@@ -173,7 +232,7 @@ input {
 	transition: background-color 0.3s, transform 0.3s;
 }
 
-.sidebar-button:hover, .like-button:hover, .dislike-button:hover, #submit-comment:hover {
+.sidebar-button:hover, .like-button:hover, .dislike-button:hover, .submit-comment:hover {
 	background:linear-gradient(to right, white, maroon);
 	transform: scale(1.1);
 }
