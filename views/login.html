@@ -1,34 +1,38 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel="stylesheet" href="css/styles.css">
-        <title>Login</title>
-    </head>
-    <body>
-        <section class="border">
-            <div class="navbar">
-                <img src="imgs/basicLogo.jpeg">
-                <a href="login.html">Login</a>
-                <a href="index.html">Home</a>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/styles.css">
+    <title>Login</title>
+</head>
+<body>
+    <div class="container">
+        <div class="login-card">
+            <div class="logo">
+                <img src="imgs/basicLogo.jpeg" alt="InsideBox Logo">
             </div>
-            <h1 style="text-align: center;">Login/Create Account</h1>
-        </section>
-        <form class="login-box" action="login.html" method="post">
-            <div class="username">
-                <label for="usr">Username: </label>
-                <input type="text" id="usr" name="usr" style="width: 50%;">
-            </div>
-            <div class="password">
-                <label for="pwd">Password: </label>
-                <input type="password" id="pwd" name="pwd" style="width: 50%;">
-            </div>
-            <div class="account-btns">
-                <button type="submit" id="login-btn" name="login" style="border-radius: 5px;" value="Login">Login</button>
-                <button type="submit" id="create-acct-btn" name="create" style="border-radius: 5px;" value="Create Account">Create Account</button>
-            </div>
-        </form>
-        <script src="scripts/login.js"></script>
-    </body>
+            <h2>Welcome back</h2>
+            <p>Please enter your details</p>
+            <form action="login.php" method="post">
+                <div class="input-group">
+                    <label for="email">Email address</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+                <div class="input-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" required>
+                </div>
+                <div class="options">
+                    <label><input type="checkbox" name="remember"> Remember for 30 days</label>
+                    <a href="forgot-password.html">Forgot password?</a>
+                </div>
+                <button type="submit" class="btn-primary">Sign in</button>
+                <button type="button" class="btn-google">Sign in with Google</button>
+                <p>Don't have an account? <a href="register.html">Sign up</a></p>
+            </form>
+        </div>
+    </div>
+    <script src="scripts/login.js"></script>
+</body>
 </html>
