@@ -254,6 +254,88 @@ input {
     width: calc(100% - 220px);
 }
 
+.welcome-banner {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    top: 120px; 
+    width: fit-content;
+    max-width: 80%;
+    text-align: center;
+    padding: 40px 60px;
+    background: linear-gradient(135deg, #791919, #a83232, #ff4d4d);
+    color: white;
+    font-size: 24px;
+    font-weight: 600;
+    text-transform: uppercase;
+    border-radius: 20px;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+    letter-spacing: 1.5px;
+    animation: fadeIn 1.5s ease-in-out;
+}
+
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+
+
+.video-sections {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 300px;
+    padding-top: 20px;
+}
+
+
+.video-category {
+    width: 50%;
+    margin: 20px 0;
+    background: rgba(50, 50, 50, 0.7);
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+}
+
+
+.video-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+    justify-content: center;
+    padding: 10px;
+}
+
+
+.video-item {
+    text-align: center;
+    background: rgba(255, 255, 255, 0.1);
+    padding: 10px;
+    border-radius: 10px;
+    transition: transform 0.3s ease-in-out;
+}
+
+.video-item img {
+    width: 200px; 
+    height: 120px; 
+    object-fit: cover; 
+}
+
+
+.video-item:hover {
+    transform: scale(1.05);
+}
+
+
 .logo img {
 	height: 40px;
 }
