@@ -15,8 +15,9 @@
     </div>
     <div class="searchbar">
         <form action="player.html" method="post">
-        <input type="text" name="srch" placeholder="Search..." />
-        <button id="searchbtn" type="submit">Search</button>
+            <input name="comments" type="hidden" id="user-comments" value="<%= JSON.stringify(comments) %>"/>
+            <input type="text" name="srch" placeholder="Search..." />
+            <button id="searchbtn" type="submit">Search</button>
         </form>
     </div>
     </header>
@@ -42,7 +43,7 @@
             <input name="vid" type="hidden" id="video-id" value="<%= vid %>"/>
             <input name="title" type="hidden" id="video-title" value="<%= title %>"/>
             <input name="vurl" type="hidden" id="video-url" value="<%= vURL %>"/>
-            <input name="comments" type="hidden" id="user-comments" value="<%= comments %>"/>
+            <input name="comments" type="hidden" id="user-comments" value="<%= JSON.stringify(comments) %>"/>
             <button id="like-btn" name="liked" class="like-button" value="true">Like</button>
             <button id="dislike-btn" name="disliked" class="dislike-button" value="true">Dislike</button>
         </div>
@@ -53,13 +54,13 @@
             <input name="vid" type="hidden" id="video-id" value="<%= vid %>">
             <input name="title" type="hidden" id="video-title" value="<%= title %>"/>
             <input name="vurl" type="hidden" id="video-url" value="<%= vURL %>"/>
-            <input name="comments" type="hidden" id="user-comments" value="<%= comments %>"/>
+            <input name="comments" type="hidden" id="user-comments" value="<%= JSON.stringify(comments) %>"/>
             <textarea name="commented" id="comment-input" placeholder="Write a comment..."></textarea>
             <button id="submit-comment">Submit</button>
             <div name="comments-box" id="comments-container">
                 <% 
                 for (const comment in comments) { %>
-                    <pre><%= comments[comment].user_id; %></pre>
+                    <pre><%= comments[comment].username; %></pre>
                     <pre>     <%= comments[comment].comment; %></pre>
                 <% } %>
             </div>
