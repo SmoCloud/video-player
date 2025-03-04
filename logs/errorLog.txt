@@ -115,3 +115,28 @@ vid is not defined
     45|             <button id="like-btn" name="liked" class="like-button" value="true">Like</button>
 
 vid is not defined
+2025-03-04	14:23:35	0195629d-0f57-720f-a53d-d4930aaf5277	SyntaxError: Unexpected token 'catch' in C:\Users\willi\OneDrive\Documents\GitHub\video-player\views\pages\player.ejs while compiling ejs
+
+If the above error is not helpful, you may want to try EJS-Lint:
+https://github.com/RyanZim/EJS-Lint
+Or, if you meant to create an async function, pass `async: true` as an option.
+2025-03-04	14:28:07	019562a1-3780-756e-a4f0-49149afa4c49	SyntaxError: Unexpected token 'catch' in C:\Users\willi\OneDrive\Documents\GitHub\video-player\views\pages\player.ejs while compiling ejs
+
+If the above error is not helpful, you may want to try EJS-Lint:
+https://github.com/RyanZim/EJS-Lint
+Or, if you meant to create an async function, pass `async: true` as an option.
+2025-03-04	14:28:13	019562a1-4f53-7206-beac-bb2117cb66ad	SyntaxError: Unexpected token 'catch' in C:\Users\willi\OneDrive\Documents\GitHub\video-player\views\pages\player.ejs while compiling ejs
+
+If the above error is not helpful, you may want to try EJS-Lint:
+https://github.com/RyanZim/EJS-Lint
+Or, if you meant to create an async function, pass `async: true` as an option.
+2025-03-04	14:28:17	019562a1-5da4-741a-ba2e-0ece6d6c23fc	SyntaxError: Unexpected token 'catch' in C:\Users\willi\OneDrive\Documents\GitHub\video-player\views\pages\player.ejs while compiling ejs
+
+If the above error is not helpful, you may want to try EJS-Lint:
+https://github.com/RyanZim/EJS-Lint
+Or, if you meant to create an async function, pass `async: true` as an option.
+2025-03-04	14:31:18	019562a4-2281-70ca-acc7-f9110def22fd	SyntaxError: Unexpected token 'catch' in C:\Users\willi\OneDrive\Documents\GitHub\video-player\views\pages\player.ejs while compiling ejs
+
+If the above error is not helpful, you may want to try EJS-Lint:
+https://github.com/RyanZim/EJS-Lint
+Or, if you meant to create an async function, pass `async: true` as an option.
