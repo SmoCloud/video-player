@@ -119,11 +119,14 @@ app.route('/player(.html)?')
             const title = data[key].title;
             const vURL = data[key].url;
             const vID = data[key].video_id;
-            dbServer.query(`SELECT * FROM comments WHERE video_id LIKE ${vID};`, (error, comments, fields) => {
+            dbServer.query(`SELECT * FROM comments WHERE video_id LIKE ${vID};`, (error, results, fields) => {
                 if (error)
                     throw (error);
-                response.render('pages/player', { "username": request.session.username, "title": title,
-                    "vURL": vURL, "vid": vID, comments });
+                if (results.length > 0) {
+                    // comments = JSON.stringify(results);
+                    response.render('pages/player', { "username": request.session.username, "title": title,
+                        "vURL": vURL, "vid": vID, "comments": results });
+                }
             });
             console.log(`JSON data detected.\t${vID}`);
         } else if (typeof(request.body.srch) !== "undefined" && request.body.srch) {
@@ -133,7 +136,7 @@ app.route('/player(.html)?')
                 if (error) 
                     throw (error);
                 console.log("Rendering player page with search results...");
-                response.render('pages/search', { results, "username": request.session.username });
+                response.render('pages/search', { results, "username": request.session.username, "comments": request.body.comments });
             });
         } else if (typeof(request.session.userID) !== "undefined" && request.session.userID) {
             console.log("Like detected.");
@@ -153,7 +156,7 @@ app.route('/player(.html)?')
                     if (results.length > 0) {
                         console.log(`${request.body.title} already liked by ${request.session.username}`)
                         response.render('pages/player', { "username": request.session.username, 
-                            "title": request.body.title, "vURL": request.body.vurl, "vid": request.body.vid, "isLiked": true })
+                            "title": request.body.title, "vURL": request.body.vurl, "vid": request.body.vid, "isLiked": true, "comments": request.body.comments })
                     } else {
                         console.log("Attempting to insert like...");
                         dbServer.query(`INSERT INTO likes (user_id, liked_videos) VALUES (${request.session.userID}, ${request.body.vid});`);
@@ -174,7 +177,7 @@ app.route('/player(.html)?')
                     if (results.length > 0) {
                         console.log(`${request.body.title} already disliked by ${request.session.username}`)
                         response.render('pages/player', { "username": request.session.username, "title": request.body.title,
-                            "vURL": request.body.vurl, "vid": request.body.vid, "isDisliked": true });
+                            "vURL": request.body.vurl, "vid": request.body.vid, "isDisliked": true, "comments": request.body.comments });
                     } else {
                         console.log("Attempting to insert dislike...");
                         dbServer.query(`INSERT INTO dislikes (user_id, disliked_videos) VALUES (${request.session.userID}, ${request.body.vid});`);
@@ -184,16 +187,16 @@ app.route('/player(.html)?')
                 console.log(`Comment received, maybe?\n${request.session.userID}\t${request.body.commented}\t${request.body.vid}`);
                 dbServer.query(`INSERT INTO comments (user_id, video_id, comment) VALUES (${request.session.userID}, ${request.body.vid}, '${request.body.commented}');`);
                 response.render('pages/player', { "username": request.session.username, "title": request.body.title,
-                    "vURL": request.body.vurl, "vid": request.body.vid });
+                    "vURL": request.body.vurl, "vid": request.body.vid, "comments": request.body.comments });
             } else { 
                 console.log("Failed?");
                 response.render('pages/player', { "username": request.session.username, "title": request.body.title, 
-                    "vURL": request.body.vurl, "vid": request.body.vid, "isLiked": false });
+                    "vURL": request.body.vurl, "vid": request.body.vid, "isLiked": false, "comments": request.body.comments });
             } 
         } else { 
             console.log("Are you logged in?");
             response.render('pages/player', { "username": request.session.username, "title": request.body.title, "vURL": request.body.vurl,
-                "vid": request.body.vid, "isLiked": false });
+                "vid": request.body.vid, "isLiked": false, "comments": request.body.comments });
         } 
     });
 
