@@ -133,3 +133,5 @@ comments is not defined
     48|         </div>
 
 comments is not defined
+2025-03-04	09:20:10	01956187-4693-720c-bfba-601728cda8a0	Error: Not allowed by CORS
+2025-03-04	09:26:05	0195618c-b18c-77d8-a3fe-2868c0815e9a	Error: Can't add new command when connection is in closed state
