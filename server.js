@@ -185,6 +185,8 @@ app.route('/player(.html)?')
                     } else {
                         console.log("Attempting to insert dislike...");
                         dbServer.query(`INSERT INTO dislikes (user_id, disliked_videos) VALUES (${request.session.userID}, ${request.body.vid});`);
+                        response.render('pages/player', { "username": request.session.username, "title": request.body.title,
+                            "vURL": request.body.vurl, "vid": request.body.vid, "isDisliked": false, comments });
                     }
                 });
             } else if (typeof(request.body.commented) !== "undefined" && request.body.commented) {
