@@ -522,3 +522,16 @@
 2025-03-03	08:53:51	01955c48-d29a-77ee-baa0-d55a157f1d65	GET	undefined	/css/styles.css
 2025-03-03	08:53:51	01955c48-d29b-73ee-9a7f-1767098eecc6	GET	undefined	/imgs/basicLogo.jpeg
 2025-03-03	08:53:51	01955c48-d29c-77da-b1a9-5a76e9ad7813	GET	undefined	/imgs/default_avatar.png
+2025-03-04	12:40:08	0195623e-58c7-7128-98ba-091d35887d68	GET	undefined	/
+2025-03-04	12:40:08	0195623e-58fa-7566-bb7c-982847eda6ba	GET	undefined	/css/styles.css
+2025-03-04	12:40:08	0195623e-58fd-773b-a20d-7dbea24791d8	GET	undefined	/imgs/basicLogo.jpeg
+2025-03-04	12:40:08	0195623e-5900-7769-8a5d-6acad3f85323	GET	undefined	/imgs/default_avatar.png
+2025-03-04	12:40:08	0195623e-5905-7540-8d0f-c2a2343ffa11	GET	undefined	/scripts/index.js
+2025-03-04	12:40:08	0195623e-5a29-73b7-9c05-ab4466609f02	GET	undefined	/videos/cool.mp4
+2025-03-04	12:40:08	0195623e-5a93-709e-8dd9-ea8e97b4da4c	GET	undefined	/videos/cool.mp4
+2025-03-04	12:40:08	0195623e-5ad4-777d-a4fb-95ce4056139e	GET	undefined	/videos/cool.mp4
+2025-03-04	12:40:08	0195623e-5bcc-744a-bb91-a278cac83ae5	GET	undefined	/favicon.ico
+2025-03-04	12:40:13	0195623e-6ec2-7259-9057-c406b51f1c92	GET	undefined	/login.html?
+2025-03-04	12:40:13	0195623e-6eee-7068-8426-eed304a7d7c9	GET	undefined	/scripts/login.js
+2025-03-04	12:40:13	0195623e-6eef-71de-b585-7d24ee6fbc84	GET	undefined	/css/styles.css
+2025-03-04	12:40:13	0195623e-6ef0-74cf-811b-baff0dbc1321	GET	undefined	/imgs/basicLogo.jpeg
