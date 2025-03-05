@@ -6,12 +6,14 @@
   <title>Z<sup>2</sup></title>
   <link href="https://vjs.zencdn.net/8.16.1/video-js.css" rel="stylesheet" />
   <script src="https://vjs.zencdn.net/8.16.1/video.min.js"></script>
-  <link rel="stylesheet" href="css/styles.css" type="text/css" />
+  <link rel="stylesheet" href="../public/css/styles.css" />
+   
+  <script type="text/javascript" src="/public/scripts/profile.js"></script>
 </head>
 <body>
   <header>
     <div class="logo">
-        <img src="imgs/basicLogo.jpeg" alt="Logo" />
+        <img src="../public/imgs/basicLogo.jpeg" alt="Logo" />
     </div>
     <div class="searchbar">
         <form action="player.html" method="post">
@@ -20,17 +22,83 @@
         </form>
     </div>
   </header>
-    <div class="sidebar">
-        <form action="login.html" method="get"><button type="submit" class="sidebar-button" id="acct-btn"><img src="imgs/default_avatar.png" alt="Account Login" width="100px" height="auto"/></button></form>
-        <br>
-        <p style="color:white;"><%= username; %></p>
-        <br>
-        <form action="index.html" method="get"><button type="submit" class="sidebar-button" id="home-btn">Home</button></form>
-        <form action="upload.html" method="get"><button type="submit" class="sidebar-button" id="home-btn">Upload</button></form>
-        <form action="liked.html" method="get"><button type="submit" class="sidebar-button" id="liked-videos-btn">Liked Videos</button></form>
-        <form action="history.html" method="get"><button type="submit" class="sidebar-button" id="history-btn">Watched Videos</button></form>
+
+  <div class="sidebar">
+      <form action="login.html" method="get">
+          <button type="submit" class="sidebar-button" id="acct-btn">
+              <img src="../public/imgs/default_avatar.png" alt="Account Login" width="100px" height="auto"/>
+          </button>
+      </form>
+      <br>
+      <form action="index.html" method="get"><button type="submit" class="sidebar-button">Home</button></form>
+      <form action="upload.html" method="get"><button type="submit" class="sidebar-button">Upload</button></form>
+      <form action="liked.html" method="get"><button type="submit" class="sidebar-button">Liked Videos</button></form>
+      <form action="history.html" method="get"><button type="submit" class="sidebar-button">Watched Videos</button></form>
+
+      <!-- Logout Button -->
+      <button id="logout-btn" class="sidebar-button" onclick="logout()">Log Out</button>
+  </div>
+
+  <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; margin-top: 50px; padding: 50px;">
+    <img src="<%= (profilePic && profilePic !== '') ? profilePic : '../public/imgs/default_avatar.png' %>" 
+     style="width: 150px; height: 150px; border-radius: 50%; border: 2px solid white; object-fit: cover;"> 
+
+    <form action="/upload-profile-pic" method="post" enctype="multipart/form-data">
+        <input type="file" name="profilePic" id="profilePicInput" style="display: none;" onchange="this.form.submit()">
+        <button class="profilePic-button" type="button" onclick="document.getElementById('profilePicInput').click()">
+          Edit Profile Picture
+      </button>
+    </form>
+
+    <div style="text-align: center; position: relative; margin-top: 50px;">
+      <!-- Username Section -->
+      <div class="input-container">
+        <div class="input-header">Username</div>
+        <input type="text" id="username-input" value="<%= username %>" readonly />
+        <div class="button-container">
+          <button id="username-edit-btn" onclick="toggleEditable('username')">Edit</button>
+        </div>
+      </div>
+
+      <!-- Password Section -->
+      <div class="input-container">
+        <div class="input-header">Password</div>
+        <input type="password" id="password-input" value="*****" readonly />
+        <div class="button-container">
+          <button id="password-edit-btn" onclick="showPasswordModal()">Change Password</button>
+        </div>
+      </div>
+
+      <!-- Bio Section -->
+      <div class="input-container">
+        <div class="input-header">Bio</div>
+        <textarea id="bio-input" readonly><%= bio %></textarea>
+        <div class="button-container edit-button">
+          <button id="bio-edit-btn" onclick="toggleEditable('bio')">Edit</button>
+        </div>
+      </div>
+
+      <!-- Date of Birth Section (No Edit Button) -->
+      <div class="input-container">
+        <div class="input-header">Date of Birth</div>
+        <input type="date" id="dob" value="<%= dob %>" readonly />
+      </div>
     </div>
-    <div style="display: block; position: relative; justify-content: center; align-items: center; margin-top: 50px; padding: 50px;">
-      <h1 style="text-align: center;">Hello there <%= username %></h1>
+  </div>
+
+  <!-- Password Change Modal -->
+  <div id="passwordModal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="closePasswordModal()">&times;</span>
+      <h2>Change Password</h2>
+      <label for="oldPassword">Old Password:</label>
+      <input type="password" id="oldPassword" placeholder="Enter old password" required /><br><br>
+      <label for="newPassword">New Password:</label>
+      <input type="password" id="newPassword" placeholder="Enter new password" required /><br><br>
+      <label for="confirmPassword">Confirm Password:</label>
+      <input type="password" id="confirmPassword" placeholder="Confirm new password" required /><br><br>
+      <button type="button" onclick="updatePassword()">Save Changes</button>
     </div>
+  </div>
 </body>
+</html>

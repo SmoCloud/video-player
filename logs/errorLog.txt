@@ -172,3 +172,52 @@ Or, if you meant to create an async function, pass `async: true` as an option.
 If the above error is not helpful, you may want to try EJS-Lint:
 https://github.com/RyanZim/EJS-Lint
 Or, if you meant to create an async function, pass `async: true` as an option.
+2025-03-04	22:13:29	0195644b-4460-742d-8f90-a34980d8d761	ReferenceError: C:\Program Files\Ampps\www\video-player\views\pages\index.ejs:41
+    39|           <div class="recommended-videos">
+    40|             <form action="player.html" method="post">
+ >> 41|               <input name="jsonData" type="hidden" id="json-data" value="<%= JSON.stringify(results) %>"/>
+    42|               <% for (const key in results) {%>
+    43|                 <tr>
+    44|                   <td>
+
+results is not defined
+2025-03-04	22:14:58	0195644c-a283-7391-9ce1-f765cfc247e2	ReferenceError: C:\Program Files\Ampps\www\video-player\views\pages\index.ejs:41
+    39|           <div class="recommended-videos">
+    40|             <form action="player.html" method="post">
+ >> 41|               <input name="jsonData" type="hidden" id="json-data" value="<%= JSON.stringify(results) %>"/>
+    42|               <% for (const key in results) {%>
+    43|                 <tr>
+    44|                   <td>
+
+results is not defined
+2025-03-04	22:17:07	0195644e-9934-7219-8a8a-5572f09444d3	ReferenceError: C:\Program Files\Ampps\www\video-player\views\pages\index.ejs:41
+    39|           <div class="recommended-videos">
+    40|             <form action="player.html" method="post">
+ >> 41|               <input name="jsonData" type="hidden" id="json-data" value="<%= JSON.stringify(results) %>"/>
+    42|               <% for (const key in results) {%>
+    43|                 <tr>
+    44|                   <td>
+
+results is not defined
+2025-03-04	22:21:37	01956452-b7b4-716f-b366-39a4644bc7d6	ReferenceError: C:\Program Files\Ampps\www\video-player\views\pages\index.ejs:41
+    39|           <div class="recommended-videos">
+    40|             <form action="player.html" method="post">
+ >> 41|               <input name="jsonData" type="hidden" id="json-data" value="<%= JSON.stringify(results) %>"/>
+    42|               <% for (const key in results) {%>
+    43|                 <tr>
+    44|                   <td>
+
+results is not defined
+2025-03-04	22:43:30	01956466-bede-754e-b7a0-8a90735a8501	ReferenceError: usrMatch is not defined
+2025-03-04	22:43:46	01956466-fd9c-75b2-815d-bb6d9611e30f	ReferenceError: usrMatch is not defined
+2025-03-04	22:45:34	01956468-a46c-72db-8d63-ba63fbdefa04	ReferenceError: results is not defined
+2025-03-04	22:45:55	01956468-f613-760b-a47e-f7d5f2188203	ReferenceError: usrMatch is not defined
+2025-03-04	23:26:33	0195648e-2b90-7738-8fbf-c865ef155b41	SyntaxError: "[object Object]" is not valid JSON
+2025-03-04	23:29:15	01956490-a1dd-701b-85d8-8338b229c894	TypeError: Converting circular structure to JSON
+    --> starting at object with constructor 'Socket'
+    |     property 'parser' -> object with constructor 'HTTPParser'
+    --- property 'socket' closes the circle
+2025-03-04	23:30:20	01956491-a0d8-72e9-aee0-fd7d37ba05b0	TypeError: Converting circular structure to JSON
+    --> starting at object with constructor 'Socket'
+    |     property 'parser' -> object with constructor 'HTTPParser'
+    --- property 'socket' closes the circle

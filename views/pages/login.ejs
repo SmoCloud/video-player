@@ -20,6 +20,7 @@
         <%
         } %>
         <form class="login-box" action="login.html" method="post">
+            <input name="jsonData" type="hidden" value="<%= JSON.stringify(results) %>"/>
             <div class="username">
                 <label for="usr">Username: </label>
                 <input type="text" id="usr" name="usr" style="width: 50%;">

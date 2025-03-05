@@ -71,6 +71,7 @@ app.route('^/$|/index(.html)?')
             if (error)
                 throw (error);
             if (typeof(request.session.username) !== "undefined" && request.session.username) {
+                console.log(results);
                 response.render('pages/index', { "username": request.session.username, results });
             }
             else {
@@ -248,39 +249,51 @@ app.route('/upload(.html)?')
 
 app.route('/login(.html)?')
     .get((request, response) => {
+        console.log(`${request.method}\t${request.headers.origin}\t${request.url}`);
         if (typeof(request.session.username) !== "undefined" && request.session.username) {
             response.render('pages/profile', { "username": request.session.username });
         }
         else {
-            response.sendFile(path.join(__dirname, 'views', 'login.html'));
+            response.render('pages/login', { "usrMatch": true, "pwdMatch": true, "results": request.body.results })
         }
     })
     .post((request, response) => {
+        var usrMatch = true;
+        var pwdMatch = true;
         console.log(`${request.method}\t${request.headers.origin}\t${request.url}`);
-        if (typeof(request.body.create) !== "undefined" && request.body.create) {
+        if (typeof(request.session.username) !== "undefined" && request.session.username) {
+            response.render('pages/profile', { "username": request.session.username });
+        } 
+        else if (typeof(request.body.create) !== "undefined" && request.body.create) {
             response.sendFile(path.join(__dirname, 'views', 'registration.html'));
         }
         else if (typeof(request.body.login) !== "undefined" && request.body.login) {
+            // console.log(request.headers.origin);
             const username = request.body.usr;
             const password = request.body.pwd;
-            const usrMatch = false;
-            const pwdMatch = false;
-            dbServer.query(`SELECT * FROM accounts WHERE username='${username}';`, (error, results, fields) => {
+            dbServer.query(`SELECT * FROM accounts WHERE username='${username}';`, (error, users, fields) => {
                 if (error) 
                     throw (error);
-                if (results.length > 0) {
-                    const pwdMatch = password === hashCheck(password, results[0].password);
-                    if (hashCheck(password, results[0].password)) {
+                if (users.length > 0) {
+                    pwdMatch = password === hashCheck(password, users[0].password);
+                    if (hashCheck(password, users[0].password)) {
                         request.session.username = username;
-                        request.session.userID = results[0].user_id;
-                        response.render('pages/index', { "username": request.session.username });
-                    }
+                        request.session.userID = users[0].user_id;
+                        results = JSON.parse(request.body.jsonData);
+                        response.render('pages/index', { "username": request.session.username, results });
+                    } 
                 } else {
-                    const usrMatch = false;
-                    response.render('pages/login', { usrMatch, pwdMatch })
+                    usrMatch = false;
+                    pwdMatch = false;
+                    results = JSON.parse(request.body.jsonData);
+                    response.render('pages/login', { usrMatch, pwdMatch, results });
                 }
-            }
-        )}
+            })
+        } else {
+            results = JSON.parse(request.body.jsonData);
+            // console.log(results);
+            response.render('pages/login', { "usrMatch": true, "pwdMatch": true, results })
+        }
     });
 
 app.route('/registration(.html)?')
