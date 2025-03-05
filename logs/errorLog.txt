@@ -264,3 +264,13 @@ bio is not defined
     87|   </div>
 
 dob is not defined
+2025-03-05	10:01:16	019566d3-4492-7486-9f4f-7cab9166661c	ReferenceError: C:\Program Files\Ampps\www\video-player\views\pages\profile.ejs:43
+    41| 
+    42|   <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; margin-top: 50px; padding: 50px;">
+ >> 43|     <img src="<%= (profilePic && profilePic !== '') ? profilePic : '../public/imgs/default_avatar.png' %>" 
+    44|      style="width: 150px; height: 150px; border-radius: 50%; border: 2px solid white; object-fit: cover;"> 
+    45| 
+    46|     <form action="/upload-profile-pic" method="post" enctype="multipart/form-data">
+
+profilePic is not defined
+2025-03-05	10:01:16	019566d3-44a3-709b-84c8-700058a50f37	URIError: Failed to decode param '/%3C%=%20(profilePic%20&&%20profilePic%20!==%20'')%20'

@@ -249,7 +249,7 @@ app.route('/upload(.html)?')
 
 app.route('/login(.html)?')
     .get((request, response) => {
-        console.log(`${request.method}\t${request.headers.origin}\t${request.url}`);
+        console.log(`${request.session.username}\t${request.method}\t${request.headers.origin}\t${request.url}`);
         if (typeof(request.session.username) !== "undefined" && request.session.username) {
             response.render('pages/profile', { "username": request.session.username });
         }
