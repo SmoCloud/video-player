@@ -140,3 +140,15 @@ Or, if you meant to create an async function, pass `async: true` as an option.
 If the above error is not helpful, you may want to try EJS-Lint:
 https://github.com/RyanZim/EJS-Lint
 Or, if you meant to create an async function, pass `async: true` as an option.
+2025-03-04	21:29:53	01956423-590d-772e-8978-3844b2c416c4	ReferenceError: vID is not defined
+2025-03-04	21:30:10	01956423-9b64-737d-9ae9-d67397efae4a	Error: Cannot set headers after they are sent to the client
+2025-03-04	21:31:48	01956425-1b58-755c-a055-e199656af0b1	SyntaxError: Unexpected token 'catch' in C:\Program Files\Ampps\www\video-player\views\pages\player.ejs while compiling ejs
+
+If the above error is not helpful, you may want to try EJS-Lint:
+https://github.com/RyanZim/EJS-Lint
+Or, if you meant to create an async function, pass `async: true` as an option.
+2025-03-04	21:32:02	01956425-51ff-761c-a867-07cc94c1a10d	SyntaxError: Unexpected token 'catch' in C:\Program Files\Ampps\www\video-player\views\pages\player.ejs while compiling ejs
+
+If the above error is not helpful, you may want to try EJS-Lint:
+https://github.com/RyanZim/EJS-Lint
+Or, if you meant to create an async function, pass `async: true` as an option.

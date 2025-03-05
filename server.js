@@ -54,7 +54,7 @@ const dbServer = mysql.createConnection({
     port: 3306               // The port for the database (default is 3306 for MariaDB)
 });
 
-dbServer.connect((err) => {
+dbServer.connect((err) => { // open connection to database
     if (err) {
         console.error("Error connecting: " + err.stack);
         return;
@@ -67,12 +67,17 @@ dbServer.connect((err) => {
 app.route('^/$|/index(.html)?')
     .get((request, response) => {
         console.log(`${request.method}\t${request.headers.origin}\t${request.url}`);
-        if (typeof(request.session.username) !== "undefined" && request.session.username) {
-            response.render('pages/index', { "username": request.session.username })
-        }
-        else {
-            response.sendFile(path.join(__dirname, 'views', 'index.html'));
-        }
+        dbServer.query(`SELECT * FROM videos ORDER BY released LIMIT 10;`, (error, results, fields) => {
+            if (error)
+                throw (error);
+            if (typeof(request.session.username) !== "undefined" && request.session.username) {
+                response.render('pages/index', { "username": request.session.username, results });
+            }
+            else {
+                response.render('pages/index', { "username": "", results });
+            }
+        });
+        // response.sendFile(path.join(__dirname, 'views', 'index.html'));
     })
     .post((request, response) => {
         console.log(`${request.method}\t${request.headers.origin}\t${request.url}`);
