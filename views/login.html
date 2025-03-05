@@ -7,6 +7,11 @@
     <title>Login</title>
 </head>
 <body>
+    <div class="navbar">
+        <img src="imgs/basicLogo.jpeg">
+        <a href="login.html">Login</a>
+        <a href="index.html">Home</a>
+    </div>
     <div class="container">
         <div class="registration">
             <div class="logo">
@@ -14,23 +19,23 @@
             </div>
             <h2>Welcome back</h2>
             <p>Please enter your details</p>
-            <form action="index.html" method="post">
+            <form id="login-form">
                 <div class="input-group">
-                    <label for="email">Email address</label>
-                    <input type="email" id="email" name="email" required>
-                </div> <br>
+                    <label for="usr">Username</label>
+                    <input type="text" id="usr" name="usr" required>
+                </div> 
+                <br>
                 <div class="input-group">
-                    <label for="password">Password</label>
-                    <input type="password" id="password" name="password" required>
+                    <label for="pwd">Password</label>
+                    <input type="password" id="pwd" name="pwd" required>
                 </div>
                 <div class="options">
                     <p>Remember for 30 days<input style="width: auto;" type="checkbox" name="remember"></p>
                 </div>
-                <button type="submit" id="login-btn" name="login-btn">Sign in</button>
-                <button type="submit" id="google-btn" name="google-btn">Sign in with Google</button>
+                <button type="submit" id="login-btn">Sign in</button>
+                <button type="button" id="google-btn">Sign in with Google</button>
                 <p>Don't have an account? <a href="registration.html">Sign up</a></p>
                 <a href="forgot-password.html">Forgot password?</a>
-
             </form>
         </div>
     </div>
