@@ -37,8 +37,10 @@ function toggleEditable(field) {
         inputField.removeAttribute("readonly");
         inputField.focus();
         editButton.textContent = "Save Changes";
+        editButton.setAttribute('name', 'save');
     } else {
         saveChanges(field);
+        editButton.setAttribute('name', 'edit');
         editButton.textContent = "Edit";
     }
 }
