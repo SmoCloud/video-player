@@ -8,28 +8,29 @@
 </head>
 <body>
     <div class="container">
-        <div class="login-card">
+        <div class="registration">
             <div class="logo">
                 <img src="imgs/basicLogo.jpeg" alt="InsideBox Logo">
             </div>
             <h2>Welcome back</h2>
             <p>Please enter your details</p>
-            <form action="login.php" method="post">
+            <form action="index.html" method="post">
                 <div class="input-group">
                     <label for="email">Email address</label>
                     <input type="email" id="email" name="email" required>
-                </div>
+                </div> <br>
                 <div class="input-group">
                     <label for="password">Password</label>
                     <input type="password" id="password" name="password" required>
                 </div>
                 <div class="options">
-                    <label><input type="checkbox" name="remember"> Remember for 30 days</label>
-                    <a href="forgot-password.html">Forgot password?</a>
+                    <p>Remember for 30 days<input style="width: auto;" type="checkbox" name="remember"></p>
                 </div>
-                <button type="submit" class="btn-primary">Sign in</button>
-                <button type="button" class="btn-google">Sign in with Google</button>
-                <p>Don't have an account? <a href="register.html">Sign up</a></p>
+                <button type="submit" id="login-btn" name="login-btn">Sign in</button>
+                <button type="submit" id="google-btn" name="google-btn">Sign in with Google</button>
+                <p>Don't have an account? <a href="registration.html">Sign up</a></p>
+                <a href="forgot-password.html">Forgot password?</a>
+
             </form>
         </div>
     </div>

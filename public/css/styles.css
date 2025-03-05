@@ -51,7 +51,7 @@ form {
     margin: 20px auto;
     max-width: 400px;
     background: rgba(0, 0, 0, 0.8);
-    padding: 20px;
+    padding: 30px;
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
@@ -88,14 +88,27 @@ input:focus {
 #register-btn, #login-btn {
     background-color: #791919;
     color: rgb(218, 247, 166);
+    margin: 5px;
+    margin-top: 10px;
+    margin-bottom: 10px;
     padding: 10px;
     border-radius: 5px;
+    justify-content: center;
+    align-items: center;
     font-family: Arial;
     font-size: 16px;
     border: none;
     cursor: pointer;
     transition: background-color 0.3s;
     width: 100%;
+}
+#google-btn {
+    background-color: #ddd;
+    font-family: Arial;
+    padding: 2px;
+    border-radius: 2px;
+    border: none;
+    cursor: pointer;
 }
 
 #register-btn:hover, #login-btn:hover {

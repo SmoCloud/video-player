@@ -115,3 +115,8 @@ vid is not defined
     45|             <button id="like-btn" name="liked" class="like-button" value="true">Like</button>
 
 vid is not defined
+2025-03-04	21:29:37	01956423-1be2-75bf-aba9-74049800b3ea	SyntaxError: Unexpected token 'catch' in C:\Users\Logan\OneDrive\Desktop\SchoolWork\Capstone\video-player\views\pages\player.ejs while compiling ejs
+
+If the above error is not helpful, you may want to try EJS-Lint:
+https://github.com/RyanZim/EJS-Lint
+Or, if you meant to create an async function, pass `async: true` as an option.
