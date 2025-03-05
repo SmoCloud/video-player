@@ -67,17 +67,23 @@ dbServer.connect((err) => { // open connection to database
 app.route('^/$|/index(.html)?')
     .get((request, response) => {
         console.log(`${request.method}\t${request.headers.origin}\t${request.url}`);
-        dbServer.query(`SELECT * FROM videos ORDER BY released LIMIT 10;`, (error, results, fields) => {
-            if (error)
-                throw (error);
-            if (typeof(request.session.username) !== "undefined" && request.session.username) {
-                console.log(results);
-                response.render('pages/index', { "username": request.session.username, results });
-            }
-            else {
-                response.render('pages/index', { "username": "", results });
-            }
-        });
+        console.log(request.body.results);
+        if (typeof(request.body.results) === "undefined" && !request.body.results) {
+            dbServer.query(`SELECT * FROM videos ORDER BY released LIMIT 10;`, (error, results, fields) => {
+                if (error)
+                    throw (error);
+                if (typeof(request.session.username) !== "undefined" && request.session.username) {
+                    console.log(results);
+                    response.render('pages/index', { "username": request.session.username, results });
+                }
+                else {
+                    response.render('pages/index', { "username": "", results });
+                }
+            });
+        } else {
+            results = JSON.parse(request.body.results);
+            response.render('pages/index', { "username": request.session.username, results });
+        }
         // response.sendFile(path.join(__dirname, 'views', 'index.html'));
     })
     .post((request, response) => {
@@ -270,12 +276,15 @@ app.route('/login(.html)?')
                 response.render('pages/login', { "usrMatch": true, "pwdMatch": true, results })
             }
             else if (typeof(request.body.save) !== "undefined" && request.body.save) {
+                console.log("resuest.body.username: ", request.body.username);
                 if (typeof(request.body.username) !== "undefined" && request.body.username) {
-                    dbServer.query(`UPDATE accounts SET username=${request.body.username} WHERE user_id=${request.session.userID};`)
+                    dbServer.query(`UPDATE accounts SET username='${request.body.username}' WHERE user_id=${request.session.userID};`);
                     request.session.username = request.body.username;
+                    response.render('pages/profile', { "username": request.session.username, "profilePic": "imgs/default_avatar.png", "bio": "I am guest", "dob": "yyyy-MM-dd" });
                 }
                 else if (typeof(request.body.bio) !== "undefined" && request.body.bio) {
-                    dbServer.query(`UPDATE accounts SET username=${request.body.username} WHERE user_id=${request.session.userID};`)
+                    console.log(request.body.bio);
+                    dbServer.query(`UPDATE accounts SET username=${request.body.username} WHERE user_id=${request.session.userID};`);
                     request.session.username = request.body.username;
                 }
                 response.render('pages/profile', { "username": request.session.username, "profilePic": "imgs/default_avatar.png", "bio": "I am guest", "dob": "yyyy-MM-dd" });

@@ -325,3 +325,34 @@ bio is not defined
 2025-03-05	12:24:41	01956756-9134-769d-92d0-6650186ad17c	SyntaxError: "undefined" is not valid JSON
 2025-03-05	12:25:21	01956757-2df5-756c-8140-1927b61675b6	SyntaxError: "undefined" is not valid JSON
 2025-03-05	14:09:52	019567b6-dc0f-725f-b029-7a862d9325ab	Error: Could not find matching close tag for "<%".
+2025-03-05	14:32:58	019567cc-0553-779d-b6dd-38c3e03998f1	SyntaxError: "undefined" is not valid JSON
+2025-03-05	14:45:01	019567d7-0c01-719a-b69b-42e7b322c311	Error: Can't add new command when connection is in closed state
+2025-03-05	14:45:06	019567d7-2167-74be-8bcc-f00a411fc395	Error: Can't add new command when connection is in closed state
+2025-03-05	14:45:43	019567d7-af25-702d-8c43-a6960f45525d	Error: Can't add new command when connection is in closed state
+2025-03-05	14:46:39	019567d8-8c0d-705f-9e77-bb94806ca9c8	Error: Can't add new command when connection is in closed state
+2025-03-05	14:52:19	019567dd-b99c-7647-b636-85f6832ecb13	TypeError: The "path" argument must be of type string. Received undefined
+2025-03-05	14:54:01	019567df-4b88-74c1-9ced-fe51e6b6c9d4	Error: Can't add new command when connection is in closed state
+2025-03-05	14:54:24	019567df-a202-739e-ba31-4fc9ba5a15b9	Error: Can't add new command when connection is in closed state
+2025-03-05	14:58:02	019567e2-f8a3-758f-bcd9-c616ef5a9ca6	Error: Can't add new command when connection is in closed state
+2025-03-05	14:58:20	019567e3-3e4b-71cc-9c8b-1b47c9df2aae	ReferenceError: results is not defined
+2025-03-05	14:58:25	019567e3-5135-71ed-bda4-cb2908cd6163	ReferenceError: results is not defined
+2025-03-05	14:58:31	019567e3-6864-729e-bc87-eb1fd8113ef2	ReferenceError: results is not defined
+2025-03-05	14:59:13	019567e4-0a77-73be-99fb-058ccc86a8ca	SyntaxError: "undefined" is not valid JSON
+2025-03-05	14:59:47	019567e4-91f9-721b-9150-f9fbab3bf5f7	SyntaxError: "undefined" is not valid JSON
+2025-03-05	15:00:31	019567e5-3e0a-779d-834f-336861b96579	SyntaxError: "undefined" is not valid JSON
+2025-03-05	15:04:48	019567e9-29c2-755f-b5ac-f87b97100ebe	Error: Can't add new command when connection is in closed state
+2025-03-05	15:06:30	019567ea-b611-73de-afdf-16c037f4b9e5	Error: Cannot set headers after they are sent to the client
+2025-03-05	15:06:33	019567ea-c25b-7604-8622-b9ddeb1628d8	Error: Can't add new command when connection is in closed state
+2025-03-05	15:11:58	019567ef-b960-701b-a4a6-f23048c917ff	Error: Cannot set headers after they are sent to the client
+2025-03-05	15:12:17	019567f0-03b9-765d-ae7f-8f291b3fcc5d	Error: Can't add new command when connection is in closed state
+2025-03-05	15:12:23	019567f0-1bd8-7718-8a4b-db876615853e	Error: Can't add new command when connection is in closed state
+2025-03-05	15:16:40	019567f4-057c-7089-92d0-e289a0854da7	Error: Cannot set headers after they are sent to the client
+2025-03-05	15:16:46	019567f4-1d4c-730d-ae7b-c8958eb50fee	Error: Can't add new command when connection is in closed state
+2025-03-05	15:17:16	019567f4-92ac-70e7-b07b-c785c8820efc	Error: Can't add new command when connection is in closed state
+2025-03-05	15:17:20	019567f4-a249-7266-a20d-ed0ee0ef25cd	Error: Can't add new command when connection is in closed state
+2025-03-05	15:17:23	019567f4-ad13-70ea-919e-6669a6ac29b3	Error: Can't add new command when connection is in closed state
+2025-03-05	15:17:28	019567f4-c135-741e-a9da-8c23552f0877	Error: Can't add new command when connection is in closed state
+2025-03-05	15:17:29	019567f4-c647-74e8-a1fc-b3eeec205102	Error: Can't add new command when connection is in closed state
+2025-03-05	15:18:43	019567f5-e80c-71e8-b0ff-f409b474e314	Error: Cannot set headers after they are sent to the client
+2025-03-05	15:19:02	019567f6-318e-72b9-9f5e-382bddc4acdd	Error: Can't add new command when connection is in closed state
+2025-03-05	15:22:02	019567f8-f0d7-7672-b599-aee028875465	Error: Cannot set headers after they are sent to the client

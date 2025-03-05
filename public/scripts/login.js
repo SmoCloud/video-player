@@ -20,7 +20,5 @@ loginBtn.onclick = function() {
     // while password field is empty
     else if(password === "" || password === null) {
         window.alert("Password field cannot be empty!");    // alert that password cannot be empty
-    }
-
-    
+    }   
 }

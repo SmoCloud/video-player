@@ -46,7 +46,7 @@ function toggleEditable(field) {
     }
 }
 
-function saveChanges(field) {
+async function saveChanges(field) {
     const inputField = document.getElementById(`${field}-input`);
     const newValue = inputField.value.trim();
 
@@ -55,9 +55,15 @@ function saveChanges(field) {
         return;
     }
 
-    const dataName = field === "username" ? "username" : "bio";
-    const data = { dataName: newValue, "save": true };
-    fetch('http://localhost:8080/login.html?', {
+    var data = {};
+    if (field === "username") {
+        data = { "username": newValue, "save": true };
+    }
+    else if (field === "bio") {
+        data = { "bio": newValue, "save": true };
+    }
+    console.log(data);
+    await fetch('http://localhost:8080/login.html?', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
