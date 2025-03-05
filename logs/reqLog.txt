@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 2025-02-11	18:49:46	0194f76b-388e-7749-8d61-81030be53c41	GET	undefined	/
 2025-02-11	18:49:46	0194f76b-389c-7187-adcc-0594c1975e02	GET	undefined	/css/styles.css
 2025-02-11	18:49:46	0194f76b-389d-70ae-b46a-34d4625449ac	GET	undefined	/imgs/default_avatar.png
@@ -464,7 +463,6 @@
 2025-02-24	08:48:14	01953837-2a69-77bf-a937-140bef98e341	GET	undefined	/imgs/default_avatar.png
 2025-02-24	08:48:14	01953837-2a71-703f-af78-d7932ead8e36	GET	undefined	/scripts/index.js
 2025-02-24	08:48:15	01953837-2d1e-77ec-91cd-b51b40de7823	GET	undefined	/videos/cool.mp4
-=======
 2025-03-02	16:53:23	019558d9-7dd4-7528-8f3c-254b9234db1a	POST	http://localhost:8080	/player.html
 2025-03-02	16:53:23	019558d9-7dec-752f-9b34-4981c5e3f312	GET	undefined	/css/styles.css
 2025-03-02	16:53:23	019558d9-7ded-779d-9039-01b06544f915	GET	undefined	/imgs/basicLogo.jpeg
@@ -989,7 +987,6 @@
 2025-03-03	08:53:51	01955c48-d29a-77ee-baa0-d55a157f1d65	GET	undefined	/css/styles.css
 2025-03-03	08:53:51	01955c48-d29b-73ee-9a7f-1767098eecc6	GET	undefined	/imgs/basicLogo.jpeg
 2025-03-03	08:53:51	01955c48-d29c-77da-b1a9-5a76e9ad7813	GET	undefined	/imgs/default_avatar.png
->>>>>>> 5665740e56ce4de4e75ae0a159932a32c8ed124f
 2025-03-04	12:24:51	01956230-5cc5-7387-bacc-54793ee225b5	GET	undefined	/index.html
 2025-03-04	12:24:51	01956230-5ce1-75a4-b46e-78d11b818d1d	GET	undefined	/css/styles.css
 2025-03-04	12:24:51	01956230-5ce2-773b-9f12-cdd584563d6f	GET	undefined	/imgs/basicLogo.jpeg

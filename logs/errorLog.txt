@@ -115,6 +115,26 @@ vid is not defined
     45|             <button id="like-btn" name="liked" class="like-button" value="true">Like</button>
 
 vid is not defined
+2025-03-03	22:46:38	01955f43-4449-759c-a464-33432935f2f9	ReferenceError: C:\Program Files\Ampps\www\video-player\views\pages\player.ejs:58
+    56|             <button id="submit-comment">Submit</button>
+    57|             <div id="comments-container">
+ >> 58|                 <% for (const comment in comments) {
+    59| 
+    60|                     console.log(comment);
+    61|                 } %>
+
+comments is not defined
+2025-03-03	23:15:00	01955f5d-3b9f-732a-947f-ea18254d2173	ReferenceError: C:\Program Files\Ampps\www\video-player\views\pages\player.ejs:45
+    43|             <input name="title" type="hidden" id="video-title" value="<%= title %>"/>
+    44|             <input name="vurl" type="hidden" id="video-url" value="<%= vURL %>"/>
+ >> 45|             <input name="comments" type="hidden" id="user-comments" value="<%= comments %>"/>
+    46|             <button id="like-btn" name="liked" class="like-button" value="true">Like</button>
+    47|             <button id="dislike-btn" name="disliked" class="dislike-button" value="true">Dislike</button>
+    48|         </div>
+
+comments is not defined
+2025-03-04	09:20:10	01956187-4693-720c-bfba-601728cda8a0	Error: Not allowed by CORS
+2025-03-04	09:26:05	0195618c-b18c-77d8-a3fe-2868c0815e9a	Error: Can't add new command when connection is in closed state
 2025-03-04	14:23:35	0195629d-0f57-720f-a53d-d4930aaf5277	SyntaxError: Unexpected token 'catch' in C:\Users\willi\OneDrive\Documents\GitHub\video-player\views\pages\player.ejs while compiling ejs
 
 If the above error is not helpful, you may want to try EJS-Lint:

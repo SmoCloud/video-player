@@ -16,7 +16,7 @@ const PORT = process.env.PORT || 8080;
 app.set('view engine', 'ejs');
 app.use(logger);
 // Cross Origin Resource Sharing (will allow for functionality in multiple browsers easier)
-const whitelist = ['https://www.google.com', 'http://127.0.0.1:8080', 'http://localhost:8080'];
+const whitelist = ['https://www.google.com', 'http://127.0.0.1:8080', 'http://localhost:8080', 'http://10.22.10.211:8080'];
 const corsOptions = {
     origin: (origin, callback) => {
         if (whitelist.indexOf(origin) !== -1 || !origin) { // !origin must be removed before final release
@@ -124,11 +124,13 @@ app.route('/player(.html)?')
             const title = data[key].title;
             const vURL = data[key].url;
             const vID = data[key].video_id;
-            dbServer.query(`SELECT * FROM comments WHERE video_id LIKE ${vID};`, (error, comments, fields) => {
+            dbServer.query(`SELECT username, comment FROM accounts a JOIN comments c ON a.user_id=c.user_id WHERE c.video_id LIKE ${vID};`, (error, comments, fields) => {
                 if (error)
                     throw (error);
-                response.render('pages/player', { "username": request.session.username, "title": title,
-                    "vURL": vURL, "vid": vID, comments });
+                if (comments.length > 0) {
+                    response.render('pages/player', { "username": request.session.username, "title": title,
+                        "vURL": vURL, "vid": vID, comments });
+                }
             });
             console.log(`JSON data detected.\t${vID}`);
         } else if (typeof(request.body.srch) !== "undefined" && request.body.srch) {
@@ -138,7 +140,8 @@ app.route('/player(.html)?')
                 if (error) 
                     throw (error);
                 console.log("Rendering player page with search results...");
-                response.render('pages/search', { results, "username": request.session.username });
+                comments = JSON.parse(request.body.comments);
+                response.render('pages/search', { results, "username": request.session.username, comments });
             });
         } else if (typeof(request.session.userID) !== "undefined" && request.session.userID) {
             console.log("Like detected.");
@@ -156,12 +159,15 @@ app.route('/player(.html)?')
                     if (error)
                         throw (error);
                     if (results.length > 0) {
-                        console.log(`${request.body.title} already liked by ${request.session.username}`)
+                        console.log(`${request.body.title} already liked by ${request.session.username}`);
+                        comments = JSON.parse(request.body.comments);
                         response.render('pages/player', { "username": request.session.username, 
-                            "title": request.body.title, "vURL": request.body.vurl, "vid": request.body.vid, "isLiked": true })
+                            "title": request.body.title, "vURL": request.body.vurl, "vid": request.body.vid, "isLiked": true, comments })
                     } else {
                         console.log("Attempting to insert like...");
                         dbServer.query(`INSERT INTO likes (user_id, liked_videos) VALUES (${request.session.userID}, ${request.body.vid});`);
+                        response.render('pages/player', { "username": request.session.username, 
+                            "title": request.body.title, "vURL": request.body.vurl, "vid": request.body.vid, "isLiked": false, comments });
                     }
                 });
             } else if (typeof(request.body.disliked) !== "undefined" && request.body.disliked) {
@@ -177,28 +183,34 @@ app.route('/player(.html)?')
                     if (error)
                         throw (error);
                     if (results.length > 0) {
-                        console.log(`${request.body.title} already disliked by ${request.session.username}`)
+                        console.log(`${request.body.title} already disliked by ${request.session.username}`);
+                        comments = JSON.parse(request.body.comments);
                         response.render('pages/player', { "username": request.session.username, "title": request.body.title,
-                            "vURL": request.body.vurl, "vid": request.body.vid, "isDisliked": true });
+                            "vURL": request.body.vurl, "vid": request.body.vid, "isDisliked": true, comments });
                     } else {
                         console.log("Attempting to insert dislike...");
                         dbServer.query(`INSERT INTO dislikes (user_id, disliked_videos) VALUES (${request.session.userID}, ${request.body.vid});`);
+                        response.render('pages/player', { "username": request.session.username, "title": request.body.title,
+                            "vURL": request.body.vurl, "vid": request.body.vid, "isDisliked": false, comments });
                     }
                 });
             } else if (typeof(request.body.commented) !== "undefined" && request.body.commented) {
                 console.log(`Comment received, maybe?\n${request.session.userID}\t${request.body.commented}\t${request.body.vid}`);
                 dbServer.query(`INSERT INTO comments (user_id, video_id, comment) VALUES (${request.session.userID}, ${request.body.vid}, '${request.body.commented}');`);
+                comments = JSON.parse(request.body.comments);
                 response.render('pages/player', { "username": request.session.username, "title": request.body.title,
-                    "vURL": request.body.vurl, "vid": request.body.vid });
+                    "vURL": request.body.vurl, "vid": request.body.vid, comments });
             } else { 
                 console.log("Failed?");
+                comments = JSON.parse(request.body.comments);
                 response.render('pages/player', { "username": request.session.username, "title": request.body.title, 
-                    "vURL": request.body.vurl, "vid": request.body.vid, "isLiked": false });
+                    "vURL": request.body.vurl, "vid": request.body.vid, "isLiked": false, comments });
             } 
         } else { 
             console.log("Are you logged in?");
+            comments = JSON.parse(request.body.comments);
             response.render('pages/player', { "username": request.session.username, "title": request.body.title, "vURL": request.body.vurl,
-                "vid": request.body.vid, "isLiked": false });
+                "vid": request.body.vid, "isLiked": false, comments });
         } 
     });
 
@@ -222,7 +234,7 @@ app.route('/upload(.html)?')
             }
     
             var t_path = files.fileToUpload[0].filepath;
-            var n_path = 'C:\\Users\\yourWindowsName\\Desktop\\' + files.fileToUpload[0].originalFilename; //THIS IS DEPENDENT ON HOST MACHINE
+            var n_path = 'C:/Program Files/Ampps/www/video-player/public/videos/' + files.fileToUpload[0].originalFilename; //THIS IS DEPENDENT ON HOST MACHINE
 
             dbServer.query(`INSERT INTO videos (title, description) VALUES ('${fields.v_title?.[0]}', '${fields.v_description?.[0]}');`);
 
