@@ -53,43 +53,77 @@ form {
     color: white;
 }
 
-.registration {
+/*Login/Registration */
+.registration, .login-box {
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
+    width: 100%;
+    margin: 20px auto;
+    max-width: 400px;
+    background: rgba(0, 0, 0, 0.8);
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
 .inputField {
+    width: 100%;
     display: flex;
-    justify-content: center;
+    flex-direction: column;
     align-items: center;
-    text-align: left;
-    margin: 10px;
-    padding-bottom: 20px;
-}
-
-input {
-    padding: 5px;
-    font-size: 14px;
-    border-radius: 5px;
+    margin-bottom: 15px;
 }
 
 .inputFieldLabel {
-    position: relative;
-    display: block;
-    padding-bottom: 5px;
+    font-size: 1rem;
+    margin-bottom: 5px;
+    color: #ddd;
 }
 
-#register-btn {
+input {
+    width: 100%;
+    padding: 8px;
+    font-size: 14px;
+    border-radius: 5px;
+    border: 1px solid #444;
+    background-color: #222;
+    color: white;
+}
+
+input:focus {
+    outline: none;
+    border-color: #791919;
+}
+
+#register-btn, #login-btn {
     background-color: #791919;
     color: rgb(218, 247, 166);
+    margin: 5px;
+    margin-top: 10px;
+    margin-bottom: 10px;
     padding: 10px;
     border-radius: 5px;
+    justify-content: center;
+    align-items: center;
     font-family: Arial;
     font-size: 16px;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    width: 100%;
+}
+#google-btn {
+    background-color: #ddd;
+    font-family: Arial;
+    padding: 2px;
+    border-radius: 2px;
+    border: none;
+    cursor: pointer;
 }
 
-#register-btn:hover {
+#register-btn:hover, #login-btn:hover {
     background-color: red;
 }
 
