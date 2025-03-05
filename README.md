@@ -23,7 +23,6 @@ All of the node modules can be installed using powershell or git BASH. This can 
             - mysql2
             - uuid
             - video.js
-            - nodemon
 
 # Get Started:
 - Run server.js from the command line using 'node server' or 'node --watch server' to have the server hot reload whenever any file being watched changes.
@@ -33,11 +32,9 @@ All of the node modules can be installed using powershell or git BASH. This can 
 
 # TODO
 - Find a place to host website and acquire unique domain name
-- Improve styling of front-end pages
-    - Design user account profile page
-    - Improve search UI
-    - Improve video player UI
-- Introduce some secutiry/encryption of data passed from the front-end to the back-end and stored in database (user account passwords, mainly)
-- Implement video uploading functionality on server-side.
-- Implement user interaction with videos (likes, dislikes, comments)
-- Interact with YouTube API (likely using node.js)
+- Introduce some security/encryption of data passed from the front-end to the back-end and stored in database (user account passwords, video upload file names, etc.)
+- Interact with YouTube API (likely using node.js)*
+
+
+
+* This is less a goal and more of a hope, that we can reach the point that we actually start thinking about and trying to do this.
