@@ -121,6 +121,9 @@ If the above error is not helpful, you may want to try EJS-Lint:
 https://github.com/RyanZim/EJS-Lint
 Or, if you meant to create an async function, pass `async: true` as an option.
 2025-03-05	00:29:39	019564c7-f17b-747b-aa19-55025bd286a4	Error: Can't add new command when connection is in closed state
+<<<<<<< HEAD
+2025-03-05	00:36:07	019564cd-dae8-75fa-ade6-e74c8a1030b9	Error: Can't add new command when connection is in closed state
+=======
 2025-03-03	22:46:38	01955f43-4449-759c-a464-33432935f2f9	ReferenceError: C:\Program Files\Ampps\www\video-player\views\pages\player.ejs:58
     56|             <button id="submit-comment">Submit</button>
     57|             <div id="comments-container">
@@ -356,3 +359,4 @@ bio is not defined
 2025-03-05	15:18:43	019567f5-e80c-71e8-b0ff-f409b474e314	Error: Cannot set headers after they are sent to the client
 2025-03-05	15:19:02	019567f6-318e-72b9-9f5e-382bddc4acdd	Error: Can't add new command when connection is in closed state
 2025-03-05	15:22:02	019567f8-f0d7-7672-b599-aee028875465	Error: Cannot set headers after they are sent to the client
+>>>>>>> 70668994abbdba273c920286f9295537d9e89d1e
