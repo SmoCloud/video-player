@@ -1,3 +1,5 @@
+CREATE DATABASE  IF NOT EXISTS `z_squared` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
+USE `z_squared`;
 -- MySQL dump 10.13  Distrib 8.0.36, for Win64 (x86_64)
 --
 -- Host: localhost    Database: z_squared
@@ -42,6 +44,61 @@ INSERT INTO `accounts` VALUES (1,'guest@guest_guest.guest','guest','03ac674216f3
 UNLOCK TABLES;
 
 --
+-- Table structure for table `comments`
+--
+
+DROP TABLE IF EXISTS `comments`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `comments` (
+  `comments_id` int NOT NULL AUTO_INCREMENT,
+  `user_id` int NOT NULL,
+  `video_id` int NOT NULL,
+  `comment` varchar(1024) NOT NULL,
+  PRIMARY KEY (`comments_id`),
+  KEY `id_user_idx` (`user_id`),
+  KEY `id_videos_idx` (`video_id`),
+  CONSTRAINT `id_user` FOREIGN KEY (`user_id`) REFERENCES `accounts` (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `id_videos` FOREIGN KEY (`video_id`) REFERENCES `videos` (`video_id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `comments`
+--
+
+LOCK TABLES `comments` WRITE;
+/*!40000 ALTER TABLE `comments` DISABLE KEYS */;
+INSERT INTO `comments` VALUES (1,1,4,'Cool.'),(2,1,5,'Slice n Dice.');
+/*!40000 ALTER TABLE `comments` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `dislikes`
+--
+
+DROP TABLE IF EXISTS `dislikes`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `dislikes` (
+  `user_id` int NOT NULL,
+  `disliked_videos` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs NOT NULL,
+  KEY `dislike_id` (`user_id`),
+  CONSTRAINT `dislike_id` FOREIGN KEY (`user_id`) REFERENCES `accounts` (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `dislikes`
+--
+
+LOCK TABLES `dislikes` WRITE;
+/*!40000 ALTER TABLE `dislikes` DISABLE KEYS */;
+INSERT INTO `dislikes` VALUES (1,'6');
+/*!40000 ALTER TABLE `dislikes` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `likes`
 --
 
@@ -64,6 +121,7 @@ CREATE TABLE `likes` (
 
 LOCK TABLES `likes` WRITE;
 /*!40000 ALTER TABLE `likes` DISABLE KEYS */;
+INSERT INTO `likes` VALUES (1,5),(1,4);
 /*!40000 ALTER TABLE `likes` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -110,4 +168,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-03-02 13:38:10
+-- Dump completed on 2025-03-03 23:49:57

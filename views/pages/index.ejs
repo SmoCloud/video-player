@@ -19,29 +19,55 @@
       <button id="searchbtn" type="submit">Search</button>
     </form>
   </div>
-</header>
-<div class="sidebar">
-  <form action="login.html" method="get"><button type="submit" class="sidebar-button" id="acct-btn"><img src="imgs/default_avatar.png" alt="Account Login" width="100px" height="auto"/></button></form>
-  <br>
-  <p style="color:white;"><%= username; %></p>
-  <br>
-  <form action="index.html" method="get"><button type="submit" class="sidebar-button" id="home-btn">Home</button></form>
-  <form action="upload.html" method="get"><button type="submit" class="sidebar-button" id="home-btn">Upload</button></form>
-  <form action="liked.html" method="get"><button type="submit" class="sidebar-button" id="liked-videos-btn">Liked Videos</button></form>
-  <form action="history.html" method="get"><button type="submit" class="sidebar-button" id="history-btn">Watched Videos</button></form>
-</div>
-<div id="main-content">
-  <div id="video-container" class="vjs-matrix">
-    <table>
-      <tr>
-          <td>
-              <video id="z-video" class="video-js" controls preload="auto" width="640" height="440" data-setup="{}">
-                  <source id="z-source" src="videos/cool.mp4" type="video/mp4" />
-              </video>
-          </td>
-      </tr>
-  </table>
-  <div id="videoTitle">Cool</div>
+  </header>
+  <div class="sidebar">
+    <form action="login.html" method="post">
+      <input name="jsonData" type="hidden" id="json-data" value="<%= JSON.stringify(results) %>"/>
+      <button type="submit" class="sidebar-button" id="acct-btn"><img src="imgs/default_avatar.png" alt="Account Login" width="100px" height="auto"/></button>
+    </form>
+    <br>
+    <p style="color:white;"><%= username; %></p>
+    <br>
+    <form action="index.html" method="get"><button type="submit" class="sidebar-button" id="home-btn">Home</button></form>
+    <form action="upload.html" method="get"><button type="submit" class="sidebar-button" id="home-btn">Upload</button></form>
+    <form action="liked.html" method="get"><button type="submit" class="sidebar-button" id="liked-videos-btn">Liked Videos</button></form>
+    <form action="history.html" method="get"><button type="submit" class="sidebar-button" id="history-btn">Watched Videos</button></form>
+  </div>
+  <div class="main-content">
+    <div class="welcome-banner">Welcome To Z-Squared</div>
+    <div class="video-sections">
+      <div class="video-category">
+        <h2>Recommended Videos</h2>
+        <div class="video-grid">
+          <div class="recommended-videos">
+            <form action="player.html" method="post">
+              <input name="jsonData" type="hidden" id="json-data" value="<%= JSON.stringify(results) %>"/>
+              <% for (const key in results) {%>
+                <tr>
+                  <td>
+                    <hr>
+                    <div id="videoTitle"><%= results[key].title %></div>
+                    <br>
+                    <button name="thumber" type="submit" value="<%= key %>"><img id="<%= results[key].url %>" class="thumbnails" src="<%= results[key].thumbnail %>" title="<%= results[key].title %>" width="480" height="320"></button>
+                    <hr>
+                  </td>
+                </tr>
+              <% } %>
+            </form>
+          </div>
+        </div>
+      </div>
+      <div class="video-category">
+        <h2>Watched Videos</h2>
+        <div class="video-grid">
+        </div>
+      </div>
+      <div class="video-category">
+        <h2>Liked Videos</h2>
+        <div class="video-grid">
+        </div>
+      </div>
+    </div>
   </div>
   <form action="index.html" method="get">
     <div class="button-container">
@@ -57,7 +83,6 @@
       <div id="comments-container"></div>
     </div>
   </form>
-</div>
 <script type="text/javascript" src="scripts/index.js"></script>
 </body>
 </html>

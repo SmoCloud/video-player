@@ -16,7 +16,7 @@ const PORT = process.env.PORT || 8080;
 app.set('view engine', 'ejs');
 app.use(logger);
 // Cross Origin Resource Sharing (will allow for functionality in multiple browsers easier)
-const whitelist = ['https://www.google.com', 'http://127.0.0.1:8080', 'http://localhost:8080'];
+const whitelist = ['https://www.google.com', 'http://127.0.0.1:8080', 'http://localhost:8080', 'http://10.22.10.211:8080'];
 const corsOptions = {
     origin: (origin, callback) => {
         if (whitelist.indexOf(origin) !== -1 || !origin) { // !origin must be removed before final release
@@ -54,7 +54,7 @@ const dbServer = mysql.createConnection({
     port: 3306               // The port for the database (default is 3306 for MariaDB)
 });
 
-dbServer.connect((err) => {
+dbServer.connect((err) => { // open connection to database
     if (err) {
         console.error("Error connecting: " + err.stack);
         return;
@@ -67,12 +67,18 @@ dbServer.connect((err) => {
 app.route('^/$|/index(.html)?')
     .get((request, response) => {
         console.log(`${request.method}\t${request.headers.origin}\t${request.url}`);
-        if (typeof(request.session.username) !== "undefined" && request.session.username) {
-            response.render('pages/index', { "username": request.session.username })
-        }
-        else {
-            response.sendFile(path.join(__dirname, 'views', 'index.html'));
-        }
+        dbServer.query(`SELECT * FROM videos ORDER BY released LIMIT 10;`, (error, results, fields) => {
+            if (error)
+                throw (error);
+            if (typeof(request.session.username) !== "undefined" && request.session.username) {
+                console.log(results);
+                response.render('pages/index', { "username": request.session.username, results });
+            }
+            else {
+                response.render('pages/index', { "username": "", results });
+            }
+        });
+        // response.sendFile(path.join(__dirname, 'views', 'index.html'));
     })
     .post((request, response) => {
         console.log(`${request.method}\t${request.headers.origin}\t${request.url}`);
@@ -119,11 +125,13 @@ app.route('/player(.html)?')
             const title = data[key].title;
             const vURL = data[key].url;
             const vID = data[key].video_id;
-            dbServer.query(`SELECT * FROM comments WHERE video_id LIKE ${vID};`, (error, comments, fields) => {
+            dbServer.query(`SELECT username, comment FROM accounts a JOIN comments c ON a.user_id=c.user_id WHERE c.video_id LIKE ${vID};`, (error, comments, fields) => {
                 if (error)
                     throw (error);
-                response.render('pages/player', { "username": request.session.username, "title": title,
-                    "vURL": vURL, "vid": vID, comments });
+                if (comments.length > 0) {
+                    response.render('pages/player', { "username": request.session.username, "title": title,
+                        "vURL": vURL, "vid": vID, comments });
+                }
             });
             console.log(`JSON data detected.\t${vID}`);
         } else if (typeof(request.body.srch) !== "undefined" && request.body.srch) {
@@ -133,7 +141,8 @@ app.route('/player(.html)?')
                 if (error) 
                     throw (error);
                 console.log("Rendering player page with search results...");
-                response.render('pages/search', { results, "username": request.session.username });
+                comments = JSON.parse(request.body.comments);
+                response.render('pages/search', { results, "username": request.session.username, comments });
             });
         } else if (typeof(request.session.userID) !== "undefined" && request.session.userID) {
             console.log("Like detected.");
@@ -151,12 +160,15 @@ app.route('/player(.html)?')
                     if (error)
                         throw (error);
                     if (results.length > 0) {
-                        console.log(`${request.body.title} already liked by ${request.session.username}`)
+                        console.log(`${request.body.title} already liked by ${request.session.username}`);
+                        comments = JSON.parse(request.body.comments);
                         response.render('pages/player', { "username": request.session.username, 
-                            "title": request.body.title, "vURL": request.body.vurl, "vid": request.body.vid, "isLiked": true })
+                            "title": request.body.title, "vURL": request.body.vurl, "vid": request.body.vid, "isLiked": true, comments })
                     } else {
                         console.log("Attempting to insert like...");
                         dbServer.query(`INSERT INTO likes (user_id, liked_videos) VALUES (${request.session.userID}, ${request.body.vid});`);
+                        response.render('pages/player', { "username": request.session.username, 
+                            "title": request.body.title, "vURL": request.body.vurl, "vid": request.body.vid, "isLiked": false, comments });
                     }
                 });
             } else if (typeof(request.body.disliked) !== "undefined" && request.body.disliked) {
@@ -172,28 +184,34 @@ app.route('/player(.html)?')
                     if (error)
                         throw (error);
                     if (results.length > 0) {
-                        console.log(`${request.body.title} already disliked by ${request.session.username}`)
+                        console.log(`${request.body.title} already disliked by ${request.session.username}`);
+                        comments = JSON.parse(request.body.comments);
                         response.render('pages/player', { "username": request.session.username, "title": request.body.title,
-                            "vURL": request.body.vurl, "vid": request.body.vid, "isDisliked": true });
+                            "vURL": request.body.vurl, "vid": request.body.vid, "isDisliked": true, comments });
                     } else {
                         console.log("Attempting to insert dislike...");
                         dbServer.query(`INSERT INTO dislikes (user_id, disliked_videos) VALUES (${request.session.userID}, ${request.body.vid});`);
+                        response.render('pages/player', { "username": request.session.username, "title": request.body.title,
+                            "vURL": request.body.vurl, "vid": request.body.vid, "isDisliked": false, comments });
                     }
                 });
             } else if (typeof(request.body.commented) !== "undefined" && request.body.commented) {
                 console.log(`Comment received, maybe?\n${request.session.userID}\t${request.body.commented}\t${request.body.vid}`);
                 dbServer.query(`INSERT INTO comments (user_id, video_id, comment) VALUES (${request.session.userID}, ${request.body.vid}, '${request.body.commented}');`);
+                comments = JSON.parse(request.body.comments);
                 response.render('pages/player', { "username": request.session.username, "title": request.body.title,
-                    "vURL": request.body.vurl, "vid": request.body.vid });
+                    "vURL": request.body.vurl, "vid": request.body.vid, comments });
             } else { 
                 console.log("Failed?");
+                comments = JSON.parse(request.body.comments);
                 response.render('pages/player', { "username": request.session.username, "title": request.body.title, 
-                    "vURL": request.body.vurl, "vid": request.body.vid, "isLiked": false });
+                    "vURL": request.body.vurl, "vid": request.body.vid, "isLiked": false, comments });
             } 
         } else { 
             console.log("Are you logged in?");
+            comments = JSON.parse(request.body.comments);
             response.render('pages/player', { "username": request.session.username, "title": request.body.title, "vURL": request.body.vurl,
-                "vid": request.body.vid, "isLiked": false });
+                "vid": request.body.vid, "isLiked": false, comments });
         } 
     });
 
@@ -217,7 +235,7 @@ app.route('/upload(.html)?')
             }
     
             var t_path = files.fileToUpload[0].filepath;
-            var n_path = 'C:\\Users\\yourWindowsName\\Desktop\\' + files.fileToUpload[0].originalFilename; //THIS IS DEPENDENT ON HOST MACHINE
+            var n_path = 'C:/Program Files/Ampps/www/video-player/public/videos/' + files.fileToUpload[0].originalFilename; //THIS IS DEPENDENT ON HOST MACHINE
 
             dbServer.query(`INSERT INTO videos (title, description) VALUES ('${fields.v_title?.[0]}', '${fields.v_description?.[0]}');`);
 
@@ -231,39 +249,51 @@ app.route('/upload(.html)?')
 
 app.route('/login(.html)?')
     .get((request, response) => {
+        console.log(`${request.method}\t${request.headers.origin}\t${request.url}`);
         if (typeof(request.session.username) !== "undefined" && request.session.username) {
             response.render('pages/profile', { "username": request.session.username });
         }
         else {
-            response.sendFile(path.join(__dirname, 'views', 'login.html'));
+            response.render('pages/login', { "usrMatch": true, "pwdMatch": true, "results": request.body.results })
         }
     })
     .post((request, response) => {
+        var usrMatch = true;
+        var pwdMatch = true;
         console.log(`${request.method}\t${request.headers.origin}\t${request.url}`);
-        if (typeof(request.body.create) !== "undefined" && request.body.create) {
+        if (typeof(request.session.username) !== "undefined" && request.session.username) {
+            response.render('pages/profile', { "username": request.session.username });
+        } 
+        else if (typeof(request.body.create) !== "undefined" && request.body.create) {
             response.sendFile(path.join(__dirname, 'views', 'registration.html'));
         }
         else if (typeof(request.body.login) !== "undefined" && request.body.login) {
+            // console.log(request.headers.origin);
             const username = request.body.usr;
             const password = request.body.pwd;
-            const usrMatch = false;
-            const pwdMatch = false;
-            dbServer.query(`SELECT * FROM accounts WHERE username='${username}';`, (error, results, fields) => {
+            dbServer.query(`SELECT * FROM accounts WHERE username='${username}';`, (error, users, fields) => {
                 if (error) 
                     throw (error);
-                if (results.length > 0) {
-                    const pwdMatch = password === hashCheck(password, results[0].password);
-                    if (hashCheck(password, results[0].password)) {
+                if (users.length > 0) {
+                    pwdMatch = password === hashCheck(password, users[0].password);
+                    if (hashCheck(password, users[0].password)) {
                         request.session.username = username;
-                        request.session.userID = results[0].user_id;
-                        response.render('pages/index', { "username": request.session.username });
-                    }
+                        request.session.userID = users[0].user_id;
+                        results = JSON.parse(request.body.jsonData);
+                        response.render('pages/index', { "username": request.session.username, results });
+                    } 
                 } else {
-                    const usrMatch = false;
-                    response.render('pages/login', { usrMatch, pwdMatch })
+                    usrMatch = false;
+                    pwdMatch = false;
+                    results = JSON.parse(request.body.jsonData);
+                    response.render('pages/login', { usrMatch, pwdMatch, results });
                 }
-            }
-        )}
+            })
+        } else {
+            results = JSON.parse(request.body.jsonData);
+            // console.log(results);
+            response.render('pages/login', { "usrMatch": true, "pwdMatch": true, results })
+        }
     });
 
 app.route('/registration(.html)?')
