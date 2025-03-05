@@ -121,6 +121,9 @@ If the above error is not helpful, you may want to try EJS-Lint:
 https://github.com/RyanZim/EJS-Lint
 Or, if you meant to create an async function, pass `async: true` as an option.
 2025-03-05	00:29:39	019564c7-f17b-747b-aa19-55025bd286a4	Error: Can't add new command when connection is in closed state
+<<<<<<< HEAD
+2025-03-05	00:36:07	019564cd-dae8-75fa-ade6-e74c8a1030b9	Error: Can't add new command when connection is in closed state
+=======
 2025-03-03	22:46:38	01955f43-4449-759c-a464-33432935f2f9	ReferenceError: C:\Program Files\Ampps\www\video-player\views\pages\player.ejs:58
     56|             <button id="submit-comment">Submit</button>
     57|             <div id="comments-container">
@@ -227,3 +230,4 @@ results is not defined
     --> starting at object with constructor 'Socket'
     |     property 'parser' -> object with constructor 'HTTPParser'
     --- property 'socket' closes the circle
+>>>>>>> 70668994abbdba273c920286f9295537d9e89d1e
