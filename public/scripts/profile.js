@@ -37,10 +37,11 @@ function toggleEditable(field) {
         inputField.removeAttribute("readonly");
         inputField.focus();
         editButton.textContent = "Save Changes";
-        editButton.setAttribute('name', 'save');
+        // editButton.setAttribute('name', `${field}-save`);
     } else {
         saveChanges(field);
-        editButton.setAttribute('name', 'edit');
+        // window.location.href = "login.html";
+        // editButton.setAttribute('name', `${field}-edit`);
         editButton.textContent = "Edit";
     }
 }
@@ -54,6 +55,18 @@ function saveChanges(field) {
         return;
     }
 
+    const dataName = field === "username" ? "username" : "bio";
+    const data = { dataName: newValue, "save": true };
+    fetch('http://localhost:8080/login.html?', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+    })
+    .then(response => response)
+    .then(data => console.log('Success:', data))
+    .catch(error => console.log('Error:', error));
     console.log(`${field} updated:`, newValue);
     alert(`${field.charAt(0).toUpperCase() + field.slice(1)} updated successfully!`);
     inputField.setAttribute("readonly", "true");

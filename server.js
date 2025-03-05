@@ -248,7 +248,7 @@ app.route('/upload(.html)?')
     });
 
 
-    
+
 app.route('/login(.html)?')
     .get((request, response) => {
         console.log(`${request.method}\t${request.headers.origin}\t${request.url}`);
@@ -269,8 +269,19 @@ app.route('/login(.html)?')
                 results = JSON.parse(request.body.logout);
                 response.render('pages/login', { "usrMatch": true, "pwdMatch": true, results })
             }
+            else if (typeof(request.body.save) !== "undefined" && request.body.save) {
+                if (typeof(request.body.username) !== "undefined" && request.body.username) {
+                    dbServer.query(`UPDATE accounts SET username=${request.body.username} WHERE user_id=${request.session.userID};`)
+                    request.session.username = request.body.username;
+                }
+                else if (typeof(request.body.bio) !== "undefined" && request.body.bio) {
+                    dbServer.query(`UPDATE accounts SET username=${request.body.username} WHERE user_id=${request.session.userID};`)
+                    request.session.username = request.body.username;
+                }
+                response.render('pages/profile', { "username": request.session.username, "profilePic": "imgs/default_avatar.png", "bio": "I am guest", "dob": "yyyy-MM-dd" });
+            }
             else {
-                response.render('pages/profile', { "username": request.session.username, "profilePic": "imgs/default_avatar.png", "bio": "I am guest", "dob": "mm/dd/yy" });
+                response.render('pages/profile', { "username": request.session.username, "profilePic": "imgs/default_avatar.png", "bio": "I am guest", "dob": "yyyy-MM-dd" });
             }
         } 
         else if (typeof(request.body.create) !== "undefined" && request.body.create) {
