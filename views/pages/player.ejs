@@ -59,7 +59,7 @@
             <button id="submit-comment">Submit</button>
             <div name="comments-box" id="comments-container">
                 <% 
-                for (const comment in comments) {
+                for (const comment in comments) { %>
                     <pre><%= comments[comment].username; %></pre>
                     <pre>     <%= comments[comment].comment; %></pre>
                 <% } %>

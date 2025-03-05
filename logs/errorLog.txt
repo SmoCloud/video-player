@@ -324,3 +324,4 @@ bio is not defined
 2025-03-05	12:23:31	01956755-7fd1-7190-be9b-79bd06b7190d	SyntaxError: "undefined" is not valid JSON
 2025-03-05	12:24:41	01956756-9134-769d-92d0-6650186ad17c	SyntaxError: "undefined" is not valid JSON
 2025-03-05	12:25:21	01956757-2df5-756c-8140-1927b61675b6	SyntaxError: "undefined" is not valid JSON
+2025-03-05	14:09:52	019567b6-dc0f-725f-b029-7a862d9325ab	Error: Could not find matching close tag for "<%".
