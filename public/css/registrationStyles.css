@@ -12,6 +12,39 @@
     padding-bottom: 20px;
 }
 
+.border {
+    display: inline-block;
+    width: 100%;
+    justify-content: space-evenly;
+    align-items: center;
+}
+
+.navbar {
+    overflow: hidden;
+    background-color: #791919;
+    font-family: Arial;
+}
+
+.navbar img {
+    width: auto;
+    padding-top: 5px;
+    padding-left: 5px;
+    height: 35px;
+}
+
+.navbar a {
+    float: right;
+    font-size: 16px;
+    color: rgb(218, 247, 166);
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+}
+
+.navbar a:hover {
+    background-color: red;
+}
+
 .inputField {
     display: block;
     justify-content: center;

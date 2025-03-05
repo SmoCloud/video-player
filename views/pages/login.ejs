@@ -7,14 +7,14 @@
         <title>Login</title>
     </head>
     <body>
-        <!-- <section class="border">
+        <section class="border">
             <div class="navbar">
                 <img src="imgs/basicLogo.jpeg">
                 <a href="login.html">Login</a>
                 <a href="index.html">Home</a>
             </div>
             <h1 style="text-align: center;">Login/Create Account</h1>
-        </section> -->
+        </section>
         <% if (!pwdMatch || !usrMatch) { %>
         <h3 style="text-align: center;">Invalid login. Please try again</h3>
         <%
@@ -26,7 +26,8 @@
                 </div>
                 <h2>Welcome back</h2>
                 <p>Please enter your details</p>
-                <form id="login-form">
+                <form id="login-form" action="login.html" method="post">
+                    <input name="jsonData" type="hidden" value="<%= JSON.stringify(results) %>"/>
                     <div class="input-group">
                         <label for="usr">Username</label>
                         <input type="text" id="usr" name="usr" required>
@@ -39,8 +40,8 @@
                     <div class="options">
                         <p>Remember for 30 days<input style="width: auto;" type="checkbox" name="remember"></p>
                     </div>
-                    <button type="submit" name="login" id="login-btn">Sign in</button>
-                    <button type="button" name="google-login" id="google-btn">Sign in with Google</button>
+                    <button type="submit" name="login" id="login-btn" value="Login">Sign in</button>
+                    <button type="button" name="google-login" id="google-btn" value="GLogin">Sign in with Google</button>
                     <p>Don't have an account? <a href="registration.html">Sign up</a></p>
                     <a href="forgot-password.html">Forgot password?</a>
                 </form>
@@ -61,6 +62,6 @@
                 <button type="submit" id="create-acct-btn" name="create" style="border-radius: 5px;" value="Create Account">Create Account</button>
             </div>
         </form> -->
-        <script src="scripts/login.js"></script>
+        <script type="text/javascript" src="scripts/login.js"></script>
     </body>
 </html>
