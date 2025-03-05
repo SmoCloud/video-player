@@ -221,3 +221,40 @@ results is not defined
     --> starting at object with constructor 'Socket'
     |     property 'parser' -> object with constructor 'HTTPParser'
     --- property 'socket' closes the circle
+2025-03-04	23:53:21	019564a6-b3c6-71c6-bd34-17520ea029d5	ReferenceError: C:\Program Files\Ampps\www\video-player\views\pages\profile.ejs:43
+    41| 
+    42|   <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; margin-top: 50px; padding: 50px;">
+ >> 43|     <img src="<%= (profilePic && profilePic !== '') ? profilePic : '../public/imgs/default_avatar.png' %>" 
+    44|      style="width: 150px; height: 150px; border-radius: 50%; border: 2px solid white; object-fit: cover;"> 
+    45| 
+    46|     <form action="/upload-profile-pic" method="post" enctype="multipart/form-data">
+
+profilePic is not defined
+2025-03-04	23:53:21	019564a6-b3ce-7167-868f-e527678b8272	URIError: Failed to decode param '/%3C%=%20(profilePic%20&&%20profilePic%20!==%20'')%20'
+2025-03-04	23:57:30	019564aa-80fc-7275-abde-88365fe9990c	ReferenceError: C:\Program Files\Ampps\www\video-player\views\pages\profile.ejs:75
+    73|       <div class="input-container">
+    74|         <div class="input-header">Bio</div>
+ >> 75|         <textarea id="bio-input" readonly><%= bio %></textarea>
+    76|         <div class="button-container edit-button">
+    77|           <button id="bio-edit-btn" onclick="toggleEditable('bio')">Edit</button>
+    78|         </div>
+
+bio is not defined
+2025-03-04	23:58:08	019564ab-14de-76fc-be6c-5e9c242fc366	ReferenceError: C:\Program Files\Ampps\www\video-player\views\pages\profile.ejs:75
+    73|       <div class="input-container">
+    74|         <div class="input-header">Bio</div>
+ >> 75|         <textarea id="bio-input" readonly><%= bio %></textarea>
+    76|         <div class="button-container edit-button">
+    77|           <button id="bio-edit-btn" onclick="toggleEditable('bio')">Edit</button>
+    78|         </div>
+
+bio is not defined
+2025-03-04	23:58:34	019564ab-7ab8-7355-9451-8a7eb077e0a5	ReferenceError: C:\Program Files\Ampps\www\video-player\views\pages\profile.ejs:84
+    82|       <div class="input-container">
+    83|         <div class="input-header">Date of Birth</div>
+ >> 84|         <input type="date" id="dob" value="<%= dob %>" readonly />
+    85|       </div>
+    86|     </div>
+    87|   </div>
+
+dob is not defined

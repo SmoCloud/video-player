@@ -262,7 +262,7 @@ app.route('/login(.html)?')
         var pwdMatch = true;
         console.log(`${request.method}\t${request.headers.origin}\t${request.url}`);
         if (typeof(request.session.username) !== "undefined" && request.session.username) {
-            response.render('pages/profile', { "username": request.session.username });
+            response.render('pages/profile', { "username": request.session.username, "profilePic": "/public/imgs/default_avatar.png", "bio": "I am guest", "dob": "mm/dd/yy" });
         } 
         else if (typeof(request.body.create) !== "undefined" && request.body.create) {
             response.sendFile(path.join(__dirname, 'views', 'registration.html'));
