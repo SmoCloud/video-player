@@ -398,7 +398,8 @@ input:focus {
 	padding: 5px;
 	font-size: 1em;
 	border: none;
-    background-color: black;
+    color: black;
+    background-color: white;
 	border-radius: 5px;
 	margin-right: 10px;
 	flex-grow: 1;
