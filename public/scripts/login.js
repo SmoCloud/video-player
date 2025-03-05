@@ -1,28 +1,26 @@
-document.getElementById("login-form").addEventListener("submit", function(event) {
-    event.preventDefault(); // Prevent form from refreshing the page
+let username;   // stores the entered username
+let password;   // stores the entered password
 
-    let username = document.getElementById("usr").value.trim(); // Get entered username
-    let password = document.getElementById("pwd").value.trim(); // Get entered password
 
-    console.log("Username:", username);
-    console.log("Password:", password);
+// get element for login button
+const loginBtn = document.getElementById("login-btn");
 
-    // Validate inputs
-    if (username === "") {
-        alert("Username field cannot be empty!");
-        return;
+// function is called when login button is clicked
+loginBtn.onclick = function() {
+    username = document.getElementById("usr").value;    // get entered username
+    console.log(username);  // log username to console for testing
+    password = document.getElementById("pwd").value;    // get entered password
+    console.log(password);  // log password to console for testing
+
+    // while username field is empty
+    if(username === ""|| username === null) {
+        window.alert("Username field cannot be empty!");    // alert that username cannot be empty
     }
 
-    if (password === "") {
-        alert("Password field cannot be empty!");
-        return;
+    // while password field is empty
+    else if(password === "" || password === null) {
+        window.alert("Password field cannot be empty!");    // alert that password cannot be empty
     }
 
-    // Simulated login validation (Replace this with actual authentication logic)
-    if (username === "admin@admin" && password === "admin") { 
-        alert("Login successful!");
-        window.location.href = "index.html"; // Redirect to index.html
-    } else {
-        alert("Invalid username or password. Please try again.");
-    }
-});
+    
+}
