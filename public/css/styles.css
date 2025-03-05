@@ -232,7 +232,7 @@ input {
 	transition: background-color 0.3s, transform 0.3s;
 }
 
-.sidebar-button:hover, .like-button:hover, .dislike-button:hover, .submit-comment:hover {
+.sidebar-button:hover, .like-button:hover, .dislike-button:hover, .submit-comment:hover, .button-container button:hover, .profilePic-button:hover{
 	background:linear-gradient(to right, white, maroon);
 	transform: scale(1.1);
 }
@@ -540,4 +540,136 @@ input {
     padding: 10px;
 }
 
+.input-container {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    margin-bottom: 20px;
+    width: 300px;
+  }
+  .input-header {
+    font-size: 18px;
+    color: wheat;
+    margin-bottom: 8px;
+  }
+  .input-container input,
+  .input-container textarea {
+    padding: 8px 12px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin-top: 8px;
+  }
+  .input-container input {
+    width: 100%; 
+  }
+  .input-container textarea {
+    width: 100%; 
+    height: 100px;
+    resize: none; 
+  }
+  .button-container {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    margin-top: 8px; 
+  }
+  .button-container button {
+    padding: 5px 10px;
+    background-color: maroon; 
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    width: 80px; 
+    transition: background-color 0.3s, transform 0.3s;
+    color: white;
+  }
 
+  form button[type="button"] {
+    background-color: maroon; 
+    color: white;
+    border: 1px solid maroon;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    width: auto;  
+    text-align: center;
+    margin-top: 10px;
+    transition: background-color 0.3s, transform 0.3s;
+  }
+
+  .modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgb(0, 0, 0);
+    background-color: rgba(0, 0, 0, 0.4);
+    padding-top: 60px;
+  }
+
+  .modal-content {
+    background-color: maroon;
+    margin: 5% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+    max-width: 400px;
+    text-align: center;
+  }
+  
+  .modal-content h2 {
+	border-bottom: 6px solid black;
+	padding-bottom: 10px;
+	margin-bottom: 20px;
+	color: white;
+}
+
+  .modal-content label {
+    display: block;
+    margin-top: 10px;
+    margin-bottom: 5px;
+    font-weight: bold;
+  }
+
+  .modal-content input {
+    width: 80%;
+    padding: 10px;
+    margin-bottom: 20px;
+    border: 1px solid #000000;
+    border-radius: 5px;
+    text-align: center;
+  }
+
+  .modal-content button {
+    padding: 10px 20px;
+    background-color: rgb(87, 86, 86);
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+
+  .modal-content button:hover {
+    background-color: #2b2828;
+  }
+
+  .close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+  }
+
+  .close:hover,
+  .close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+  }
