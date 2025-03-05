@@ -249,9 +249,9 @@ app.route('/upload(.html)?')
 
 app.route('/login(.html)?')
     .get((request, response) => {
-        console.log(`${request.session.username}\t${request.method}\t${request.headers.origin}\t${request.url}`);
+        console.log(`${request.method}\t${request.headers.origin}\t${request.url}`);
         if (typeof(request.session.username) !== "undefined" && request.session.username) {
-            response.render('pages/profile', { "username": request.session.username });
+            response.render('pages/profile', { "username": request.session.username, "profilePic": "imgs/default_avatar.png", "bio": "I am guest", "dob": "mm/dd/yy" });
         }
         else {
             response.render('pages/login', { "usrMatch": true, "pwdMatch": true, "results": request.body.results })
@@ -262,7 +262,14 @@ app.route('/login(.html)?')
         var pwdMatch = true;
         console.log(`${request.method}\t${request.headers.origin}\t${request.url}`);
         if (typeof(request.session.username) !== "undefined" && request.session.username) {
-            response.render('pages/profile', { "username": request.session.username, "profilePic": "/public/imgs/default_avatar.png", "bio": "I am guest", "dob": "mm/dd/yy" });
+            if (typeof(request.body.logout) !== "undefined" && request.body.logout) {
+                request.session.destroy();
+                results = JSON.parse(request.body.logout);
+                response.render('pages/login', { "usrMatch": true, "pwdMatch": true, results })
+            }
+            else {
+                response.render('pages/profile', { "username": request.session.username, "profilePic": "imgs/default_avatar.png", "bio": "I am guest", "dob": "mm/dd/yy" });
+            }
         } 
         else if (typeof(request.body.create) !== "undefined" && request.body.create) {
             response.sendFile(path.join(__dirname, 'views', 'registration.html'));

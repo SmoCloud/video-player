@@ -274,3 +274,53 @@ dob is not defined
 
 profilePic is not defined
 2025-03-05	10:01:16	019566d3-44a3-709b-84c8-700058a50f37	URIError: Failed to decode param '/%3C%=%20(profilePic%20&&%20profilePic%20!==%20'')%20'
+2025-03-05	12:03:26	01956743-1eaa-7788-9556-002f5fd959f5	ReferenceError: C:\Program Files\Ampps\www\video-player\views\pages\profile.ejs:43
+    41| 
+    42|   <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; margin-top: 50px; padding: 50px;">
+ >> 43|     <img src="<%= (profilePic && profilePic !== '') ? profilePic : '../public/imgs/default_avatar.png' %>" 
+    44|      style="width: 150px; height: 150px; border-radius: 50%; border: 2px solid white; object-fit: cover;"> 
+    45| 
+    46|     <form action="/upload-profile-pic" method="post" enctype="multipart/form-data">
+
+profilePic is not defined
+2025-03-05	12:03:26	01956743-1ec1-73b9-bf33-a9b59a45d645	URIError: Failed to decode param '/%3C%=%20(profilePic%20&&%20profilePic%20!==%20'')%20'
+2025-03-05	12:06:46	01956746-2959-757a-80f2-e98105336827	ReferenceError: C:\Program Files\Ampps\www\video-player\views\pages\profile.ejs:43
+    41| 
+    42|   <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; margin-top: 50px; padding: 50px;">
+ >> 43|     <img src="<%= (profilePic && profilePic !== '') ? profilePic : '../public/imgs/default_avatar.png' %>" 
+    44|      style="width: 150px; height: 150px; border-radius: 50%; border: 2px solid white; object-fit: cover;"> 
+    45| 
+    46|     <form action="/upload-profile-pic" method="post" enctype="multipart/form-data">
+
+profilePic is not defined
+2025-03-05	12:07:12	01956746-8e76-7659-9f56-3aed62640935	ReferenceError: C:\Program Files\Ampps\www\video-player\views\pages\profile.ejs:43
+    41| 
+    42|   <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; margin-top: 50px; padding: 50px;">
+ >> 43|     <img src="<%= (profilePic && profilePic !== '') ? profilePic : '../public/imgs/default_avatar.png' %>" 
+    44|      style="width: 150px; height: 150px; border-radius: 50%; border: 2px solid white; object-fit: cover;"> 
+    45| 
+    46|     <form action="/upload-profile-pic" method="post" enctype="multipart/form-data">
+
+profilePic is not defined
+2025-03-05	12:08:52	01956748-16c6-70f3-a5cc-d479ade2ad3d	ReferenceError: C:\Program Files\Ampps\www\video-player\views\pages\profile.ejs:75
+    73|       <div class="input-container">
+    74|         <div class="input-header">Bio</div>
+ >> 75|         <textarea id="bio-input" readonly><%= bio %></textarea>
+    76|         <div class="button-container edit-button">
+    77|           <button id="bio-edit-btn" onclick="toggleEditable('bio')">Edit</button>
+    78|         </div>
+
+bio is not defined
+2025-03-05	12:11:21	0195674a-5cb5-716e-8e21-aa0d159b6992	ReferenceError: C:\Program Files\Ampps\www\video-player\views\pages\profile.ejs:75
+    73|       <div class="input-container">
+    74|         <div class="input-header">Bio</div>
+ >> 75|         <textarea id="bio-input" readonly><%= bio %></textarea>
+    76|         <div class="button-container edit-button">
+    77|           <button id="bio-edit-btn" onclick="toggleEditable('bio')">Edit</button>
+    78|         </div>
+
+bio is not defined
+2025-03-05	12:18:53	01956751-4094-758d-ab9d-982f2fcd2d60	SyntaxError: "undefined" is not valid JSON
+2025-03-05	12:23:31	01956755-7fd1-7190-be9b-79bd06b7190d	SyntaxError: "undefined" is not valid JSON
+2025-03-05	12:24:41	01956756-9134-769d-92d0-6650186ad17c	SyntaxError: "undefined" is not valid JSON
+2025-03-05	12:25:21	01956757-2df5-756c-8140-1927b61675b6	SyntaxError: "undefined" is not valid JSON
