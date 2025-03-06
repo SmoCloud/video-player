@@ -16,7 +16,7 @@ const PORT = process.env.PORT || 8080;
 app.set('view engine', 'ejs');
 app.use(logger);
 // Cross Origin Resource Sharing (will allow for functionality in multiple browsers easier)
-const whitelist = ['https://www.google.com', 'http://127.0.0.1:8080', 'http://localhost:8080', 'http://10.22.10.211:8080'];
+const whitelist = ['https://www.google.com', 'http://127.0.0.1:8080', 'http://localhost:8080', ];
 const corsOptions = {
     origin: (origin, callback) => {
         if (whitelist.indexOf(origin) !== -1 || !origin) { // !origin must be removed before final release
