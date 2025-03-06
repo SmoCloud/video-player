@@ -30,8 +30,8 @@ function logout() {
 }
 
 function toggleEditable(field) {
-        const inputField = document.getElementById(`${field}-input`);
-        const editButton = document.getElementById(`${field}-edit-btn`);
+    const inputField = document.getElementById(`${field}-input`);
+    const editButton = document.getElementById(`${field}-edit-btn`);
 
     if (inputField.hasAttribute("readonly")) {
         inputField.removeAttribute("readonly");

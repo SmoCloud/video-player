@@ -6,6 +6,7 @@ const app = express();
 const path = require('path');
 const cors = require('cors');
 const mysql = require('mysql2');
+const { format } = require('date-fns');
 const { randomUUID } = require('crypto');
 const { logger } = require('./middleware/logger');
 const errorHandler = require('./middleware/errorHandler')
@@ -26,7 +27,7 @@ const corsOptions = {
         }
     }, 
     optionsSuccessStatus: 200
-}
+};
 app.use(cors(corsOptions));
 app.use(express.static(path.join(__dirname, '/public')));
 app.use(express.json());
@@ -67,7 +68,6 @@ dbServer.connect((err) => { // open connection to database
 app.route('^/$|/index(.html)?')
     .get((request, response) => {
         console.log(`${request.method}\t${request.headers.origin}\t${request.url}`);
-        console.log(request.body.results);
         if (typeof(request.body.results) === "undefined" && !request.body.results) {
             dbServer.query(`SELECT * FROM videos ORDER BY released LIMIT 10;`, (error, results, fields) => {
                 if (error)
@@ -124,7 +124,6 @@ app.route('/player(.html)?')
     })
     .post((request, response) => {
         console.log(`${request.method}\t${request.headers.origin}\t${request.url}`);
-        console.log(request.session.user.user_id);
         if (typeof(request.body.jsonData) !== "undefined" && request.body.jsonData) {
             const data = JSON.parse(request.body.jsonData);
             const key = request.body.thumber;
@@ -150,9 +149,8 @@ app.route('/player(.html)?')
                 comments = JSON.parse(request.body.comments);
                 response.render('pages/search', { results, "user": request.session.user, comments });
             });
-        } else if (typeof(request.session.user.user_id) !== "undefined" && request.session.user.user_id) {
+        } else if (typeof(request.session.user) !== "undefined" && request.session.user) {
             console.log("Like detected.");
-            console.log(`${typeof(request.body.liked)}`)
             if (typeof(request.body.liked) !== "undefined" && request.body.liked) {
                 dbServer.query(`SELECT * FROM dislikes WHERE user_id LIKE ${request.session.user.user_id} AND disliked_videos=${request.body.vid};`,(error, results, fields) => {
                     if (error)
@@ -173,6 +171,7 @@ app.route('/player(.html)?')
                     } else {
                         console.log("Attempting to insert like...");
                         dbServer.query(`INSERT INTO likes (user_id, liked_videos) VALUES (${request.session.user.user_id}, ${request.body.vid});`);
+                        comments = JSON.parse(request.body.comments);
                         response.render('pages/player', { "user": request.session.user, 
                             "title": request.body.title, "vURL": request.body.vurl, "vid": request.body.vid, "isLiked": false, comments });
                     }
@@ -259,7 +258,7 @@ app.route('/login(.html)?')
     .get((request, response) => {
         console.log(`${request.method}\t${request.headers.origin}\t${request.url}`);
         if (typeof(request.session.user) !== "undefined" && request.session.user) {
-            response.render('pages/profile', { "user": request.session.user, "profilePic": "imgs/default_avatar.png", "bio": "I am guest", "dob": "mm/dd/yy" });
+            response.render('pages/profile', { "user": request.session.user });
         }
         else {
             response.render('pages/login', { "usrMatch": true, "pwdMatch": true, "results": request.body.results })
@@ -280,17 +279,16 @@ app.route('/login(.html)?')
                 if (typeof(request.body.username) !== "undefined" && request.body.username) {
                     dbServer.query(`UPDATE accounts SET username='${request.body.username}' WHERE user_id=${request.session.user.user_id};`);
                     request.session.user.username = request.body.username;
-                    response.render('pages/profile', { "user": request.session.user, "profilePic": "imgs/default_avatar.png", "bio": "I am guest", "dob": "yyyy-MM-dd" });
+                    response.render('pages/profile', { "user": request.session.user });
                 }
                 else if (typeof(request.body.bio) !== "undefined" && request.body.bio) {
-                    console.log(request.body.bio);
-                    dbServer.query(`UPDATE accounts SET username=${request.body.username} WHERE user_id=${request.session.user.user_id};`);
+                    dbServer.query(`UPDATE accounts SET bio='${request.body.bio}' WHERE user_id=${request.session.user.user_id};`);
                     request.session.user.bio = request.body.bio;
                 }
-                response.render('pages/profile', { "user": request.session.user, "profilePic": "imgs/default_avatar.png", "bio": "I am guest", "dob": "yyyy-MM-dd" });
+                response.render('pages/profile', { "user": request.session.user });
             }
             else {
-                response.render('pages/profile', { "user": request.session.user, "profilePic": "imgs/default_avatar.png", "bio": "I am guest", "dob": "yyyy-MM-dd" });
+                response.render('pages/profile', { "user": request.session.user });
             }
         } 
         else if (typeof(request.body.create) !== "undefined" && request.body.create) {
@@ -304,7 +302,8 @@ app.route('/login(.html)?')
                     pwdMatch = request.body.pwd === hashCheck(request.body.pwd, users[0].password);
                     if (hashCheck(request.body.pwd, users[0].password)) {
                         request.session.user = users[0];
-                        // console.log(request.session.user);
+                        request.session.user.DoB = format(request.session.user.DoB, 'yyyy-MM-dd');
+                        console.log(request.session.user.DoB);
                         results = JSON.parse(request.body.jsonData);
                         response.render('pages/index', { "user": request.session.user, results });
                     } 
@@ -314,7 +313,7 @@ app.route('/login(.html)?')
                     results = JSON.parse(request.body.jsonData);
                     response.render('pages/login', { usrMatch, pwdMatch, results });
                 }
-            })
+            });
         } else {
             results = JSON.parse(request.body.jsonData);
             // console.log(results);
@@ -333,7 +332,7 @@ app.route('/registration(.html)?')
             if (error) 
                 throw (error);
             if (results[0].count === 0) {
-                dbServer.query(`INSERT INTO accounts (email, username, password) VALUES ('${request.body.email}', '${request.body.username}', '${hashMake(request.body.password)}');`, (error, results, fields) => {
+                dbServer.query(`INSERT INTO accounts (email, username, password, DoB) VALUES ('${request.body.email}', '${request.body.username}', '${hashMake(request.body.password)}', '${request.body.dob}');`, (error, results, fields) => {
                     if (error)
                         throw (error);
                     response.sendFile(path.join(__dirname, 'views', 'index.html'));
