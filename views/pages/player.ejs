@@ -24,7 +24,9 @@
     <div class="sidebar">
         <form action="login.html" method="get"><button type="submit" class="sidebar-button" id="acct-btn"><img src="imgs/default_avatar.png" alt="Account Login" width="100px" height="auto"/></button></form>
         <br>
+        <% if (typeof(user) !== "undefined" && user) { %>
         <p style="color:white;"><%= user.username; %></p>
+        <% } %>
         <br>
         <form action="index.html" method="get"><button type="submit" class="sidebar-button" id="home-btn">Home</button></form>
         <form action="upload.html" method="get"><button type="submit" class="sidebar-button" id="home-btn">Upload</button></form>
@@ -32,11 +34,11 @@
         <form action="history.html" method="get"><button type="submit" class="sidebar-button" id="history-btn">Watched Videos</button></form>
     </div>
     <div id="main-content">
-    <div id="video-container" class="vjs-matrix">
-        <video id="my-video" class="video-js" controls preload="auto" width="640" height="440" data-setup="{}">
-            <source id="z-source" src="<%= vURL %>" type="video/mp4" />
-        </video>
-    <div id="video-title"><%= title %></div>
+        <div id="video-container" class="vjs-matrix">
+            <video id="my-video" class="video-js" controls preload="auto" width="640" height="440" data-setup="{}">
+                <source id="z-source" src="<%= `${vURL}` %>" type="video/mp4" />
+            </video>
+        <div id="video-title"><%= title %></div>
     </div>
     <form action="player.html" method="post">
         <div class="button-container">

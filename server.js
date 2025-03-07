@@ -136,9 +136,13 @@ app.route('/player(.html)?')
                 if (comments.length > 0) {
                     response.render('pages/player', { "user": request.session.user, "title": title,
                         "vURL": vURL, "vid": vID, comments });
+                } 
+                else {
+                    response.render('pages/player', { "user": request.session.user, "title": title,
+                        "vURL": vURL, "vid": vID, "comments": [{}] })
                 }
             });
-            console.log(`JSON data detected.\t${vID}`);
+            console.log(`JSON data detected.\t${vID}\t${vURL}\t`);
         } else if (typeof(request.body.srch) !== "undefined" && request.body.srch) {
             const searchQuery = "'%" + request.body.srch + "%'";
             console.log("Search detected.")
@@ -158,6 +162,7 @@ app.route('/player(.html)?')
                     if (results.length > 0) {
                         console.log("Removing from dislikes...");
                         dbServer.query(`DELETE FROM dislikes WHERE disliked_videos=${request.body.vid};`)
+                        dbServer.query(`UPDATE videos SET dislikes=dislikes-1 WHERE video_id='${request.body.vid}';`);
                     }
                 });
                 dbServer.query(`SELECT * FROM likes WHERE user_id LIKE ${request.session.user.user_id} AND liked_videos=${request.body.vid};`, (error, results, fields) => {
@@ -171,6 +176,7 @@ app.route('/player(.html)?')
                     } else {
                         console.log("Attempting to insert like...");
                         dbServer.query(`INSERT INTO likes (user_id, liked_videos) VALUES (${request.session.user.user_id}, ${request.body.vid});`);
+                        dbServer.query(`UPDATE videos SET likes=likes+1 WHERE video_id='${request.body.vid}';`);
                         comments = JSON.parse(request.body.comments);
                         response.render('pages/player', { "user": request.session.user, 
                             "title": request.body.title, "vURL": request.body.vurl, "vid": request.body.vid, "isLiked": false, comments });
@@ -183,6 +189,7 @@ app.route('/player(.html)?')
                     if (results.length > 0) {
                         console.log("Removing from likes...");
                         dbServer.query(`DELETE FROM likes WHERE liked_videos=${request.body.vid};`)
+                        dbServer.query(`UPDATE videos SET likes=likes-1 WHERE video_id=${request.body.vid};`);
                     }
                 });
                 dbServer.query(`SELECT * FROM dislikes WHERE user_id LIKE ${request.session.user.user_id} AND disliked_videos=${request.body.vid};`, (error, results, fields) => {
