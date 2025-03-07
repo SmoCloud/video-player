@@ -358,7 +358,7 @@ app.route('/liked(.html)?')
     .get((request, response) => {
         console.log(`${request.method}\t${request.headers.origin}\t${request.url}`);
         if (request.session.user.username !== "undefined" && request.session.user.username) {
-            dbServer.query(`SELECT * FROM likes l JOIN videos v ON v.video_id=l.liked_videos;`, (error, results, fields) => {
+            dbServer.query(`SELECT * FROM likes l JOIN videos v ON v.video_id=l.liked_videos WHERE l.user_id=${request.session.user.user_id};`, (error, results, fields) => {
                 if (error)
                     throw (error);
                 if (results.length > 0) {
