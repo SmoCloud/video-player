@@ -22,7 +22,7 @@
   </header>
   <div class="sidebar">
     <form action="login.html" method="post">
-      <input name="jsonData" type="hidden" id="json-data" value="<%= JSON.stringify(results) %>"/>
+      <input name="jsonData" type="hidden" id="json-data" value="<%= results %>"/>
       <button type="submit" class="sidebar-button" id="acct-btn"><img src="imgs/default_avatar.png" alt="Account Login" width="100px" height="auto"/></button>
     </form>
     <br> <% if (typeof(user) !== "undefined" && user) { %>
@@ -41,7 +41,7 @@
         <div class="video-grid">
           <div class="recommended-videos">
             <form action="player.html" method="post">
-              <input name="jsonData" type="hidden" id="json-data" value="<%= JSON.stringify(results) %>"/>
+              <input name="jsonData" type="hidden" id="json-data" value="<%= results %>"/>
               <% for (const key in results) {%>
                 <tr>
                   <td>
