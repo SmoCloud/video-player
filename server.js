@@ -14,12 +14,15 @@ const { logger } = require('./middleware/logger');
 const errorHandler = require('./middleware/errorHandler');
 const { hashMake, hashCheck } = require('./public/scripts/hasher');
 
-const PORT = process.env.PORT || 8080;
+const PORTS = [ 
+    process.env.PORT || 8080,
+    process.env.PORT || 8443
+ ];
 
 app.set('view engine', 'ejs');
 app.use(logger);
 // Cross Origin Resource Sharing (will allow for functionality in multiple browsers easier)
-const whitelist = ['https://www.google.com', 'https://127.0.0.1:8080', 'https://localhost:8080', 'https://www.zsquaredkings.com' ];
+const whitelist = ['https://www.google.com', 'https://127.0.0.1:8443', 'https://localhost:8443', 'http://127.0.0.1:8080', 'http://localhost:8080' ];
 const corsOptions = {
     origin: (origin, callback) => {
         if (whitelist.indexOf(origin) !== -1 || !origin) { // !origin must be removed before final release
@@ -49,12 +52,17 @@ app.use(session({   // session settings found in the expressjs.com docs
     },
 }));
 
-const keys = {
-    key: fs.readFileSync('./cert/local.decrypted.key'),
-    cert: fs.readFileSync('./cert/local.crt')
-};
-
-const server = https.createServer(keys, app);
+var server = null;
+try {
+    const keys = {
+        key: fs.readFileSync('./cert/local.decrypted.key'),
+        cert: fs.readFileSync('./cert/local.crt')
+    };
+    
+    server = https.createServer(keys, app);
+} catch (error) {
+    console.log(error);
+}
 
 const dbServer = mysql.createConnection({
     host: 'localhost',       // Database host (use your DB host if not localhost)
@@ -76,6 +84,9 @@ dbServer.connect((err) => { // open connection to database
 
 app.route('^/$|/index(.html)?')
     .get((request, response) => {
+        if (typeof(request.session.flags) === "undefined") {
+            request.session.flags = {};
+        }
         console.log(`${request.method}\t${request.headers.origin}\t${request.url}`);
         if (typeof(request.body.results) === "undefined" || !request.body.results) {
             dbServer.query(`SELECT * FROM videos ORDER BY released LIMIT 10;`, (error, results, fields) => {
@@ -89,7 +100,8 @@ app.route('^/$|/index(.html)?')
                     response.render('pages/index', { "user": [{}], results });
                 }
             });
-        } else {
+        }
+        else {
             response.render('pages/index', { "user": request.session.user, "results": request.body.results });
         }
         // response.sendFile(path.join(__dirname, 'views', 'index.html'));
@@ -265,7 +277,7 @@ app.route('/login(.html)?')
             response.render('pages/profile', { "user": request.session.user });
         }
         else {
-            response.sendfile(path.join(__dirname, 'views', 'login.html'));
+            response.sendFile(path.join(__dirname, 'views', 'login.html'));
         }
     })
     .post((request, response) => {
@@ -291,9 +303,9 @@ app.route('/login(.html)?')
             else {
                 response.render('pages/profile', { "user": request.session.user });
             }
-        } 
+        }
         else if (typeof(request.body.create) !== "undefined" && request.body.create) {
-            response.sendFile(path.join(__dirname, 'views', 'registration.html'));
+            response.redirect(path.join(__dirname, 'views', 'registration.html'));
         }
         else if (typeof(request.body.login) !== "undefined" && request.body.login) {
             dbServer.query(`SELECT * FROM accounts WHERE username='${request.body.usr}';`, (error, users, fields) => {
@@ -303,7 +315,7 @@ app.route('/login(.html)?')
                     if (hashCheck(request.body.pwd, users[0].password)) {
                         request.session.user = users[0];
                         request.session.user.DoB = format(request.session.user.DoB, 'yyyy-MM-dd');
-                        response.render('pages/index', { "user": request.session.user });
+                        response.redirect('index.html');
                     } 
                     else {
                         response.render('pages/login', { "usrMatch": true, "pwdMatch": false });
@@ -313,9 +325,6 @@ app.route('/login(.html)?')
                     response.render('pages/login', { "usrMatch": false, "pwdMatch": false });
                 }
             });
-        } 
-        else {
-            response.sendFile(path.join(__dirname, 'views', 'login.html'));
         }
     });
 
@@ -369,5 +378,10 @@ app.all('*', (request, response) => {
 
 app.use(errorHandler);
 
-// app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
-server.listen(PORT, () => {console.log(`Server is listening on https://localhost:${PORT}`)});
+try {
+    app.listen(PORTS[0], () => console.log(`Server running on port ${PORTS[0]}`));
+    server.listen(PORTS[1], () => {console.log(`Server is listening on https://localhost:${PORTS[1]}`)});
+}
+catch (error) {
+    console.log(error);
+}
