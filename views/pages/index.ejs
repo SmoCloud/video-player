@@ -40,7 +40,7 @@
         <div class="video-grid">
           <div class="recommended-videos">
             <form action="player.html" method="post">
-              <input name="results" type="hidden" id="json-data" value="<%= results %>"/>
+              <input name="video" type="hidden" id="json-data" value="<%= results %>"/>
               <% for (const key in results) {%>
                 <tr>
                   <td>

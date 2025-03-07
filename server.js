@@ -88,22 +88,17 @@ app.route('^/$|/index(.html)?')
             request.session.flags = {};
         }
         console.log(`${request.method}\t${request.headers.origin}\t${request.url}`);
-        if (typeof(request.body.results) === "undefined" || !request.body.results) {
-            dbServer.query(`SELECT * FROM videos ORDER BY released LIMIT 10;`, (error, results, fields) => {
-                if (error)
-                    throw (error);
-                if (typeof(request.session.user) !== "undefined" && request.session.user) {
-                    console.log(results);
-                    response.render('pages/index', { "user": request.session.user, results });
-                }
-                else {
-                    response.render('pages/index', { "user": [{}], results });
-                }
-            });
-        }
-        else {
-            response.render('pages/index', { "user": request.session.user, "results": request.body.results });
-        }
+        dbServer.query(`SELECT * FROM videos ORDER BY released LIMIT 10;`, (error, results, fields) => {
+            if (error)
+                throw (error);
+            if (typeof(request.session.user) !== "undefined" && request.session.user) {
+                console.log(results);
+                response.render('pages/index', { "user": request.session.user, results });
+            }
+            else {
+                response.render('pages/index', { "user": [{}], results });
+            }
+        });
         // response.sendFile(path.join(__dirname, 'views', 'index.html'));
     })
     .post((request, response) => {
@@ -126,7 +121,7 @@ app.route('/player(.html)?')
             const vURL = request.query.vurl;
             const vID = request.query.video_id;
             console.log("Get request detected.");
-        } else if (typeof(request.session.user.user_id) !== "undefined" && request.session.user.user_id) {
+        } else if (typeof(request.session.user) !== "undefined" && request.session.user) {
             dbServer.query(`SELECT * FROM likes WHERE user_id LIKE ${request.session.user.user_id} AND liked_videos LIKE '${title}';`, (error, results, fields) => {
                 console.log("Looking for likes.");
                 if (error)
@@ -144,11 +139,13 @@ app.route('/player(.html)?')
     })
     .post((request, response) => {
         console.log(`${request.method}\t${request.headers.origin}\t${request.url}`);
-        if (typeof(request.body.results) !== "undefined" && request.body.results) {
+        if (typeof(request.body.video) !== "undefined" && request.body.video) {
             const key = request.body.thumber;
-            const title = request.body.results[key].title;
-            const vURL = request.body.results[key].url;
-            const vID = request.body.results[key].video_id;
+            // const data = JSON.parse(request.body.video[key]);
+            const title = request.body.video[key].title;
+            const vURL = request.body.video[key].url;
+            const vID = request.body.video[key].video_id;
+            console.log("Results: ", request.body.video[key].title);
             dbServer.query(`SELECT username, comment FROM accounts a JOIN comments c ON a.user_id=c.user_id WHERE c.video_id LIKE ${vID};`, (error, comments, fields) => {
                 if (error)
                     throw (error);
@@ -162,7 +159,8 @@ app.route('/player(.html)?')
                 }
             });
             console.log(`JSON data detected.\t${vID}\t${vURL}\t`);
-        } else if (typeof(request.body.srch) !== "undefined" && request.body.srch) {
+        } 
+        else if (typeof(request.body.srch) !== "undefined" && request.body.srch) {
             const searchQuery = "'%" + request.body.srch + "%'";
             console.log("Search detected.")
             dbServer.query(`SELECT * FROM videos WHERE title LIKE ${searchQuery};`, (error, results, fields) => {
@@ -171,7 +169,8 @@ app.route('/player(.html)?')
                 console.log("Rendering player page with search results...");
                 response.render('pages/search', { results, "user": request.session.user, "comments": request.body.comments });
             });
-        } else if (typeof(request.session.user) !== "undefined" && request.session.user) {
+        } 
+        else if (typeof(request.session.user) !== "undefined" && request.session.user) {
             console.log("Like detected.");
             if (typeof(request.body.liked) !== "undefined" && request.body.liked) {
                 dbServer.query(`SELECT * FROM dislikes WHERE user_id LIKE ${request.session.user.user_id} AND disliked_videos=${request.body.vid};`,(error, results, fields) => {
@@ -380,7 +379,7 @@ app.use(errorHandler);
 
 try {
     app.listen(PORTS[0], () => console.log(`Server running on port ${PORTS[0]}`));
-    server.listen(PORTS[1], () => {console.log(`Server is listening on https://localhost:${PORTS[1]}`)});
+    // server.listen(PORTS[1], () => {console.log(`Server is listening on https://localhost:${PORTS[1]}`)});
 }
 catch (error) {
     console.log(error);
