@@ -1,23 +1,25 @@
+const https = require('https');
+const fs = require('fs');
 const express = require('express');
 const session = require('express-session');
 const formidable = require('formidable');
-const fs = require('fs')
 const app = express();
 const path = require('path');
 const cors = require('cors');
 const mysql = require('mysql2');
+// const bodyParser = require('body-parser');
 const { format } = require('date-fns');
 const { randomUUID } = require('crypto');
 const { logger } = require('./middleware/logger');
-const errorHandler = require('./middleware/errorHandler')
-const { hashMake, hashCheck } = require('./public/scripts/hasher')
+const errorHandler = require('./middleware/errorHandler');
+const { hashMake, hashCheck } = require('./public/scripts/hasher');
 
 const PORT = process.env.PORT || 8080;
 
 app.set('view engine', 'ejs');
 app.use(logger);
 // Cross Origin Resource Sharing (will allow for functionality in multiple browsers easier)
-const whitelist = ['https://www.google.com', 'http://127.0.0.1:8080', 'http://localhost:8080', ];
+const whitelist = ['https://www.google.com', 'https://127.0.0.1:8080', 'https://localhost:8080', 'https://www.zsquaredkings.com' ];
 const corsOptions = {
     origin: (origin, callback) => {
         if (whitelist.indexOf(origin) !== -1 || !origin) { // !origin must be removed before final release
@@ -31,7 +33,7 @@ const corsOptions = {
 app.use(cors(corsOptions));
 app.use(express.static(path.join(__dirname, '/public')));
 app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+app.use(express.urlencoded({ extended: true }));
 app.use(session({   // session settings found in the expressjs.com docs
     genid               : function(req) {
         return randomUUID();
@@ -46,6 +48,13 @@ app.use(session({   // session settings found in the expressjs.com docs
         maxAge      : null,
     },
 }));
+
+const keys = {
+    key: fs.readFileSync('./cert/local.decrypted.key'),
+    cert: fs.readFileSync('./cert/local.crt')
+};
+
+const server = https.createServer(keys, app);
 
 const dbServer = mysql.createConnection({
     host: 'localhost',       // Database host (use your DB host if not localhost)
@@ -68,12 +77,12 @@ dbServer.connect((err) => { // open connection to database
 app.route('^/$|/index(.html)?')
     .get((request, response) => {
         console.log(`${request.method}\t${request.headers.origin}\t${request.url}`);
-        if (typeof(request.body.results) === "undefined" && !request.body.results) {
+        if (typeof(request.body.results) === "undefined" || !request.body.results) {
             dbServer.query(`SELECT * FROM videos ORDER BY released LIMIT 10;`, (error, results, fields) => {
                 if (error)
                     throw (error);
                 if (typeof(request.session.user) !== "undefined" && request.session.user) {
-                    // console.log(results);
+                    console.log(results);
                     response.render('pages/index', { "user": request.session.user, results });
                 }
                 else {
@@ -81,8 +90,7 @@ app.route('^/$|/index(.html)?')
                 }
             });
         } else {
-            results = JSON.parse(request.body.results);
-            response.render('pages/index', { "user": request.session.user, results });
+            response.render('pages/index', { "user": request.session.user, "results": request.body.results });
         }
         // response.sendFile(path.join(__dirname, 'views', 'index.html'));
     })
@@ -124,12 +132,11 @@ app.route('/player(.html)?')
     })
     .post((request, response) => {
         console.log(`${request.method}\t${request.headers.origin}\t${request.url}`);
-        if (typeof(request.body.jsonData) !== "undefined" && request.body.jsonData) {
-            const data = JSON.parse(request.body.jsonData);
+        if (typeof(request.body.results) !== "undefined" && request.body.results) {
             const key = request.body.thumber;
-            const title = data[key].title;
-            const vURL = data[key].url;
-            const vID = data[key].video_id;
+            const title = request.body.results[key].title;
+            const vURL = request.body.results[key].url;
+            const vID = request.body.results[key].video_id;
             dbServer.query(`SELECT username, comment FROM accounts a JOIN comments c ON a.user_id=c.user_id WHERE c.video_id LIKE ${vID};`, (error, comments, fields) => {
                 if (error)
                     throw (error);
@@ -258,7 +265,7 @@ app.route('/login(.html)?')
             response.render('pages/profile', { "user": request.session.user });
         }
         else {
-            response.render('pages/login', { "usrMatch": true, "pwdMatch": true, "results": request.body.results })
+            response.sendfile(path.join(__dirname, 'views', 'login.html'));
         }
     })
     .post((request, response) => {
@@ -266,7 +273,7 @@ app.route('/login(.html)?')
         if (typeof(request.session.user) !== "undefined" && request.session.user) {
             if (typeof(request.body.logout) !== "undefined" && request.body.logout) {
                 request.session.destroy();
-                response.render('pages/login', { "usrMatch": true, "pwdMatch": true, "results": request.body.logout })
+                response.render('pages/login', { "usrMatch": true, "pwdMatch": true })
             }
             else if (typeof(request.body.save) !== "undefined" && request.body.save) {
                 // console.log("resuest.body.username: ", request.body.username);
@@ -293,23 +300,22 @@ app.route('/login(.html)?')
                 if (error) 
                     throw (error);
                 if (users.length > 0) {
-                    pwdMatch = request.body.pwd === hashCheck(request.body.pwd, users[0].password);
                     if (hashCheck(request.body.pwd, users[0].password)) {
                         request.session.user = users[0];
                         request.session.user.DoB = format(request.session.user.DoB, 'yyyy-MM-dd');
-                        response.render('pages/index', { "user": request.session.user, "results": request.body.jsonData });
+                        response.render('pages/index', { "user": request.session.user });
                     } 
                     else {
-                        response.render('pages/login', { "usrMatch": true, "pwdMatch": false, "results": request.body.jsonData });
+                        response.render('pages/login', { "usrMatch": true, "pwdMatch": false });
                     }
                 } 
                 else {
-                    response.render('pages/login', { "usrMatch": false, "pwdMatch": false, "results": request.body.jsonData });
+                    response.render('pages/login', { "usrMatch": false, "pwdMatch": false });
                 }
             });
         } 
         else {
-            response.render('pages/login', { "results": request.body.jsonData })
+            response.sendFile(path.join(__dirname, 'views', 'login.html'));
         }
     });
 
@@ -363,4 +369,5 @@ app.all('*', (request, response) => {
 
 app.use(errorHandler);
 
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+// app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+server.listen(PORT, () => {console.log(`Server is listening on https://localhost:${PORT}`)});

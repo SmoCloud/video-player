@@ -16,8 +16,11 @@
             <h1 style="text-align: center;">Login/Create Account</h1>
         </section>
         <% if ((typeof(usrMatch) !== "undefined" || typeof(pwdMatch) !== "undefined") && (!pwdMatch || !usrMatch)) { %>
+        <input type="hidden" name="usrMatch" id="user-match" value="<%= usrMatch %>">
+        <input type="hidden" name="usrMatch" id="user-match" value="<%= usrMatch %>">
         <h3 style="text-align: center;">Invalid login. Please try again</h3>
         <%
+        getIndex();
         } %>
         <div class="container">
             <div class="registration">
@@ -27,7 +30,6 @@
                 <h2>Welcome back</h2>
                 <p>Please enter your details</p>
                 <form id="login-form" action="login.html" method="post">
-                    <input name="jsonData" type="hidden" value="<%= results %>"/>
                     <div class="input-group">
                         <label for="usr">Username</label>
                         <input type="text" id="usr" name="usr" required>
@@ -47,21 +49,6 @@
                 </form>
             </div>
         </div>
-        <!-- <form class="login-box" action="login.html" method="post">
-            <input name="jsonData" type="hidden" value="<%= JSON.stringify(results) %>"/>
-            <div class="username">
-                <label for="usr">Username: </label>
-                <input type="text" id="usr" name="usr" style="width: 50%;">
-            </div>
-            <div class="password">
-                <label for="pwd">Password: </label>
-                <input type="password" id="pwd" name="pwd" style="width: 50%;">
-            </div>
-            <div class="account-btns">
-                <button type="submit" id="login-btn" name="login" style="border-radius: 5px;" value="Login">Login</button>
-                <button type="submit" id="create-acct-btn" name="create" style="border-radius: 5px;" value="Create Account">Create Account</button>
-            </div>
-        </form> -->
         <script type="text/javascript" src="scripts/login.js"></script>
     </body>
 </html>

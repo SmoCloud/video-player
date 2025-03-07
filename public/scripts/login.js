@@ -1,7 +1,6 @@
 let username;   // stores the entered username
 let password;   // stores the entered password
 
-
 // get element for login button
 const loginBtn = document.getElementById("login-btn");
 
@@ -21,4 +20,8 @@ loginBtn.onclick = function() {
     else if(password === "" || password === null) {
         window.alert("Password field cannot be empty!");    // alert that password cannot be empty
     }   
+}
+
+async function getIndex() {
+    
 }
