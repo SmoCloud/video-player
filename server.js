@@ -208,7 +208,7 @@ app.route('/player(.html)?')
                     }
                 });
             } else if (typeof(request.body.commented) !== "undefined" && request.body.commented) {
-                console.log(`Comment received, maybe?\n${request.session.user.user_id}\t${request.body.commented}\t${request.body.vid}`);
+                // console.log(`Comment received, maybe?\n${request.session.user.user_id}\t${request.body.commented}\t${request.body.vid}`);
                 dbServer.query(`INSERT INTO comments (user_id, video_id, comment) VALUES (${request.session.user.user_id}, ${request.body.vid}, '${request.body.commented}');`);
                 comments = JSON.parse(request.body.comments);
                 response.render('pages/player', { "user": request.session.user, "title": request.body.title,
@@ -310,11 +310,17 @@ app.route('/login(.html)?')
                     if (hashCheck(request.body.pwd, users[0].password)) {
                         request.session.user = users[0];
                         request.session.user.DoB = format(request.session.user.DoB, 'yyyy-MM-dd');
-                        console.log(request.session.user.DoB);
                         results = JSON.parse(request.body.jsonData);
                         response.render('pages/index', { "user": request.session.user, results });
                     } 
-                } else {
+                    else {
+                        usrMatch = false;
+                        pwdMatch = false;
+                        results = JSON.parse(request.body.jsonData);
+                        response.render('pages/login', { usrMatch, pwdMatch, results });
+                    }
+                } 
+                else {
                     usrMatch = false;
                     pwdMatch = false;
                     results = JSON.parse(request.body.jsonData);
