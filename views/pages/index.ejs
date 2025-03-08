@@ -14,7 +14,7 @@
     <img src="imgs/basicLogo.jpeg" alt="Logo" />
   </div>
   <div class="searchbar">
-    <form action="index.html" method="post">
+    <form action="search.html" method="post">
       <input type="text" name="srch" placeholder="Search..." />
       <button id="searchbtn" type="submit">Search</button>
     </form>
@@ -40,7 +40,7 @@
         <div class="video-grid">
           <div class="recommended-videos">
             <form action="player.html" method="post">
-              <input name="video" type="hidden" id="json-data" value="<%= results %>"/>
+              <input name="video" type="hidden" id="json-data" value="<%= JSON.stringify(results) %>"/>
               <% for (const key in results) {%>
                 <tr>
                   <td>

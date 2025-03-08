@@ -36,15 +36,13 @@
     <div id="main-content">
         <div id="video-container" class="vjs-matrix">
             <video id="my-video" class="video-js" controls preload="auto" width="640" height="440" data-setup="{}">
-                <source id="z-source" src="<%= `${vURL}` %>" type="video/mp4" />
+                <source id="z-source" src="<%= vData.url %>" type="video/mp4" />
             </video>
-        <div id="video-title"><%= title %></div>
+        <div id="video-title"><%= vData.title %></div>
     </div>
     <form action="player.html" method="post">
         <div class="button-container">
-            <input name="vid" type="hidden" id="video-id" value="<%= vid %>"/>
-            <input name="title" type="hidden" id="video-title" value="<%= title %>"/>
-            <input name="vurl" type="hidden" id="video-url" value="<%= vURL %>"/>
+            <input name="video" type="hidden" id="video-id" value="<%= JSON.stringify(vData) %>"/>
             <input name="comments" type="hidden" id="user-comments" value="<%= comments %>"/>
             <button id="like-btn" name="liked" class="like-button" value="true">Like</button>
             <button id="dislike-btn" name="disliked" class="dislike-button" value="true">Dislike</button>
@@ -53,9 +51,7 @@
     <form action="player.html" method="post">
         <div class="comment-section">
             <h3>Comments</h3>
-            <input name="vid" type="hidden" id="video-id" value="<%= vid %>">
-            <input name="title" type="hidden" id="video-title" value="<%= title %>"/>
-            <input name="vurl" type="hidden" id="video-url" value="<%= vURL %>"/>
+            <input name="video" type="hidden" id="video-id" value="<%= JSON.stringify(vData) %>">
             <input name="comments" type="hidden" id="user-comments" value="<%= comments %>"/>
             <textarea name="commented" id="comment-input" placeholder="Write a comment..."></textarea>
             <button id="submit-comment">Submit</button>
