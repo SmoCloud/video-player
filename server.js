@@ -90,21 +90,22 @@ app.route('^/$|/index(.html)?')
             request.session.flags = {};
         }
         console.log(`${request.method}\t${request.headers.origin}\t${request.url}`);
-        dbServer.query(`SELECT * FROM videos ORDER BY released LIMIT 10;`, (error, results, fields) => {
+        dbServer.query(`SELECT video_id, title, thumbnail, url FROM videos ORDER BY released LIMIT 10;`, (error, results, fields) => {
             if (error)
                 throw (error);
-            if (typeof(request.session.user) !== "undefined" && request.session.user) {
-                console.log(results);
-                response.render('pages/index', { 
-                    "user": request.session.user, 
-                    results 
-                });
-            }
-            else {
-                response.render('pages/index', { 
-                    "user": [{}], 
-                    results 
-                });
+            if (results.length > 0) {
+                if (typeof(request.session.user) !== "undefined" && request.session.user) {
+                    response.render('pages/index', { 
+                        "user": request.session.user,
+                        results
+                    });
+                }
+                else {
+                    response.render('pages/index', { 
+                        "user": [{}], 
+                        results 
+                    });
+                }
             }
         });
         // response.sendFile(path.join(__dirname, 'views', 'index.html'));
@@ -127,134 +128,118 @@ app.route('^/$|/index(.html)?')
 
 app.route('/player(.html)?')
     .get((request, response) => {
-        if (typeof(request.query.title) !== "undefined" && request.query.title) {
-            const title = request.query.title;
-            const vURL = request.query.vurl;
-            const vID = request.query.video_id;
-            console.log("Get request detected.");
-        } else if (typeof(request.session.user) !== "undefined" && request.session.user) {
-            dbServer.query(`SELECT * FROM likes WHERE user_id LIKE ${request.session.user.user_id} AND liked_videos LIKE '${request.body.video.video_id}';`, (error, results, fields) => {
-                console.log("Looking for likes.");
-                if (error)
-                    throw (error);
-                if (results.length > 0) {
-                    console.log(`${request.body.video.title} already liked by ${request.session.user.username}`);
-                    response.render('pages/player', { 
-                        "user": request.session.user, 
-                        "vData": request.body.video, 
-                        "isLiked": true
-                     });
-                } else {
-                    response.render('pages/player', { 
-                        "user": request.session.user, 
-                        "vData": request.body.video, 
-                        "isLiked": false 
-                    });
-                }
-            });
-        } else {
-            response.sendFile(path.join(__dirname, 'views', 'player.html'));
-        }
-    })
-    .post((request, response) => {
-        console.log(`${request.method}\t${request.headers.origin}\t${request.url}`);
-        // console.log(JSON.parse(request.body.video)[request.body.thumber]);
-        if (typeof(request.body.video) !== "undefined" && request.body.video) {
-            video = JSON.parse(request.body.video)[request.body.thumber];
+        if (typeof(request.query.video) !== "undefined" && request.query.video) {
+            if (typeof(request.session.video) === "undefined" || !request.session.video || request.session.video !== request.query.video) {
+                request.session.video = JSON.parse(request.query.video);
+            }
             if (typeof(request.session.user) !== "undefined" && request.session.user) {
-                dbServer.query(`SELECT username, comment FROM accounts a JOIN comments c ON a.user_id=c.user_id WHERE c.video_id LIKE ${request.body.thumber};`, (error, comments, fields) => {
+                dbServer.query(`SELECT username, comment FROM accounts a JOIN comments c ON a.user_id=c.user_id WHERE c.video_id LIKE ${request.session.video.video_id};`, (error, comments, fields) => {
                     if (error)
                         throw (error);
                     if (comments.length > 0) {
                         response.render('pages/player', { 
                             "user": request.session.user, 
-                            "vData": video, 
+                            "vData": request.session.video, 
                             "comments": comments 
                         });
                     } 
                 });
             }
             else {
+                console.log("Am I making it here like I should be if I'm watching without signing in?");
                 response.render('pages/player', { 
                     "user": request.session.user, 
-                    "vData": video,
+                    "vData": request.session.video,
                     "comments": [{}] 
                 });
             }
-            console.log(`JSON data detected.\t${video.video_id}\t${video.url}\t`);
+            console.log(`JSON data detected.\t${request.session.video.url}\t`);
         } 
-        else if (typeof(request.body.liked) !== "undefined" && request.body.liked) {
-            video = JSON.parse(request.body.video);
-            console.log(`Like detected.\t${video}`);
+        else if (typeof(request.session.video) !== "undefined" && request.session.video) {
+            console.log("Am I making it here like I should be if I'm coming back after liking?");
+            response.render('pages/player', { 
+                "user": request.session.user, 
+                "vData": request.session.video,
+                "comments": [{}] 
+            });
+        }
+        else {
+            response.sendFile(path.join(__dirname, 'views', 'player.html'));
+        }
+    })
+    .post((request, response) => {
+        console.log(`${request.method}\t${request.headers.origin}\t${request.url}`);
+        if (typeof(request.body.liked) !== "undefined" && request.body.liked) {
             if (typeof(request.session.user) !== "undefined" && request.session.user) {
-                dbServer.query(`SELECT * FROM dislikes WHERE user_id LIKE ${request.session.user.user_id} AND disliked_videos=${video.video_id};`,(error, results, fields) => {
+                dbServer.query(`SELECT * FROM dislikes WHERE user_id LIKE ${request.session.user.user_id} AND disliked_videos=${vData.video_id};`,(error, results, fields) => {
                     if (error)
                         throw (error);
                     if (results.length > 0) {
                         console.log("Removing from dislikes...");
-                        dbServer.query(`DELETE FROM dislikes WHERE disliked_videos=${video.video_id} AND user_id=${request.session.user.user_id};`)
+                        dbServer.query(`DELETE FROM dislikes WHERE disliked_videos=${request.session.video.video_id} AND user_id=${request.session.user.user_id};`)
                     }
                 });
-                dbServer.query(`SELECT * FROM likes WHERE user_id LIKE ${request.session.user.user_id} AND liked_videos=${video.video_id};`, (error, results, fields) => {
+                dbServer.query(`SELECT * FROM likes WHERE user_id LIKE ${request.session.user.user_id} AND liked_videos=${request.session.video.video_id};`, (error, results, fields) => {
                     if (error)
                         throw (error);
                     if (results.length > 0) {
-                        console.log(`${video.title} already liked by ${request.session.user.username}`);
-                        response.render('pages/player', { 
-                            "user": request.session.user,
-                            "vData": video, 
-                            "isLiked": true, 
-                            "comments": request.body.comments 
-                        });
+                        console.log(`${request.session.video.title} already liked by ${request.session.user.username}`);
+                        response.redirect('/player.html');
                     }
                     else {
                         console.log("Attempting to insert like...");
-                        dbServer.query(`INSERT INTO likes (user_id, liked_videos) VALUES (${request.session.user.user_id}, ${video.video_id});`);
-                        dbServer.query(`UPDATE videos SET likes=likes+1 WHERE video_id=${video.video_id};`);
-                        response.render('pages/player', { 
-                            "user": request.session.user, 
-                            "vData": video,
-                            "isLiked": false, 
-                            "comments": request.body.comments 
-                        });
+                        dbServer.query(`INSERT INTO likes (user_id, liked_videos) VALUES (${request.session.user.user_id}, ${vData.video_id});`);
+                        dbServer.query(`UPDATE videos SET likes=likes+1 WHERE video_id=${request.session.video.video_id};`);
+                        response.redirect('/player.html');
                     }
                 });
             }
+            else {
+                // vData = JSON.parse(request.body.video);
+                response.redirect('/player.html');
+            }
         }
         else if (typeof(request.body.disliked) !== "undefined" && request.body.disliked) {
-            video = JSON.parse(request.body.video);
             if (typeof(request.session.user) !== "undefined" && request.session.user) {
                 dbServer.query(`SELECT * FROM likes WHERE user_id LIKE ${request.session.user.user_id} AND liked_videos=${video.video_id};`,(error, results, fields) => {
                     if (error)
                         throw (error);
                     if (results.length > 0) {
                         console.log("Removing from likes...");
-                        dbServer.query(`DELETE FROM likes WHERE liked_videos=${video.video_id} AND user_id=${request.session.user.user_id};`)
-                        dbServer.query(`UPDATE videos SET likes=likes-1 WHERE video_id=${video.video_id};`);
+                        dbServer.query(`DELETE FROM likes WHERE liked_videos=${request.session.video.video_id} AND user_id=${request.session.user.user_id};`)
+                        dbServer.query(`UPDATE videos SET likes=likes-1 WHERE video_id=${request.session.video.video_id};`);
                     }
                 });
                 dbServer.query(`SELECT * FROM dislikes WHERE user_id LIKE ${request.session.user.user_id} AND disliked_videos=${video.video_id};`, (error, results, fields) => {
                     if (error)
                         throw (error);
                     if (results.length > 0) {
-                        console.log(`${video.title} already disliked by ${request.session.user.username}`);
+                        console.log(`${request.session.video.title} already disliked by ${request.session.user.username}`);
                         response.render('pages/player', { 
                             "user": request.session.user, 
-                            "vData": video,
+                            "vData": request.session.video,
                             "isDisliked": true, 
                             "comments": request.body.comments
                          });
-                    } 
+                    }
                     else {
                         console.log("Attempting to insert dislike...");
                         dbServer.query(`INSERT INTO dislikes (user_id, disliked_videos) VALUES (${request.session.user.user_id}, ${video.video_id});`);
                         response.render('pages/player', { 
-                            "user": request.session.user, 
-                            "vData": video, 
-                            "isDisliked": false, 
-                            "comments": request.body.comments 
+                            "user": request.session.user,
+                            "vData": request.session.video,
+                            "isDisliked": false,
+                            "comments": request.body.comments
                         });
                     }
+                });
+            }
+            else {
+                // vData = JSON.parse(request.body.video);
+                response.render('pages/player', { 
+                    "user": request.session.user,
+                    "vData": request.session.video,
+                    "comments": [{}]
                 });
             }
         }
@@ -262,18 +247,18 @@ app.route('/player(.html)?')
             // console.log(`Comment received, maybe?\n${request.session.user.user_id}\t${request.body.commented}\t${request.body.vid}`);
             dbServer.query(`INSERT INTO comments (user_id, video_id, comment) VALUES (${request.session.user.user_id}, ${video.video_id}, '${request.body.commented}');`);
             response.render('pages/player', { 
-                "user": JSON.parse(request.session.user), 
-                "vData": video,
-                "comments": request.body.comments 
+                "user": request.session.user,
+                "vData": request.body.video,
+                "comments": request.body.comments
             });
         }
         else { 
             console.log("Failed?");
             response.render('pages/player', { 
-                "user": request.session.user, 
-                "vData": JSON.parse(request.body.video),
+                "user": request.session.user,
+                "vData": request.body.video,
                 "isLiked": false,
-                "comments": request.body.comments 
+                "comments": request.body.comments
             });
         } 
     });
@@ -332,7 +317,7 @@ app.route('/login(.html)?')
     .get((request, response) => {
         console.log(`${request.method}\t${request.headers.origin}\t${request.url}`);
         if (typeof(request.session.user) !== "undefined" && request.session.user) {
-            response.redirect('pages/profile');
+            response.redirect('/profile.html');
         }
         else {
             response.sendFile(path.join(__dirname, 'views', 'login.html'));
@@ -430,6 +415,11 @@ app.route('/liked(.html)?')
     // .post((request, response) => {
 
     // });
+
+app.route('/profile(.html)?')
+    .get((request, response) => {
+        console.log('Request received for prifle page.');
+    });
 
 app.all('*', (request, response) => {
     response.status(404);
