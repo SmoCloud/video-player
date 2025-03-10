@@ -95,7 +95,7 @@ app.route('^/$|/index(.html)?')
             request.session.flags = {};
         }
         console.log(`${request.method}\t${request.headers.origin}\t${request.url}`);
-        dbServer.query(`SELECT video_id, v.user_id, username, title, thumbnail, url FROM videos v LEFT JOIN accounts a ON v.user_id=a.user_id ORDER BY released LIMIT 10;`, (error, results, fields) => {
+        dbServer.query(`SELECT video_id, v.user_id, username, title, thumbnail, t_mimetype, url, v_mimetype FROM videos v LEFT JOIN accounts a ON v.user_id=a.user_id ORDER BY released LIMIT 10;`, (error, results, fields) => {
             if (error)
                 throw (error);
             if (results.length > 0) {
