@@ -7,7 +7,6 @@ const app = express();
 const path = require('path');
 const cors = require('cors');
 const mysql = require('mysql2');
-// const bodyParser = require('body-parser');
 const { format } = require('date-fns');
 const { randomUUID } = require('crypto');
 const { logger } = require('./middleware/logger');
@@ -28,6 +27,7 @@ const whitelist = [
     'https://localhost:8443',
     'http://127.0.0.1:8080',
     'http://localhost:8080',
+    'http://10.0.0.135:8080'
 ];
 const corsOptions = {
     origin: (origin, callback) => {
@@ -282,10 +282,22 @@ app.route('/upload(.html)?')
                     return;
                 }
 
-                const allowedVideoTypes = ["video/mp4"];
-                const allowedImageTypes = ["image/jpeg", "image/png"]
-                if (!allowedVideoTypes.includes(files.fileToUpload[0].mimetype) || !allowedImageTypes.includes(files.thumbnail[0].mimetype)) {
-                    response.end("Invalid File Type");
+                const allowedVideoTypes = [
+                    "video/mp4", 
+                    "video/ogg",
+                    "video/webm", 
+                    "video/mp3", 
+                    "video/3gpp", 
+                    "video/mpeg",
+                    "video/quicktime"
+                ];
+                const allowedImageTypes = ["image/jpeg", "image/png"];
+                if (!allowedVideoTypes.includes(files.fileToUpload[0].mimetype)) {
+                    response.end("Invalid Video File Type");
+                    return;
+                }
+                if (!allowedImageTypes.includes(files.thumbnail[0].mimetype)) {
+                    response.end("Invalid Image File Type");
                     return;
                 }
         
@@ -293,19 +305,23 @@ app.route('/upload(.html)?')
                     files.fileToUpload[0].filepath,
                     files.thumbnail[0].filepath
                 ]
+                console.log(files.fileToUpload[0]);
                 var new_paths = [
-                    'C:/Program Files/Ampps/www/video-player/public/videos/' + hashMake(files.fileToUpload[0].originalFilename),
-                    'C:/Program Files/Ampps/www/video-player/public/thumbnails/' + hashMake(files.thumbnail[0].originalFilename)
+                    'C:/Program Files/Ampps/www/video-player/public/videos/' + files.fileToUpload[0].originalFilename,
+                    'C:/Program Files/Ampps/www/video-player/public/thumbnails/' + files.thumbnail[0].originalFilename
                 ] // THIS IS DEPENDENT ON SERVER/HOST MACHINE
 
                 dbServer.query(`INSERT INTO videos (user_id, title, description, released, thumbnail, url) VALUES
                     (${request.session.user.user_id}, 
                     '${fields.v_title?.[0]}', 
                     '${fields.v_description?.[0]}', 
-                    '${format(new Date(), 'yyyy-MM-dd\'T\'HH:mm:ssXX')}', 
-                    '${hashMake(files.fileToUpload[0].originalFilename)}', 
-                    '${hashMake(files.thumbnail[0].originalFilename)}');`
-                );
+                    '${format(new Date(), 'yyyy-MM-dd\'T\'HH:mm:ss')}', 
+                    '${files.fileToUpload[0].originalFilename}', 
+                    '${files.thumbnail[0].originalFilename}');`
+                , (error, results, fields) => {
+                    if (error) 
+                        throw (error);
+                });
 
                 temp_paths.forEach((path, index) => {
                     fs.copyFile(path, new_paths[index], (err) => {
@@ -446,8 +462,8 @@ app.all('*', (request, response) => {
 app.use(errorHandler);
 
 try {
-    // app.listen(PORTS[0], () => console.log(`Server running on port ${PORTS[0]}`));
-    server.listen(PORTS[1], () => {console.log(`Server is listening on https://localhost:${PORTS[1]}`)});
+    app.listen(PORTS[0], () => console.log(`Server running on port ${PORTS[0]}`));
+    // server.listen(PORTS[1], () => {console.log(`Server is listening on https://localhost:${PORTS[1]}`)});
 }
 catch (error) {
     console.log(error);
