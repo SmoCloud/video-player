@@ -115,21 +115,6 @@ app.route('^/$|/index(.html)?')
             }
         });
     });
-    // .post((request, response) => {
-    //     console.log(`${request.method}\t${request.headers.origin}\t${request.url}`);
-    //     if (typeof(request.body.srch) !== "undefined" && request.body.srch) {
-    //         const searchQuery = "'%" + request.body.srch + "%'";
-    //         dbServer.query(`SELECT * FROM videos WHERE title LIKE ${searchQuery};`, (error, results, fields) => {
-    //             if (error) 
-    //                 throw (error);
-    //             // console.log(request.session.user);
-    //             response.render('pages/search', { 
-    //                 "user": request.session.user, 
-    //                 results 
-    //             });
-    //         });
-    //     }
-    // });
 
 app.route('/player(.html)?')
     .get((request, response) => {
@@ -267,7 +252,6 @@ app.route('/player(.html)?')
 app.route('/search(.html)?') 
     .get((request, response) => {
         console.log(`${request.method}\t${request.headers.origin}\t${request.url}`);
-        console.log(request.query.srch);
         if (typeof(request.query.srch) !== "undefined" && request.query.srch) {
             const searchQuery = "'%" + request.query.srch + "%'";
             console.log("Search detected.")
@@ -290,30 +274,48 @@ app.route('/upload(.html)?')
     })
     .post((request, response) => {
         console.log(`${request.method}\t${request.headers.origin}\t${request.url}`);
-        const form = new formidable.IncomingForm();
-        form.parse(request, (err, fields, files) => {
-            if (err) {
-                next(err);
-                return;
-            }
+        if (typeof(request.session.user) !== "undefined" && request.session.user) {
+            const form = new formidable.IncomingForm();
+            form.parse(request, (err, fields, files) => {
+                if (err) {
+                    next(err);
+                    return;
+                }
 
-            const allowedTypes = ["video/mp4"];
-            if (!allowedTypes.includes(files.fileToUpload[0].mimetype)) {
-                response.end("Invalid File Type");
-                return;
-            }
-    
-            var t_path = files.fileToUpload[0].filepath;
-            var n_path = 'C:/Program Files/Ampps/www/video-player/public/videos/' + files.fileToUpload[0].originalFilename; //THIS IS DEPENDENT ON HOST MACHINE
+                const allowedVideoTypes = ["video/mp4"];
+                const allowedImageTypes = ["image/jpeg", "image/png"]
+                if (!allowedVideoTypes.includes(files.fileToUpload[0].mimetype) || !allowedImageTypes.includes(files.thumbnail[0].mimetype)) {
+                    response.end("Invalid File Type");
+                    return;
+                }
+        
+                var temp_paths = [
+                    files.fileToUpload[0].filepath,
+                    files.thumbnail[0].filepath
+                ]
+                var new_paths = [
+                    'C:/Program Files/Ampps/www/video-player/public/videos/' + hashMake(files.fileToUpload[0].originalFilename),
+                    'C:/Program Files/Ampps/www/video-player/public/thumbnails/' + hashMake(files.thumbnail[0].originalFilename)
+                ] // THIS IS DEPENDENT ON SERVER/HOST MACHINE
 
-            dbServer.query(`INSERT INTO videos (user_id, title, description, released) VALUES (${request.session.user.user_id}, '${fields.v_title?.[0]}', '${fields.v_description?.[0]}', ${format(new Date(), 'yyyy-MM-dd\'T\'HH:mm:ssXX')});`);
+                dbServer.query(`INSERT INTO videos (user_id, title, description, released, thumbnail, url) VALUES
+                    (${request.session.user.user_id}, 
+                    '${fields.v_title?.[0]}', 
+                    '${fields.v_description?.[0]}', 
+                    '${format(new Date(), 'yyyy-MM-dd\'T\'HH:mm:ssXX')}', 
+                    '${hashMake(files.fileToUpload[0].originalFilename)}', 
+                    '${hashMake(files.thumbnail[0].originalFilename)}');`
+                );
 
-            fs.copyFile(t_path, n_path, function (err) {
-                if (err) throw err;
-                response.write('File uploaded and moved!');
-                response.end();
-              });
-          });
+                temp_paths.forEach((path, index) => {
+                    fs.copyFile(path, new_paths[index], (err) => {
+                        if (err) throw err;
+                        response.write('File uploaded and moved!');
+                        response.end();
+                    });
+                });
+            });
+        }
     });
 
 app.route('/login(.html)?')
