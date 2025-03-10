@@ -27,7 +27,6 @@ const whitelist = [
     'https://localhost:8443',
     'http://127.0.0.1:8080',
     'http://localhost:8080',
-    'http://10.0.0.135:8080'
 ];
 const corsOptions = {
     origin: (origin, callback) => {
@@ -96,7 +95,7 @@ app.route('^/$|/index(.html)?')
             request.session.flags = {};
         }
         console.log(`${request.method}\t${request.headers.origin}\t${request.url}`);
-        dbServer.query(`SELECT video_id, title, thumbnail, url FROM videos ORDER BY released LIMIT 10;`, (error, results, fields) => {
+        dbServer.query(`SELECT video_id, v.user_id, username, title, thumbnail, url FROM videos v LEFT JOIN accounts a ON v.user_id=a.user_id ORDER BY released LIMIT 10;`, (error, results, fields) => {
             if (error)
                 throw (error);
             if (results.length > 0) {
@@ -305,30 +304,21 @@ app.route('/upload(.html)?')
                     files.fileToUpload[0].filepath,
                     files.thumbnail[0].filepath
                 ];
-                var path_exts = [];
-                switch (files.fileToUpload[0].mimetype) {
-                    case 'video/mp4':
-                        path_exts.push('.mp4');
-                        break;
-                    case 'video/ogg':
-                        path_exts.push('.ogg');
-                        break;
-                    case 'video/quicktime':
-                        path_exts.push('.mov');
-                        break;
-                }
+                
                 var new_paths = [
-                    'C:/Program Files/Ampps/www/video-player/public/videos/' + files.fileToUpload[0].originalFilename,
-                    'C:/Program Files/Ampps/www/video-player/public/thumbnails/' + files.thumbnail[0].originalFilename
+                    'C:/Program Files/Ampps/www/video-player/public/videos/' + hashMake(`${request.session.user.user_id} ` + files.fileToUpload[0].originalFilename),
+                    'C:/Program Files/Ampps/www/video-player/public/thumbnails/' + hashMake(`${request.session.user.user_id} ` + files.thumbnail[0].originalFilename)
                 ]; // THIS IS DEPENDENT ON SERVER/HOST MACHINE
 
-                dbServer.query(`INSERT INTO videos (user_id, title, description, released, thumbnail, url) VALUES
+                dbServer.query(`INSERT INTO videos (user_id, title, description, released, thumbnail, t_mimetype, url, v_mimetype) VALUES
                     (${request.session.user.user_id}, 
                     '${fields.v_title?.[0]}', 
                     '${fields.v_description?.[0]}', 
                     '${format(new Date(), 'yyyy-MM-dd\'T\'HH:mm:ss')}',
-                    'videos/${files.thumbnail[0].originalFilename}', 
-                    'thumbnails/${files.fileToUpload[0].originalFilename}');`
+                    '${hashMake(`${request.session.user.user_id} ` + files.thumbnail[0].originalFilename)}', 
+                    '${files.thumbnail[0].mimetype}',
+                    '${hashMake(`${request.session.user.user_id} ` + files.fileToUpload[0].originalFilename)}',
+                    '${files.fileToUpload[0].mimetype}');`
                 , (error, results, fields) => {
                     if (error) 
                         throw (error);
