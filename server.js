@@ -200,7 +200,7 @@ app.route('/player(.html)?')
                         dbServer.query(`UPDATE videos SET likes=likes-1 WHERE video_id=${request.session.video.video_id};`);
                     }
                 });
-                dbServer.query(`SELECT * FROM dislikes WHERE user_id LIKE ${request.session.user.user_id} AND disliked_videos=${request.session.video.video_id};`, (error, results, fields) => {
+                dbServer.query(`SELECT * FROM dislikes WHERE user_id=${request.session.user.user_id} AND disliked_videos=${request.session.video.video_id};`, (error, results, fields) => {
                     if (error)
                         throw (error);
                     if (results.length > 0) {

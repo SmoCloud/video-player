@@ -36,7 +36,7 @@
     <div id = "main-content">
         <div id="video-container" class="vjs-matrix">
             <video id="my-video" class="video-js" controls preload="auto" width="640" height="440" data-setup="{}">
-                <source id="z-source" src="<%= `videos/${vData.url}`; %>" type="video/mp4" />
+                <source id="z-source" src="<%= `videos/${vData.url}`; %>" type="<%= vData.v_mimetype %>" />
             </video>
         <div id="video-title"><%= vData.title %></div>
     </div>
