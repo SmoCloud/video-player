@@ -14,7 +14,7 @@
             <img src="imgs/basicLogo.jpeg" alt="Logo" />
         </div>
         <div class="searchbar">
-            <form action="index.html" method="post">
+            <form action="search.html" method="get">
                 <input type="text" name="srch" placeholder="Search..." />
                 <button id="searchbtn" type="submit">Search</button>
             </form>
@@ -36,20 +36,18 @@
         <div id="results-container" class="results">
             <table>
                 <div class="results-loop">
-                    <form action="player.html" method="post">
-                        <input name="results" type="hidden" id="json-data" value="<%= results %>"/>
-                        <% 
-                        for (const key in results) {%>
-                        <tr>
-                            <td>
+                    <form action="player.html" method="get">
+                        <% for (const key in results) {%>
+                            <tr>
+                              <td>
                                 <hr>
                                 <div id="videoTitle"><%= results[key].title %></div>
                                 <br>
-                                <button name="thumber" type="submit" value="<%= key %>"><img id="<%= results[key].url %>" class="thumbnails" src="<%= results[key].thumbnail %>" title="<%= results[key].title %>" width="480" height="320"></button>
+                                <button name="video" type="submit" value="<%= JSON.stringify(results[key]) %>"><img id="<%= results[key].url %>" class="thumbnails" src="<%= results[key].thumbnail %>" title="<%= results[key].title %>" width="480" height="320"></button>
                                 <hr>
-                            </td>
-                        </tr>
-                        <% } %>
+                              </td>
+                            </tr>
+                          <% } %>
                     </form>
                 </div>
             </table>
