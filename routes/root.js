@@ -26,7 +26,7 @@ multiple types of requests.
 
 router.get('/upload(.html)?', (request, response) => {    // handles get requests to the upload.html page from client
     console.log(`${request.method}\t${request.headers.origin}\t${request.url}`);    // log request details
-    response.sendFile(path.join(__dirname, '..', 'views', 'upload.html'));    // send upload.html file (no extra data needed to be sent as session holds user data, if user is logged in)
+    response.sendFile(path.join(__dirname, 'views', 'upload.html'));    // send upload.html file (no extra data needed to be sent as session holds user data, if user is logged in)
 });
 
 router.route('/login(.html)?')
@@ -36,7 +36,7 @@ router.route('/login(.html)?')
         response.redirect(303, 'profile.html'); // redirect to profile.html with a 303 status code, which will make a GET request to the new page being redirected to
     }
     else {
-        response.sendFile(path.join(__dirname, '..', 'views', 'login.html')); // else send the login.html page
+        response.sendFile(path.join(__dirname, 'views', 'login.html')); // else send the login.html page
     }
 })
 .post((request, response) => {  // post requests handled here
@@ -48,7 +48,7 @@ router.route('/login(.html)?')
 
 router.get('/registration(.html)?', (request, response) => {  // handles get requests to registration.html
     console.log(`${request.method}\t${request.headers.origin}\t${request.url}`);    // log request details
-    response.sendFile(path.join(__dirname, '..', 'views', 'registration.html'));  // send registration.html to client
+    response.sendFile(path.join(__dirname, 'views', 'registration.html'));  // send registration.html to client
 });
 
 router.get('/profile(.html)?', (request, response) => {   // handles get requests to profile.html

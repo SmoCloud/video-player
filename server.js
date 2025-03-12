@@ -1,3 +1,4 @@
+const fs = require('fs');           // allows for asynchronous reading of filesconst express = require('express')
 const https = require('https');     // allows for connection using https instead of http
 const express = require('express'); // Express framework for creating a web server
 const session = require('express-session'); // Add-on for express that creates a session attached to client requests
@@ -54,6 +55,8 @@ app.use(session({   // session settings found in the expressjs.com docs
 
 app.use('/', express.static(path.join(__dirname, '/public')));   // Tells express to start its search in the public folder for any files requested by the client
 app.use('/', require('./routes/root'));
+app.use('/', require('./routes/api/profiles'));
+
 
 var server = null;  // tries to read for a key and certificate for https, if not found, error is logged and execution continues using http connection
 try {

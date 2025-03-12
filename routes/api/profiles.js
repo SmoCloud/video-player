@@ -1,5 +1,5 @@
-
 const fs = require('fs');           // allows for asynchronous reading of filesconst express = require('express')
+const express = require('express');
 const session = require('express-session'); // Add-on for express that creates a session attached to client requests
 const formidable = require('formidable');   // Formidable parses html forms
 const router = express.Router();
@@ -222,7 +222,7 @@ router.get('/liked(.html)?', (request, response) => { // handles all requests to
 //      left this here in case post requests to the liked page are ever made (unlikely)
 // });
 
-router.put('profile.html', (request, response) => {
+router.put('/profile(.html)?',  (request, response) => {
     if (typeof(request.session.user) !== "undefined" && request.session.user) { // if a user is logged in
         if (typeof(request.body.logout) !== "undefined" && request.body.logout) {   // if the logout button was clicked
             request.session.destroy();  // terminate the session
@@ -241,3 +241,5 @@ router.put('profile.html', (request, response) => {
         response.redirect(303, 'profile.html'); // redirect back to profile.html with status code 303 (GET request)
     }
 });
+
+module.exports = router;
