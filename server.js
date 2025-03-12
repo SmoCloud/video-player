@@ -1,36 +1,36 @@
-const https = require('https');
-const fs = require('fs');
-const express = require('express');
-const session = require('express-session');
-const formidable = require('formidable');
-const app = express();
-const path = require('path');
-const cors = require('cors');
-const mysql = require('mysql2');
-const { format } = require('date-fns');
-const { randomUUID } = require('crypto');
-const { logger } = require('./middleware/logger');
-const errorHandler = require('./middleware/errorHandler');
-const { hashMake, hashCheck } = require('./public/scripts/hasher');
+const https = require('https');     // allows for connection using https instead of http
+const fs = require('fs');           // allows for asynchronous reading of files
+const express = require('express'); // Express framework for creating a web server
+const session = require('express-session'); // Add-on for express that creates a session attached to client requests
+const formidable = require('formidable');   // Formidable parses html forms
+const app = express();              // Declare express instance
+const path = require('path');       // path module deals with directory handling, has built-in variables for the root directory
+const cors = require('cors');       // Cross-Origin Resource Sharing allows for different browsers to make requests for the web server
+const mysql = require('mysql2');    // Module allows for connection to a sql database
+const { format } = require('date-fns'); // Functions that deal with datetime
+const { randomUUID } = require('crypto');   // Import ability to generate a random id for the session
+const { logger } = require('./middleware/logger');  // custom middleware creates a requestLog to log requests to the server
+const errorHandler = require('./middleware/errorHandler');  // custom middleware creates a errorLog to log server errors
+const { hashMake, hashCheck } = require('./public/scripts/hasher'); // custom middleware creates a hash and checks a hash against another hash for a match (used for password validation)
 
-const PORTS = [ 
-    process.env.PORT || 8080,
-    process.env.PORT || 8443
+const PORTS = [     // Ports that the server listens for requests on
+    process.env.PORT || 8080,   // HTTP requests port
+    process.env.PORT || 8443    // HTTPS requests port
  ];
 
-app.set('view engine', 'ejs');
-app.use(logger);
-// Cross Origin Resource Sharing (will allow for functionality in multiple browsers easier)
-const whitelist = [
+app.set('view engine', 'ejs');  // Allows express to render .ejs files with data sent to the client by the server
+app.use(logger);                // Tells express to use the custom logger middleware, automates the writing of requests to the requestLog
+// Cross Origin Resource Sharing (will allow for functionality in multiple browsers)
+const whitelist = [             // Contains list of valid addresses that are allowed to make a request to this server throught CORS
     // 'https://www.google.com',
     'https://127.0.0.1:8443',
     'https://localhost:8443',
     'http://127.0.0.1:8080',
     'http://localhost:8080',
 ];
-const corsOptions = {
+const corsOptions = {           // Determines if the origin address making the requesst is in the whietlist
     origin: (origin, callback) => {
-        if (whitelist.indexOf(origin) !== -1 || !origin) { // !origin must be removed before final release
+        if (whitelist.indexOf(origin) !== -1 || !origin) { // !origin used for testing to allow requests from an undefined origin, typcially localhost
             callback(null, true);
         } 
         else {
@@ -39,16 +39,16 @@ const corsOptions = {
     }, 
     optionsSuccessStatus: 200
 };
-app.use(cors(corsOptions));
-app.use(express.static(path.join(__dirname, '/public')));
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(cors(corsOptions));     // Tells express to use the CORS module with the corsOptions set above
+app.use(express.static(path.join(__dirname, '/public')));   // Tells express to start its search in the public folder for any files requested by the client
+app.use(express.json());        // Tells express to use json
+app.use(express.urlencoded({ extended: true }));    // Tells express that the url will be encoded
 app.use(session({   // session settings found in the expressjs.com docs
     genid               : function(req) {
-        return randomUUID();
+        return randomUUID();    // get a random unique id for the session
     },
-    secret              : 'The Power of Z-Squared.',
-    resave              : false,
+    secret              : 'The Power of Z-Squared.',    // secret passphrase
+    resave              : false, 
     saveUninitialized   : false,
     cookie: { 
         path        : '/',
@@ -58,7 +58,7 @@ app.use(session({   // session settings found in the expressjs.com docs
     },
 }));
 
-var server = null;
+var server = null;  // tries to read for a key and certificate for https, if not found, error is logged and execution continues using http connection
 try {
     const keys = {
         key: fs.readFileSync('./cert/local.decrypted.key'),
@@ -71,7 +71,7 @@ catch (error) {
     console.log(error);
 }
 
-const dbServer = mysql.createConnection({
+const dbServer = mysql.createConnection({   // Create the connection to the sql database
     host: 'localhost',       // Database host (use your DB host if not localhost)
     user: 'guest',            // Your database username
     password: '',    // Your database password
@@ -89,57 +89,65 @@ dbServer.connect((err) => { // open connection to database
     }
 });
 
-app.route('^/$|/index(.html)?')
-    .get((request, response) => {
-        if (typeof(request.session.flags) === "undefined") {
+app.route('^/$|/index(.html)?')     // handles all requessts made by the client for the index.html page
+    .get((request, response) => {   // get requests to index handled in here
+        if (typeof(request.session.flags) === "undefined") {    // create session flags as an empty object if it's not created
             request.session.flags = {};
         }
-        console.log(`${request.method}\t${request.headers.origin}\t${request.url}`);
+        console.log(`${request.method}\t${request.headers.origin}\t${request.url}`);    // log request details
+        
+        // perform a query to the videos database to get recommended videos rendered on the home page
         dbServer.query(`SELECT video_id, v.user_id, username, title, thumbnail, t_mimetype, url, v_mimetype FROM videos v LEFT JOIN accounts a ON v.user_id=a.user_id ORDER BY released LIMIT 10;`, (error, results, fields) => {
             if (error)
                 throw (error);
-            if (results.length > 0) {
-                if (typeof(request.session.user) !== "undefined" && request.session.user) {
-                    response.render('pages/index', { 
+            if (results.length > 0) {   // if there are any videos in the database
+                if (typeof(request.session.user) !== "undefined" && request.session.user) { // if a user is logged in
+                    response.render('pages/index', {    // render the page with the videos and the username of the logged in user
                         "user": request.session.user,
                         results
                     });
                 }
-                else {
-                    response.render('pages/index', { 
+                else {  
+                    response.render('pages/index', {    // else render page with videos and an empty username
                         "user": [{}], 
                         results 
                     });
                 }
             }
         });
-    });
+    }); // no post requests currently being made to index page
 
-app.route('/player(.html)?')
-    .get((request, response) => {
-        console.log(`${request.method}\t${request.headers.origin}\t${request.url}`);
-        if (typeof(request.query.video) !== "undefined" && request.query.video) {
-            if (typeof(request.session.video) === "undefined" || !request.session.video || request.session.video !== request.query.video) {
-                request.session.video = JSON.parse(request.query.video);
+app.route('/player(.html)?')    // handles all requests to player.html
+    .get((request, response) => {   // get requests handles here
+        console.log(`${request.method}\t${request.headers.origin}\t${request.url}`);    // log request details
+        if (typeof(request.query.video) !== "undefined" && request.query.video) {   // if there's a video selected to play
+            if (typeof(request.session.video) === "undefined" || !request.session.video || request.session.video !== request.query.video) { // if the video in the session doesn't match the video that was selected
+                request.session.video = JSON.parse(request.query.video);    // set session.video to the query.video that was selected by the user
             }
-            if (typeof(request.session.comments) !== "undefined" || !request.session.comments)
+            if (typeof(request.session.comments) !== "undefined" || !request.session.comments) {    // if there are no comments
+
+            } 
+
+            // query for comments tied to the requested video
             dbServer.query(`SELECT username, comment FROM accounts a JOIN comments c ON a.user_id=c.user_id WHERE c.video_id LIKE ${request.session.video.video_id};`, (error, comments, fields) => {
                 if (error)
                     throw (error);
-                response.render('pages/player', {
+                response.render('pages/player', {   // if there is no error, render the video with its comments
                     "user": request.session.user,
                     "vData": request.session.video,
                     comments
                 });
             });
-            console.log(`JSON data detected.\t${request.session.video.url}\t`);
+            // console.log(`JSON data detected.\t${request.session.video.url}\t`);
         } 
-        else if (typeof(request.session.video) !== "undefined" && request.session.video) {
-            console.log("Am I making it here like I should be if I'm coming back after liking?");
+        else if (typeof(request.session.video) !== "undefined" && request.session.video) {  // if the session video is set but the query is not (handles reloading the page after liking/disliking/commenting on the video)
+            // console.log("Am I making it here like I should be if I'm coming back after liking?");
+            
+            // requery for comments tied to the video saved in the session
             dbServer.query(`SELECT username, comment FROM accounts a JOIN comments c ON a.user_id=c.user_id WHERE c.video_id LIKE ${request.session.video.video_id};`, (error, comments, fields) => {
                 if (error)
                     throw (error);
-                response.render('pages/player', {
+                response.render('pages/player', {   // rerender page with video and its comments
                     "user": request.session.user,
                     "vData": request.session.video,
                     comments
@@ -147,10 +155,10 @@ app.route('/player(.html)?')
             });
         }
         else {
-            response.sendFile(path.join(__dirname, 'views', 'player.html'));
+            response.sendFile(path.join(__dirname, 'views', 'player.html'));    // else send the player.html file itself
         }
     })
-    .post((request, response) => {
+    .post((request, response) => {  // post requests made to player.html handled here
         console.log(`${request.method}\t${request.headers.origin}\t${request.url}`);
         if (typeof(request.body.liked) !== "undefined" && request.body.liked) {
             if (typeof(request.session.user) !== "undefined" && request.session.user) {
