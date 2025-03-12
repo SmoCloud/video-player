@@ -78,7 +78,7 @@ router.get('/search(.html)?', (request, response) => {    // handles all request
     }
 });
 
-app.route('/player(.html)?')    // handles all requests to player.html
+router.route('/player(.html)?')    // handles all requests to player.html
 .get((request, response) => {   // get requests handles here
     console.log(`${request.method}\t${request.headers.origin}\t${request.url}`);    // log request details
     if (typeof(request.query.video) !== "undefined" && request.query.video) {   // if there's a video selected to play
