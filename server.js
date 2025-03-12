@@ -159,67 +159,75 @@ app.route('/player(.html)?')    // handles all requests to player.html
         }
     })
     .post((request, response) => {  // post requests made to player.html handled here
-        console.log(`${request.method}\t${request.headers.origin}\t${request.url}`);
-        if (typeof(request.body.liked) !== "undefined" && request.body.liked) {
-            if (typeof(request.session.user) !== "undefined" && request.session.user) {
-                response.session.flags.isLiked = true;
+        console.log(`${request.method}\t${request.headers.origin}\t${request.url}`);    // log request details
+        if (typeof(request.body.liked) !== "undefined" && request.body.liked) { // if the like button was clicked
+            if (typeof(request.session.user) !== "undefined" && request.session.user) { // if there's a user logged in
+                response.session.flags.isLiked = true;  // this flag (will be) used to determine if a user has liked a video or not (true for liked, false for disliked, else undefined for neither)
+                
+                // check if user has previously disliked video by querying dislikes table with user id and video id
                 dbServer.query(`SELECT * FROM dislikes WHERE user_id LIKE ${request.session.user.user_id} AND disliked_videos=${vData.video_id};`,(error, results, fields) => {
                     if (error)
                         throw (error);
-                    if (results.length > 0) {
+                    if (results.length > 0) {   // if video is disliked, delete the entry from the table
                         console.log("Removing from dislikes...");
                         dbServer.query(`DELETE FROM dislikes WHERE disliked_videos=${request.session.video.video_id} AND user_id=${request.session.user.user_id};`)
                     }
                 });
+
+                // check if user has already liked video before
                 dbServer.query(`SELECT * FROM likes WHERE user_id LIKE ${request.session.user.user_id} AND liked_videos=${request.session.video.video_id};`, (error, results, fields) => {
                     if (error)
                         throw (error);
-                    if (results.length > 0) {
+                    if (results.length > 0) {   // do nothing if video already in likes table tied to the current user id
                         console.log(`${request.session.video.title} already liked by ${request.session.user.username}`);
                     }
-                    else {
+                    else {  // else insert the video id and user id into the likes table and update the like count of the video
                         console.log("Attempting to insert like...");
                         dbServer.query(`INSERT INTO likes (user_id, liked_videos) VALUES (${request.session.user.user_id}, ${vData.video_id});`);
                         dbServer.query(`UPDATE videos SET likes=likes+1 WHERE video_id=${request.session.video.video_id};`);
                     }
                 });
-                response.render('pages/player', {
+                response.render('pages/player', {   // render the video player with the video, its comments and send the flag to the client to render a 'liked' button
                     "user": request.session.user,
                     "vData": request.session.video,
                     "isLiked": response.session.flags.isLiked,
                     "comments": JSON.parse(request.body.comments)
                 });
             }
-            response.render('pages/player', { 
+            response.render('pages/player', { // render page without flag if there is no user (disallows likes unless there's a logged in user)
                 "user": request.session.user,
                 "vData": request.session.video,
                 "comments": JSON.parse(request.body.comments)
             });
         }
-        else if (typeof(request.body.disliked) !== "undefined" && request.body.disliked) {
-            if (typeof(request.session.user) !== "undefined" && request.session.user) {
-                response.session.flags.isLiked = false;
+        else if (typeof(request.body.disliked) !== "undefined" && request.body.disliked) {  // if disliked button is clicked
+            if (typeof(request.session.user) !== "undefined" && request.session.user) { // if there is a logged in user
+                response.session.flags.isLiked = false; // set isLiked session flag to false to indicate video is disliked
+                
+                // check if video has been liked by user (disallow both liking and disliking a video)
                 dbServer.query(`SELECT * FROM likes WHERE user_id LIKE ${request.session.user.user_id} AND liked_videos=${request.session.video.video_id};`,(error, results, fields) => {
                     if (error)
                         throw (error);
-                    if (results.length > 0) {
+                    if (results.length > 0) {   // delete from likes table if dislike exists, decrement like count of video
                         console.log("Removing from likes...");
                         dbServer.query(`DELETE FROM likes WHERE liked_videos=${request.session.video.video_id} AND user_id=${request.session.user.user_id};`)
                         dbServer.query(`UPDATE videos SET likes=likes-1 WHERE video_id=${request.session.video.video_id};`);
                     }
                 });
+
+                // check if video previously disliked by user
                 dbServer.query(`SELECT * FROM dislikes WHERE user_id=${request.session.user.user_id} AND disliked_videos=${request.session.video.video_id};`, (error, results, fields) => {
                     if (error)
                         throw (error);
-                    if (results.length > 0) {
+                    if (results.length > 0) {   // do nothing if video already disliked
                         console.log(`${request.session.video.title} already disliked by ${request.session.user.username}`);
                     }
-                    else {
+                    else {  // else insert video id and user id into disliked table
                         console.log("Attempting to insert dislike...");
                         dbServer.query(`INSERT INTO dislikes (user_id, disliked_videos) VALUES (${request.session.user.user_id}, ${request.session.video.video_id});`);
                     }
                 });
-                response.render('pages/player', {
+                response.render('pages/player', {   // render player page with username, video, its comments, and send isLiked flag
                     "user": request.session.user,
                     "vData": request.session.video,
                     "isLiked": response.session.flags.isLiked,
@@ -227,7 +235,7 @@ app.route('/player(.html)?')    // handles all requests to player.html
                 });
             }
             else {
-                response.render('pages/player', { 
+                response.render('pages/player', {   // render player page with username, video, and its comments
                     "user": request.session.user,
                     "vData": request.session.video,
                     // "isLiked": request.session.flags.isLiked,
@@ -235,11 +243,13 @@ app.route('/player(.html)?')    // handles all requests to player.html
                 });
             }
         }
-        else if (typeof(request.body.commented) !== "undefined" && request.body.commented) {
+        else if (typeof(request.body.commented) !== "undefined" && request.body.commented) {    // if a comment is submitted by user
             if (typeof(request.session.user) !== "undefined" && request.session.user) {
+                
+                // insert user id, video id, and new comment into comments table
                 dbServer.query(`INSERT INTO comments (user_id, video_id, comment) VALUES (${request.session.user.user_id}, ${video.video_id}, '${request.body.commented}');`);
             }
-            response.render('pages/player', { 
+            response.render('pages/player', {   // rerender player page with user info, video info, isLiked flag, and comments
                 "user": request.session.user,
                 "vData": request.body.video,
                 "isLiked": request.session.flags.isLiked,
@@ -247,7 +257,7 @@ app.route('/player(.html)?')    // handles all requests to player.html
             });
         }
         else { 
-            console.log("Failed?");
+            console.log("Failed?"); // error catch, in case some unforseen issue occurs, render player page as normal, with user, video, and comments info
             response.render('pages/player', { 
                 "user": request.session.user,
                 "vData": request.body.video,
@@ -256,17 +266,19 @@ app.route('/player(.html)?')    // handles all requests to player.html
         } 
     });
 
-app.route('/search(.html)?') 
-    .get((request, response) => {
-        console.log(`${request.method}\t${request.headers.origin}\t${request.url}`);
-        if (typeof(request.query.srch) !== "undefined" && request.query.srch) {
-            const searchQuery = "'%" + request.query.srch + "%'";
-            console.log("Search detected.")
+app.route('/search(.html)?')    // handles all requests to search.html from clients
+    .get((request, response) => {   // get requests handled in here
+        console.log(`${request.method}\t${request.headers.origin}\t${request.url}`);    // log request details
+        if (typeof(request.query.srch) !== "undefined" && request.query.srch) { // if a search was made for something
+            const searchQuery = "'%" + request.query.srch + "%'";   // regex % interpreted to mean 'any character before/after' depending on prefix/suffix location
+            // console.log("Search detected.")
+
+            // query database for any videos in the videos table that are similar to the search query
             dbServer.query(`SELECT * FROM videos WHERE title LIKE ${searchQuery};`, (error, results, fields) => {
                 if (error) 
                     throw (error);
-                console.log("Rendering player page with search results...");
-                response.render('pages/search', { 
+                // console.log("Rendering player page with search results...");
+                response.render('pages/search', {   // render page with results if no error occurs (will render nothing if no results are found, this is intended behavior)
                     results, 
                     "user": request.session.user
                 });
@@ -274,22 +286,22 @@ app.route('/search(.html)?')
         }
     });
 
-app.route('/upload(.html)?')
-    .get((request, response) => {
-        console.log(`${request.method}\t${request.headers.origin}\t${request.url}`);
-        response.sendFile(path.join(__dirname, 'views', 'upload.html'));
+app.route('/upload(.html)?')    // handles all requests to the upload.html page from client
+    .get((request, response) => {   // get requests handled here
+        console.log(`${request.method}\t${request.headers.origin}\t${request.url}`);    // log request details
+        response.sendFile(path.join(__dirname, 'views', 'upload.html'));    // send upload.html file (no extra data needed to be sent as session holds user data, if user is logged in)
     })
-    .post((request, response) => {
-        console.log(`${request.method}\t${request.headers.origin}\t${request.url}`);
-        if (typeof(request.session.user) !== "undefined" && request.session.user) {
-            const form = new formidable.IncomingForm();
-            form.parse(request, (err, fields, files) => {
-                if (err) {
+    .post((request, response) => {  // post requests handled here
+        console.log(`${request.method}\t${request.headers.origin}\t${request.url}`);    // log request details
+        if (typeof(request.session.user) !== "undefined" && request.session.user) { // if a user is logged in
+            const form = new formidable.IncomingForm(); // create a new form with formidable to hold file details incoming from an html form
+            form.parse(request, (err, fields, files) => {   // parse incoming file from html form for upload
+                if (err) {  // uses a next() callback on the error stack to loop through errors and returns if any are found (I think?)
                     next(err);
                     return;
                 }
 
-                const allowedVideoTypes = [
+                const allowedVideoTypes = [ // mimetypes of allowed video formats for upload
                     "video/mp4", 
                     "video/ogg",
                     "video/webm", 
@@ -298,28 +310,30 @@ app.route('/upload(.html)?')
                     "video/mpeg",
                     "video/quicktime"
                 ];
-                const allowedImageTypes = ["image/jpeg", "image/png"];
-                if (!allowedVideoTypes.includes(files.fileToUpload[0].mimetype)) {
+                const allowedImageTypes = ["image/jpeg", "image/png"];  // mimetypes of allowed image formats for upload (allows for unique thumbnail)
+                if (!allowedVideoTypes.includes(files.fileToUpload[0].mimetype)) {  // if mimetype of file is not in the allowed video types list, reject upload of files
                     response.end("Invalid Video File Type");
                     return;
                 }
-                if (!allowedImageTypes.includes(files.thumbnail[0].mimetype)) {
+                if (!allowedImageTypes.includes(files.thumbnail[0].mimetype)) { // if mimetype of file is not in allowed image types list, reject upload of files
                     response.end("Invalid Image File Type");
                     return;
                 }
         
-                var temp_paths = [
-                    files.fileToUpload[0].filepath,
-                    files.thumbnail[0].filepath
+                var temp_paths = [  // formidable saves to a temporary directory, automatically chosen when installed and determined by user's independent file strucutre and projecct location
+                    files.fileToUpload[0].filepath, // temp path to video file
+                    files.thumbnail[0].filepath     // temp path to image file
                 ];
                 
-                var new_paths = [
+                var new_paths = [   // final file path of video (this will be determined by the server machine file architecture and directory location)
                     'C:/Program Files/Ampps/www/video-player/public/videos/' + hashMake(`${request.session.user.user_id} ` + files.fileToUpload[0].originalFilename),
                     'C:/Program Files/Ampps/www/video-player/public/thumbnails/' + hashMake(`${request.session.user.user_id} ` + files.thumbnail[0].originalFilename)
                 ]; // THIS IS DEPENDENT ON SERVER/HOST MACHINE
 
+                // insert user id, video title, video desc, video release date (yyyy-MM-dd\T\HH:MM:ss formatted), relative file path to thumbnail,
+                // thumbnail mimetype (its file type), relative file path to video, video mime type into videos table of database
                 dbServer.query(`INSERT INTO videos (user_id, title, description, released, thumbnail, t_mimetype, url, v_mimetype) VALUES
-                    (${request.session.user.user_id}, 
+                    (${request.session.user.user_id},
                     '${fields.v_title?.[0]}', 
                     '${fields.v_description?.[0]}', 
                     '${format(new Date(), 'yyyy-MM-dd\'T\'HH:mm:ss')}',
@@ -327,78 +341,77 @@ app.route('/upload(.html)?')
                     '${files.thumbnail[0].mimetype}',
                     '${hashMake(`${request.session.user.user_id} ` + files.fileToUpload[0].originalFilename)}',
                     '${files.fileToUpload[0].mimetype}');`
-                , (error, results, fields) => {
+                , (error, results, fields) => { // catch any query errors (there are a lot of values, so there are a quite a few of unforseen possibilities here)
                     if (error) 
                         throw (error);
                 });
 
-                temp_paths.forEach((path, index) => {
-                    fs.copyFile(path, new_paths[index], (err) => {
-                        if (err) throw err;
+                temp_paths.forEach((path, index) => {   // forEach() is a built-in JS iterator that operates like 'for element in list' does in Python (potentially slower than a simple for loop and indexing, node's turning out to not be so great for speed)
+                    fs.copyFile(path, new_paths[index], (err) => {  // copy file from the temporary path to the new path
+                        if (err)    // catch any errors that occur when attempting to copy file to new location
+                            throw err;
                         response.write('File uploaded and moved!');
-                        response.end();
                     });
                 });
+                response.end(); // ends the server response to the client after all files are written
             });
         }
     });
 
-app.route('/login(.html)?')
-    .get((request, response) => {
-        console.log(`${request.method}\t${request.headers.origin}\t${request.url}`);
-        if (typeof(request.session.user) !== "undefined" && request.session.user) {
-            response.redirect(303, 'profile.html');
+app.route('/login(.html)?') // handles all requests to login.html
+    .get((request, response) => {   // get requests handled here
+        console.log(`${request.method}\t${request.headers.origin}\t${request.url}`);    // log request details
+        if (typeof(request.session.user) !== "undefined" && request.session.user) { // if a user is logged in
+            response.redirect(303, 'profile.html'); // redirect to profile.html with a 303 status code, which will make a GET request to the new page being redirected to
         }
         else {
-            response.sendFile(path.join(__dirname, 'views', 'login.html'));
+            response.sendFile(path.join(__dirname, 'views', 'login.html')); // else send the login.html page
         }
     })
-    .post((request, response) => {
-        console.log(`${request.method}\t${request.headers.origin}\t${request.url}`);
-        if (typeof(request.session.user) !== "undefined" && request.session.user) {
-            if (typeof(request.body.logout) !== "undefined" && request.body.logout) {
-                request.session.destroy();
-                response.render('pages/login', { 
-                    "usrMatch": true, 
-                    "pwdMatch": true 
-                });
+    .post((request, response) => {  // post requests handled here
+        console.log(`${request.method}\t${request.headers.origin}\t${request.url}`);    // log request details
+        if (typeof(request.session.user) !== "undefined" && request.session.user) { // if a user is logged in
+            if (typeof(request.body.logout) !== "undefined" && request.body.logout) {   // if the logout button was clicked
+                request.session.destroy();  // terminate the session
+                response.sendFile(path.join(__dirname, 'views', 'login.html')); // send the login page
             }
-            else if (typeof(request.body.save) !== "undefined" && request.body.save) {
-                // console.log("resuest.body.username: ", request.body.username);
-                if (typeof(request.body.username) !== "undefined" && request.body.username) {
-                    dbServer.query(`UPDATE accounts SET username='${request.body.username}' WHERE user_id=${request.session.user.user_id};`);
-                    request.session.user.username = request.body.username;
-                    response.redirect(303, 'profile.html');
+            else if (typeof(request.body.save) !== "undefined" && request.body.save) {  // if save changes button is clicked (only appears if an edit button is clicked)
+                if (typeof(request.body.username) !== "undefined" && request.body.username) {   //  if username has been changed
+                    dbServer.query(`UPDATE accounts SET username='${request.body.username}' WHERE user_id=${request.session.user.user_id};`);   // update username for logged in user in the accounts table
+                    request.session.user.username = request.body.username;  // update session user information with new username
+                    response.redirect(303, 'profile.html'); // redirect back to the profile page with 303 status code (makes a GET request)
                 }
-                else if (typeof(request.body.bio) !== "undefined" && request.body.bio) {
-                    dbServer.query(`UPDATE accounts SET bio='${request.body.bio}' WHERE user_id=${request.session.user.user_id};`);
-                    request.session.user.bio = request.body.bio;
+                else if (typeof(request.body.bio) !== "undefined" && request.body.bio) {    // if bio has been changed
+                    dbServer.query(`UPDATE accounts SET bio='${request.body.bio}' WHERE user_id=${request.session.user.user_id};`); // update bio for logged in user in accounts table
+                    request.session.user.bio = request.body.bio;    // update session user info with new bio
                 }
             }
-            response.redirect(303, 'profile.html');
+            response.redirect(303, 'profile.html'); // redirect back to profile.html with status code 303 (GET request)
         }
-        else if (typeof(request.body.create) !== "undefined" && request.body.create) {
-            response.redirect(303, 'registration.html');
+        else if (typeof(request.body.create) !== "undefined" && request.body.create) {  // if create account clicked on login page (not logged in)
+            response.redirect(303, 'registration.html');    // redirect to registration.html with status code 303
         }
-        else if (typeof(request.body.login) !== "undefined" && request.body.login) {
-            dbServer.query(`SELECT * FROM accounts WHERE username='${request.body.usr}';`, (error, users, fields) => {
+        else if (typeof(request.body.login) !== "undefined" && request.body.login) {    // if login button was clicked (not logged in)
+
+            // query database for matching username in accounts table
+            dbServer.query(`SELECT * FROM accounts WHERE username='${request.body.usr}';`, (error, users, fields) => { 
                 if (error) 
                     throw (error);
-                if (users.length > 0) {
-                    if (hashCheck(request.body.pwd, users[0].password)) {
-                        request.session.user = users[0];
-                        request.session.user.DoB = format(request.session.user.DoB, 'yyyy-MM-dd');
-                        response.redirect(303, 'index.html');
+                if (users.length > 0) { // if username is found in database
+                    if (hashCheck(request.body.pwd, users[0].password)) {   // if hashed version of entered password matches hashed password in database
+                        request.session.user = users[0];    // set session user info to first row of the query (should be only row, need to add some logic to prevent creation of users with identical usernames)
+                        request.session.user.DoB = format(request.session.user.DoB, 'yyyy-MM-dd');  // re-format datetime to just date (this format is used for display of date of birth on profile page)
+                        response.redirect(303, 'index.html');   // redirect to index page w/ status code 303
                     } 
                     else {
-                        response.render('pages/login', { 
+                        response.render('pages/login', {    // else password was not a match, send user matched, password failed to render of login page
                             "usrMatch": true, 
                             "pwdMatch": false 
                         });
                     }
                 } 
                 else {
-                    response.render('pages/login', { 
+                    response.render('pages/login', {    // else username was not found, send user not matched, password failed to render of login page
                         "usrMatch": false, 
                         "pwdMatch": false 
                     });
@@ -407,35 +420,41 @@ app.route('/login(.html)?')
         }
     });
 
-app.route('/registration(.html)?')
-    .get((request, response) => {
-        console.log(`${request.method}\t${request.headers.origin}\t${request.url}`);
-        response.sendFile(path.join(__dirname, 'views', 'registration.html'));
+app.route('/registration(.html)?')  // handles all requests to registration.html
+    .get((request, response) => {   // get requests handled here
+        console.log(`${request.method}\t${request.headers.origin}\t${request.url}`);    // log request details
+        response.sendFile(path.join(__dirname, 'views', 'registration.html'));  // send registration.html to client
     })
-    .post((request, response) => {
-        console.log(`${request.method}\t${request.headers.origin}\t${request.url}`);
+    .post((request, response) => {  // post requests handled here
+        console.log(`${request.method}\t${request.headers.origin}\t${request.url}`);    // log request details
+
+        // check that count of usernames that match entered username for account creation is zero
         dbServer.query(`SELECT COUNT(*) AS count FROM accounts WHERE username='${request.body.username}';`, (error, results, fields) => {
             if (error) 
                 throw (error);
-            if (results[0].count === 0) {
+            if (results[0].count === 0) {   // if username not in accounts table
+
+                // insert new account information into accounts table
                 dbServer.query(`INSERT INTO accounts (email, username, password, DoB) VALUES ('${request.body.email}', '${request.body.username}', '${hashMake(request.body.password)}', '${request.body.dob}');`, (error, results, fields) => {
                     if (error)
                         throw (error);
-                    response.redirect(303, 'index.html');
+                    response.redirect(303, 'index.html');   // redirect to index page with status code 303
                 });
             }
         });
     });
 
-app.route('/liked(.html)?')
-    .get((request, response) => {
-        console.log(`${request.method}\t${request.headers.origin}\t${request.url}`);
-        if (typeof(request.session.user) !== "undefined" && request.session.user) {
+app.route('/liked(.html)?') // handles all requests to liked.html
+    .get((request, response) => {   // get requests handled here
+        console.log(`${request.method}\t${request.headers.origin}\t${request.url}`);    // log request details
+        if (typeof(request.session.user) !== "undefined" && request.session.user) { // if a user is logged in
+
+            // get videos liked by user (thanks to relational tables, can join likes table and videos table on user id and pull liked videos based on the user id that liked them)
             dbServer.query(`SELECT * FROM likes l JOIN videos v ON v.video_id=l.liked_videos WHERE l.user_id=${request.session.user.user_id};`, (error, results, fields) => {
                 if (error)
                     throw (error);
-                if (results.length > 0) {
-                    response.render('pages/liked', {  
+                if (results.length > 0) {   // if there are liked videos by the user
+                    response.render('pages/liked', {    // render liked page with their liked videos
                         "user": request.session.user,
                         results
                     });
@@ -443,37 +462,37 @@ app.route('/liked(.html)?')
             });
         }
     });
-    // .post((request, response) => {
+    // .post((request, response) => {   // post requests handled here (if there ever end up being any made, anyway, otherwise this will be deleted)
 
     // });
 
-app.route('/profile(.html)?')
-    .get((request, response) => {
-        console.log(`${request.method}\t${request.headers.origin}\t${request.url}`);
-        console.log('Request received for profle page.');
-        response.render('pages/profile', {
+app.route('/profile(.html)?')   // handles all requests to profile.html
+    .get((request, response) => {   // get requests handled in here
+        console.log(`${request.method}\t${request.headers.origin}\t${request.url}`);    // log request details
+        // console.log('Request received for profle page.');
+        response.render('pages/profile', {  // render profile page with user data
             "user": request.session.user
         });
     });
 
-app.all('*', (request, response) => {
-    console.log(`${request.method}\t${request.headers.origin}\t${request.url}`);
-    response.status(404);
-    if (request.accepts('html')) {
-        response.sendFile(path.join(__dirname, 'views', '404.html'));
-    } else if (request.accepts('json')) {
-        response.json({ error: "404 Not Found" });
+app.all('*', (request, response) => {   // if requests to anything not in the directory is made
+    console.log(`${request.method}\t${request.headers.origin}\t${request.url}`);    // log request details
+    response.status(404);   // respond with 404 status code
+    if (request.accepts('html')) {  // if request is for an html file
+        response.sendFile(path.join(__dirname, 'views', '404.html'));   // send our (patented, copyrighted, licensed, etc. all the big corporate words) generic 404.html
+    } else if (request.accepts('json')) {   // if request is for json data
+        response.json({ error: "404 Not Found" });  // respond with josn object indicating a 404 error
     } else {
-        response.type('txt').send("404 Not Found");
+        response.type('txt').send("404 Not Found"); // respond with a txt file (if all else fails, be damned) indicating a 404
     }
 });
 
-app.use(errorHandler);
+app.use(errorHandler);  // use error handler at end of routes to catch and log any errors in logs/errorLog.txt (ignored by git, each one of us will have our own)
 
-try {
+try {   // attempt to listen on ports 8080 (HTTP) and 8443 (HTTPS) (comment out HTTPS if you're having issues with the key/cert pairing during testing, but we will need this to work before we go live)
     app.listen(PORTS[0], () => console.log(`Server running on port ${PORTS[0]}`));
     // server.listen(PORTS[1], () => {console.log(`Server is listening on https://localhost:${PORTS[1]}`)});
 }
-catch (error) {
+catch (error) { // log any server listening errors (e.g. the ports the server is suppose to be listening on are already being used by sonething else)
     console.log(error);
 }
