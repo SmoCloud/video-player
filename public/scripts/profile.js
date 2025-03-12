@@ -63,8 +63,8 @@ async function saveChanges(field) {
         data = { "bio": newValue, "save": true };
     }
     console.log(data);
-    await fetch('http://localhost:8080/login.html?', {
-        method: 'POST',
+    await fetch('http://localhost:8080/profile.html?', {
+        method: 'PUT',
         headers: {
             'Content-Type': 'application/json'
         },
