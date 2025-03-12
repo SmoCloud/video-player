@@ -43,7 +43,7 @@
     <img src="<%= (profilePic && profilePic !== '') ? profilePic : '../public/imgs/default_avatar.png' %>" 
      style="width: 150px; height: 150px; border-radius: 50%; border: 2px solid white; object-fit: cover;"> 
 
-    <form action="/upload-profile-pic" method="post" enctype="multipart/form-data">
+    <form action="/upload-profile-pic" method="put" enctype="multipart/form-data">
         <input type="file" name="profilePic" id="profilePicInput" style="display: none;" onchange="this.form.submit()">
         <button class="profilePic-button" type="button" onclick="document.getElementById('profilePicInput').click()">
           Edit Profile Picture
