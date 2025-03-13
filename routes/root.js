@@ -1,7 +1,9 @@
-const express = require('express');
-const session = require('express-session'); // Add-on for express that creates a session attached to client requests
-const router = express.Router();
-const path = require('path');
+import { Router } from 'express';
+import session from 'express-session'; // Add-on for express that creates a session attached to client requests
+const router = Router();
+import { join } from 'path';
+import { dirname } from "node:path";    // gives the root directory of the project
+const __dirname = dirname(process.argv[1]);
 
 // This file handles requests made to the server that do not involve any database queries
 // Those requests are handled by the profiles.js file inside of the /api directory
@@ -26,7 +28,7 @@ multiple types of requests.
 
 router.get('/upload(.html)?', (request, response) => {    // handles get requests to the upload.html page from client
     console.log(`${request.method}\t${request.headers.origin}\t${request.url}`);    // log request details
-    response.sendFile(path.join(__dirname, '..', 'views', 'upload.html'));    // send upload.html file (no extra data needed to be sent as session holds user data, if user is logged in)
+    response.sendFile(join(__dirname, '..', 'views', 'upload.html'));    // send upload.html file (no extra data needed to be sent as session holds user data, if user is logged in)
 });
 
 router.get('/login(.html)?', (request, response) => { // handles get requests to login.html
@@ -35,13 +37,13 @@ router.get('/login(.html)?', (request, response) => { // handles get requests to
         response.redirect(303, 'profile.html'); // redirect to profile.html with a 303 status code, which will make a GET request to the new page being redirected to
     }
     else {
-        response.sendFile(path.join(__dirname, '..', 'views', 'login.html')); // else send the login.html page
+        response.sendFile(join(__dirname, 'views', 'login.html')); // else send the login.html page
     }
 });
 
 router.get('/registration(.html)?', (request, response) => {  // handles get requests to registration.html
     console.log(`${request.method}\t${request.headers.origin}\t${request.url}`);    // log request details
-    response.sendFile(path.join(__dirname, '..', 'views', 'registration.html'));  // send registration.html to client
+    response.sendFile(join(__dirname, 'views', 'registration.html'));  // send registration.html to client
 });
 
 router.route('/profile(.html)?')
@@ -55,10 +57,10 @@ router.route('/profile(.html)?')
     if (typeof(request.session.user) !== "undefined" && request.session.user) { // if a user is logged in
         if (typeof(request.body.logout) !== "undefined" && request.body.logout) {   // if the logout button was clicked
             request.session.destroy();  // terminate the session
-            response.sendFile(path.join(__dirname, '..', 'views', 'login.html')); // send the login page
+            response.sendFile(join(__dirname, 'views', 'login.html')); // send the login page
         }
     }
     return;
 });
 
-module.exports = router;
+export { router };

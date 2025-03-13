@@ -1,13 +1,15 @@
-const fs = require('fs');           // allows for asynchronous reading of filesconst express = require('express')
-const https = require('https');     // allows for connection using https instead of http
-const express = require('express'); // Express framework for creating a web server
-const session = require('express-session'); // Add-on for express that creates a session attached to client requests
+import { readFileSync } from 'fs';           // allows for asynchronous reading of filesconst express = require('express')
+import { createServer } from 'https';     // allows for connection using https instead of http
+import express from 'express'; // Express framework for creating a web server
+import session from 'express-session'; // Add-on for express that creates a session attached to client requests
 const app = express();              // Declare express instance
-const path = require('path');       // path module deals with directory handling, has built-in variables for the root directory
-const cors = require('cors');       // Cross-Origin Resource Sharing allows for different browsers to make requests for the web server
-const { randomUUID } = require('crypto');   // Import ability to generate a random id for the session
-const { logger } = require('./middleware/logger');  // custom middleware creates a requestLog to log requests to the server
-const errorHandler = require('./middleware/errorHandler');  // custom middleware creates a errorLog to log server errors
+import { join } from 'path';       // path module deals with directory handling, has built-in variables for the root directory
+import { dirname } from "node:path";    // gives the root directory of the project
+const __dirname = dirname(process.argv[1]);
+import cors from 'cors';       // Cross-Origin Resource Sharing allows for different browsers to make requests for the web server
+import { randomUUID } from 'crypto';   // Import ability to generate a random id for the session
+import { logger } from './middleware/logger.js';  // custom middleware creates a requestLog to log requests to the server
+import errorHandler from './middleware/errorHandler.js';  // custom middleware creates a errorLog to log server errors
 
 const PORTS = [     // Ports that the server listens for requests on
     process.env.PORT || 8080,   // HTTP requests port
@@ -53,19 +55,22 @@ app.use(session({   // session settings found in the expressjs.com docs
     },
 }));
 
-app.use('/', express.static(path.join(__dirname, '/public')));   // Tells express to start its search in the public folder for any files requested by the client
-app.use('/', require('./routes/root'));
-app.use('/', require('./routes/api/profiles'));
+import { router as rootRouter} from './routes/root.js';
+import { router as apiRouter} from './routes/api/profiles.js';
+
+app.use('/', express.static(join(__dirname, '/public')));   // Tells express to start its search in the public folder for any files requested by the client
+app.use('/', rootRouter);
+app.use('/', apiRouter);
 
 
 var server = null;  // tries to read for a key and certificate for https, if not found, error is logged and execution continues using http connection
 try {
     const keys = {
-        key: fs.readFileSync('./cert/local.decrypted.key'),
-        cert: fs.readFileSync('./cert/local.crt')
+        key: readFileSync('./cert/local.decrypted.key'),
+        cert: readFileSync('./cert/local.crt')
     };
     
-    server = https.createServer(keys, app);
+    server = createServer(keys, app);
 } 
 catch (error) {
     console.log(error);
@@ -75,7 +80,7 @@ app.all('*', (request, response) => {   // if requests to anything not in the di
     console.log(`${request.method}\t${request.headers.origin}\t${request.url}`);    // log request details
     response.status(404);   // respond with 404 status code
     if (request.accepts('html')) {  // if request is for an html file
-        response.sendFile(path.join(__dirname, 'views', '404.html'));   // send our (patented, copyrighted, licensed, etc. all the big corporate words) generic 404.html
+        response.sendFile(join(__dirname, 'views', '404.html'));   // send our (patented, copyrighted, licensed, etc. all the big corporate words) generic 404.html
     } else if (request.accepts('json')) {   // if request is for json data
         response.json({ error: "404 Not Found" });  // respond with josn object indicating a 404 error
     } else {

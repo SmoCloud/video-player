@@ -1,7 +1,7 @@
-const crypto = require("crypto");
+import { createHash } from "crypto";
 
 function hashMake(pa) {
-    const hash = crypto.createHash("sha256");
+    const hash = createHash("sha256");
     hash.update(pa, "utf-8");
     var en_pa = hash.digest("hex");
     return en_pa;
@@ -16,4 +16,4 @@ function hashCheck(p1, p2) {
     }
 }
 
-module.exports = {hashMake, hashCheck};
+export { hashMake, hashCheck };

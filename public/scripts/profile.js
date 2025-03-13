@@ -1,24 +1,46 @@
+import ('./hasher.mjs');
+
 function showPasswordModal() {
     document.getElementById("passwordModal").style.display = "block";
 }
 
 function closePasswordModal() {
     document.getElementById("passwordModal").style.display = "none";
+    if (typeof(document.getElementById('badPass')) !== "undefined" && document.getElementById('badPass').value !== "false") {
+        console.log(document.getElementById('badPass').value);
+        alert("Old password and existing passord do not match.");
+        return;
+    }
 }
 
-function updatePassword() {
+async function updatePassword() {
+    const hashedPassword = document.getElementById('hashedPassword').value;
     const oldPassword = document.getElementById("oldPassword").value;
     const newPassword = document.getElementById("newPassword").value;
     const confirmPassword = document.getElementById("confirmPassword").value;
 
     if (newPassword !== confirmPassword) {
-    alert("New password and confirm password do not match.");
-    return;
+        alert("New password and confirm password do not match.");
+        return;
     }
 
-    console.log("Old Password:", oldPassword);
-    console.log("New Password:", newPassword);
-    alert("Password updated successfully!");
+    if (!hashCheck(oldPassword, hashedPassword)) {
+        alert("Old password and existing password do not match.");
+        return;
+    }
+
+    var data = {"oldPassword": oldPassword, "newPassword": newPassword, "save": true};
+    // console.log(data);
+    await fetch('http://localhost:8080/profile.html?', {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+    })
+    .then(response => response)
+    .then(data => console.log('Success:', data))
+    .catch(error => console.log('Error:', error));
 
     closePasswordModal();
 }
@@ -73,7 +95,6 @@ async function saveChanges(field) {
     .then(response => response)
     .then(data => console.log('Success:', data))
     .catch(error => console.log('Error:', error));
-    console.log(`${field} updated:`, newValue);
     alert(`${field.charAt(0).toUpperCase() + field.slice(1)} updated successfully!`);
     inputField.setAttribute("readonly", "true");
 }
@@ -107,4 +128,8 @@ document.addEventListener("click", function (event) {
         bioInput.setAttribute("readonly", "true");
         document.getElementById("bio-edit-btn").textContent = "Edit";
     }
+});
+
+document.getElementById('badPass').addEventListener("change", (event) => {
+    alert('Old password does not match existing password.');
 });

@@ -1,17 +1,19 @@
-const fs = require('fs');           // allows for asynchronous reading of filesconst express = require('express')
-const express = require('express');
-const session = require('express-session'); // Add-on for express that creates a session attached to client requests
-const formidable = require('formidable');   // Formidable parses html forms
-const router = express.Router();
-const mysql = require('mysql2');    // Module allows for connection to a sql database
-const path = require('path');
+import { copyFile } from 'fs';           // allows for asynchronous reading of files
+import { Router } from 'express';
+import session from 'express-session'; // Add-on for express that creates a session attached to client requests
+import { IncomingForm } from 'formidable';   // Formidable parses html forms
+const router = Router();
+import { createConnection } from 'mysql2';    // Module allows for connection to a sql database
+import { join } from 'path';
+import { dirname } from "node:path";    // gives the root directory of the project
+const __dirname = dirname(process.argv[1]);
 
 // required middleware
-const { format } = require('date-fns'); // Functions that deal with datetime
-const { hashMake, hashCheck } = require('../../public/scripts/hasher'); // custom middleware creates a hash and checks a hash against another hash for a match (used for password validation)
+import { format } from 'date-fns'; // Functions that deal with datetime
+import { hashMake, hashCheck } from '../../public/scripts/hasher.mjs'; // custom middleware creates a hash and checks a hash against another hash for a match (used for password validation)
 
 // create connection to the mysql db
-const dbServer = mysql.createConnection({   // Create the connection to the sql database
+const dbServer = createConnection({   // Create the connection to the sql database
     host: 'localhost',       // Database host (use your DB host if not localhost)
     user: 'guest',            // Your database username
     password: '',    // Your database password
@@ -115,7 +117,7 @@ router.route('/player(.html)?')    // handles all requests to player.html
         });
     }
     else {
-        response.sendFile(path.join(__dirname, 'views', 'player.html'));    // else send the player.html file itself
+        response.sendFile(join(__dirname, 'views', 'player.html'));    // else send the player.html file itself
     }
 })
 .post((request, response) => {  // post requests made to player.html handled here
@@ -230,7 +232,7 @@ router.route('/player(.html)?')    // handles all requests to player.html
 router.post('/upload(.html)?', (request, response) => {     // handles post requests to the upload.html page from client
     console.log(`${request.method}\t${request.headers.origin}\t${request.url}`);    // log request details
     if (typeof(request.session.user) !== "undefined" && request.session.user) { // if a user is logged in
-        const form = new formidable.IncomingForm();         // create a new form with formidable to hold file details incoming from an html form
+        const form = new IncomingForm();         // create a new form with formidable to hold file details incoming from an html form
         form.parse(request, (err, fields, files) => {       // parse incoming file from html form for upload
             if (err) {      // uses a next() callback on the error stack to loop through errors and returns if any are found (I think?)
                 next(err);
@@ -283,7 +285,7 @@ router.post('/upload(.html)?', (request, response) => {     // handles post requ
             });
 
             temp_paths.forEach((path, index) => {   // forEach() is a built-in JS iterator that operates like 'for element in list' does in Python (potentially slower than a simple for loop and indexing, node's turning out to not be so great for speed)
-                fs.copyFile(path, new_paths[index], (err) => {  // copy file from the temporary path to the new path
+                copyFile(path, new_paths[index], (err) => {  // copy file from the temporary path to the new path
                     if (err)    // catch any errors that occur when attempting to copy file to new location
                         throw err;
                     response.write('File uploaded and moved!');
@@ -307,12 +309,14 @@ router.route('/login(.html)?')
                     request.session.user = users[0];    // set session user info to first row of the query (should be only row, need to add some logic to prevent creation of users with identical usernames)
                     request.session.user.DoB = format(request.session.user.DoB, 'yyyy-MM-dd');  // re-format datetime to just date (this format is used for display of date of birth on profile page)
                     response.redirect(303, 'index.html');   // redirect to index page w/ status code 303
+                    return;
                 } 
                 else {
                     response.render('pages/login', {    // else password was not a match, send user matched, password failed to render of login page
                         "usrMatch": true, 
                         "pwdMatch": false 
                     });
+                    return;
                 }
             } 
             else {
@@ -320,13 +324,18 @@ router.route('/login(.html)?')
                     "usrMatch": false, 
                     "pwdMatch": false 
                 });
+                return;
             }
         });
     }
     else if (typeof(request.body.create) !== "undefined" && request.body.create) {  // if create account clicked on login page (not logged in)
         response.redirect(303, 'registration.html');    // redirect to registration.html with status code 303
+        return;
     }
-    response.sendFile(path.join(__dirname, '..', '..', 'views', 'login.html'));
+    else {
+        response.sendFile(join(__dirname, 'views', 'login.html'));
+        return;
+    }
 });
 
 router.post(('/registration(.html)?'), (request, response) => {  // post requests handled here
@@ -343,6 +352,7 @@ router.post(('/registration(.html)?'), (request, response) => {  // post request
                 if (error)
                     throw (error);
                 response.redirect(303, 'index.html');   // redirect to index page with status code 303
+                return;
             });
         }
     });
@@ -382,7 +392,7 @@ router.put('/profile(.html)?',  (request, response) => {
     if (typeof(request.session.user) !== "undefined" && request.session.user) { // if a user is logged in
         if (typeof(request.body.logout) !== "undefined" && request.body.logout) {   // if the logout button was clicked
             request.session.destroy();  // terminate the session
-            response.sendFile(path.join(__dirname, '..', '..', 'views', 'login.html')); // send the login page
+            response.sendFile(join(__dirname, 'views', 'login.html')); // send the login page
             return;
         }
         else if (typeof(request.body.save) !== "undefined" && request.body.save) {  // if save changes button is clicked (only routerears if an edit button is clicked)
@@ -394,10 +404,26 @@ router.put('/profile(.html)?',  (request, response) => {
                 dbServer.query(`UPDATE accounts SET bio='${request.body.bio}' WHERE user_id=${request.session.user.user_id};`); // update bio for logged in user in accounts table
                 request.session.user.bio = request.body.bio;    // update session user info with new bio
             }
+            else if (typeof(request.body.oldPassword) !== "undefined" && request.body.oldPassword) {
+                console.log(`PUT request made to change password to: ${hashMake(request.body.newPassword)}.`);
+                if (!hashCheck(request.body.oldPassword, request.session.user.password)) {
+                    console.log("Error: Incorrect old password.");
+                    response.render('pages/profile', {
+                        "user": request.session.user,
+                        "badPass": true
+                    });
+                    return;
+                }
+                else {
+                    // dbServer.query(`UPDATE accounts SET password='${hashMake(request.body.newPassword)}' WHERE user_id=${request.session.user.user_id};`);
+                    request.session.user.password = hashMake(request.body.newPassword);
+                    console.log("Password updated successfully!");
+                }
+            }
         }
         response.redirect(303, 'profile.html'); // redirect back to profile.html with status code 303 (GET request)
         return;
     }
 });
 
-module.exports = router;
+export { router };

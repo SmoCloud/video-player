@@ -7,7 +7,6 @@
   <link href="https://vjs.zencdn.net/8.16.1/video-js.css" rel="stylesheet" />
   <script type="text/javascript" src="https://vjs.zencdn.net/8.16.1/video.min.js"></script>
   <link rel="stylesheet" href="css/styles.css" type="text/css"/>
-   
   <script type="text/javascript" src="scripts/profile.js"></script>
 </head>
 <body>
@@ -91,6 +90,7 @@
     <div class="modal-content">
       <span class="close" onclick="closePasswordModal()">&times;</span>
       <h2>Change Password</h2>
+      <input type="hidden" id="hashedPassword" value="<%= user.password %>">
       <label for="oldPassword">Old Password:</label>
       <input type="password" id="oldPassword" placeholder="Enter old password" required /><br><br>
       <label for="newPassword">New Password:</label>
