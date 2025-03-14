@@ -43,27 +43,19 @@ router.get('^/$|/index(.html)?', (request, response) => {     // handles all get
     dbServer.query(`SELECT video_id, v.user_id, username, title, thumbnail, t_mimetype, url, v_mimetype FROM videos v LEFT JOIN accounts a ON v.user_id=a.user_id ORDER BY released LIMIT 10;`, (error, results, fields) => {
         if (error)
             throw (error);
-        if (results.length > 0) {   // if there are any videos in the database
-            if (typeof(request.session.user) !== "undefined" && request.session.user) { // if a user is logged in
-                response.render('pages/index', {    // render the page with the videos and the username of the logged in user
-                    "user": request.session.user,
-                    results
-                });
-            }
-            else {  
-                response.render('pages/index', {    // else render page with videos and an empty username
-                    "user": [{}], 
-                    results 
-                });
-            }
-        }
+        response.render('pages/index', {    // render the page with the videos and the username of the logged in user
+            "user": request.session.user,
+            results
+        });
     });
 }); // no post requests currently being made to index page
 
-router.get('/search(.html)?', (request, response) => {    // handles all requests to search.html from clients
+router.get('^/$|/search?', (request, response) => {    // handles all requests to search.html from clients
     console.log(`${request.method}\t${request.headers.origin}\t${request.url}`);    // log request details
-    if (typeof(request.query.srch) !== "undefined" && request.query.srch) { // if a search was made for something
-        const searchQuery = "'%" + request.query.srch + "%'";   // regex % interpreted to mean 'any character before/after' depending on prefix/suffix location
+    console.log(request.query.search);
+    if (typeof(request.query.search) !== "undefined" && request.query.search) { // if a search was made for something
+        console.log(request.params.search);
+        const searchQuery = "'%" + request.params.search + "%'";   // regex % interpreted to mean 'any character before/after' depending on prefix/suffix location
         // console.log("Search detected.")
 
         // query database for any videos in the videos table that are similar to the search query
@@ -71,10 +63,10 @@ router.get('/search(.html)?', (request, response) => {    // handles all request
             if (error) 
                 throw (error);
             // console.log("Rendering player page with search results...");
-            response.render('pages/search', {   // render page with results if no error occurs (will render nothing if no results are found, this is intended behavior)
-                results, 
-                "user": request.session.user
-            });
+            response.render('pages/search', {    // render the page with the videos and the username of the logged in user
+                "user": request.session.user,
+                results
+            }); 
         });
     }
 });
