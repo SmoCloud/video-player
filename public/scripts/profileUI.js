@@ -1,5 +1,3 @@
-import hashCheck from './hasher.js';
-
 function showPasswordModal() {
     document.getElementById("passwordModal").style.display = "block";
 }
@@ -13,19 +11,12 @@ function closePasswordModal() {
     }
 }
 
-async function updatePassword() {
-    const hashedPassword = document.getElementById('hashedPassword').value;
-    const oldPassword = document.getElementById("oldPassword").value;
+async function updatePassword(oldPassword) {
     const newPassword = document.getElementById("newPassword").value;
     const confirmPassword = document.getElementById("confirmPassword").value;
 
     if (newPassword !== confirmPassword) {
         alert("New password and confirm password do not match.");
-        return;
-    }
-
-    if (!hashCheck(oldPassword, hashedPassword)) {
-        alert("Old password and existing password do not match.");
         return;
     }
 
@@ -42,7 +33,7 @@ async function updatePassword() {
     .then(data => console.log('Success:', data))
     .catch(error => console.log('Error:', error));
 
-    closePasswordModal();
+    this.closePasswordModal();
 }
 
 function logout() {
@@ -121,16 +112,3 @@ function updateButton(event) {
         document.getElementById("bio-edit-btn").textContent = "Edit";
     }
 }
-
-
-
-export default profileUI = {
-    showPasswordModal,
-    closePasswordModal,
-    updatePassword, 
-    logout, 
-    toggleEditable,
-    saveChanges,
-    saveEvent,
-    updateButton
-};

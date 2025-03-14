@@ -7,7 +7,28 @@
   <link href="https://vjs.zencdn.net/8.16.1/video-js.css" rel="stylesheet" />
   <script type="text/javascript" src="https://vjs.zencdn.net/8.16.1/video.min.js"></script>
   <link rel="stylesheet" href="css/styles.css" type="text/css"/>
-  <script type="text/javascript" src="scripts/profile.js"></script>
+  <script type="module" src="scripts/profileUI.js">
+    import hashCheck from './hasher.js';
+
+    document.getElementById("username-input").addEventListener("keypress", saveEvent);
+    
+    document.getElementById("bio-input").addEventListener("keypress", saveEvent);
+
+    document.getElementById('username-edit-btn').addEventListener("click", toggleEditable('username'));
+  
+    document.getElementById("bio-edit-btn").addEventListener("click", toggleEditable('bio'));
+    
+    document.getElementById('close-btn').addEventListener("click", closePasswordModal());
+    
+    document.getElementById('save-password').addEventListener("click", () => {
+      if (!hashCheck(oldPassword, hashedPassword)) {
+        alert("Old password and existing password do not match.");
+        return;
+      }
+      showPasswordModal();
+    });
+
+  </script>
 </head>
 <body>
   <header>
@@ -55,7 +76,7 @@
         <div class="input-header">Username</div>
         <input type="text" id="username-input" value="<%= user.username %>" readonly />
         <div class="button-container">
-          <button id="username-edit-btn" onclick="profileUI.toggleEditable('username')">Edit</button>
+          <button id="username-edit-btn" onclick="toggleEditable('username')">Edit</button>
         </div>
       </div>
 
@@ -64,7 +85,7 @@
         <div class="input-header">Password</div>
         <input type="password" id="password-input" value="*****" readonly />
         <div class="button-container">
-          <button id="password-edit-btn" onclick="profileUI.showPasswordModal()">Change Password</button>
+          <button id="password-edit-btn" onclick="showPasswordModal()">Change Password</button>
         </div>
       </div>
 
@@ -73,7 +94,7 @@
         <div class="input-header">Bio</div>
         <textarea id="bio-input" readonly><%= user.bio %></textarea>
         <div class="button-container edit-button">
-          <button id="bio-edit-btn" onclick="profileUI.toggleEditable('bio')">Edit</button>
+          <button id="bio-edit-btn">Edit</button>
         </div>
       </div>
 
@@ -88,7 +109,7 @@
   <!-- Password Change Modal -->
   <div id="passwordModal" class="modal">
     <div class="modal-content">
-      <span class="close" onclick="closePasswordModal()">&times;</span>
+      <span class="close" id="close-btn" onclick="closePasswordModal()">&times;</span>
       <h2>Change Password</h2>
       <input type="hidden" id="hashedPassword" value="<%= user.password %>">
       <label for="oldPassword">Old Password:</label>
@@ -97,7 +118,7 @@
       <input type="password" id="newPassword" placeholder="Enter new password" required /><br><br>
       <label for="confirmPassword">Confirm Password:</label>
       <input type="password" id="confirmPassword" placeholder="Confirm new password" required /><br><br>
-      <button type="button" onclick="updatePassword()">Save Changes</button>
+      <button type="button" id="save-password">Save Changes</button>
     </div>
   </div>
 </body>
