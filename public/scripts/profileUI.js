@@ -1,4 +1,4 @@
-import ('./hasher.mjs');
+import hashCheck from './hasher.js';
 
 function showPasswordModal() {
     document.getElementById("passwordModal").style.display = "block";
@@ -99,23 +99,15 @@ async function saveChanges(field) {
     inputField.setAttribute("readonly", "true");
 }
 
-document.getElementById("username-input").addEventListener("keypress", function (event) {
+function saveEvent(event) {
     if (event.key === "Enter") {
         event.preventDefault();
         saveChanges("username");
         document.getElementById("username-edit-btn").textContent = "Edit";
     }
-});
+}
 
-document.getElementById("bio-input").addEventListener("keypress", function (event) {
-    if (event.key === "Enter") {
-        event.preventDefault();
-        saveChanges("bio");
-        document.getElementById("bio-edit-btn").textContent = "Edit";
-    }
-});
-
-document.addEventListener("click", function (event) {
+function updateButton(event) {
     const usernameInput = document.getElementById("username-input");
     const bioInput = document.getElementById("bio-input");
 
@@ -128,8 +120,17 @@ document.addEventListener("click", function (event) {
         bioInput.setAttribute("readonly", "true");
         document.getElementById("bio-edit-btn").textContent = "Edit";
     }
-});
+}
 
-document.getElementById('badPass').addEventListener("change", (event) => {
-    alert('Old password does not match existing password.');
-});
+
+
+export default profileUI = {
+    showPasswordModal,
+    closePasswordModal,
+    updatePassword, 
+    logout, 
+    toggleEditable,
+    saveChanges,
+    saveEvent,
+    updateButton
+};

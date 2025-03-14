@@ -10,7 +10,7 @@ const __dirname = dirname(process.argv[1]);
 
 // required middleware
 import { format } from 'date-fns'; // Functions that deal with datetime
-import { hashMake, hashCheck } from '../../public/scripts/hasher.mjs'; // custom middleware creates a hash and checks a hash against another hash for a match (used for password validation)
+import hashCheck, { hashMake } from '../../public/scripts/hasher.js'; // custom middleware creates a hash and checks a hash against another hash for a match (used for password validation)
 
 // create connection to the mysql db
 const dbServer = createConnection({   // Create the connection to the sql database

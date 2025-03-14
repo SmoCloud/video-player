@@ -7,9 +7,9 @@ const loginBtn = document.getElementById("login-btn");
 // function is called when login button is clicked
 loginBtn.onclick = function() {
     username = document.getElementById("usr").value;    // get entered username
-    console.log(username);  // log username to console for testing
+    // console.log(username);  // log username to console for testing
     password = document.getElementById("pwd").value;    // get entered password
-    console.log(password);  // log password to console for testing
+    // console.log(password);  // log password to console for testing
 
     // while username field is empty
     if(username === ""|| username === null) {
