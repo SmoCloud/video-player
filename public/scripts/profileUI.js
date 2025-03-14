@@ -1,27 +1,13 @@
-function showPasswordModal() {
+document.getElementById("password-edit-btn").addEventListener("click", () => {
     document.getElementById("passwordModal").style.display = "block";
-}
+});
 
-function closePasswordModal() {
-    document.getElementById("passwordModal").style.display = "none";
-    if (typeof(document.getElementById('badPass')) !== "undefined" && document.getElementById('badPass').value !== "false") {
-        console.log(document.getElementById('badPass').value);
-        alert("Old password and existing passord do not match.");
-        return;
-    }
-}
+document.getElementById("password-update-btn").addEventListener("click", () => {
+    document.getElementById("passwordModal").style.display = "hidden";
+});
 
-async function updatePassword(oldPassword) {
-    const newPassword = document.getElementById("newPassword").value;
-    const confirmPassword = document.getElementById("confirmPassword").value;
-
-    if (newPassword !== confirmPassword) {
-        alert("New password and confirm password do not match.");
-        return;
-    }
-
-    var data = {"oldPassword": oldPassword, "newPassword": newPassword, "save": true};
-    // console.log(data);
+document.getElementById("logout-btn").addEventListener("click", async () => {
+    const data = { "logout": true };
     await fetch('http://localhost:8080/profile.html?', {
         method: 'PUT',
         headers: {
@@ -29,76 +15,44 @@ async function updatePassword(oldPassword) {
         },
         body: JSON.stringify(data)
     })
-    .then(response => response)
-    .then(data => console.log('Success:', data))
-    .catch(error => console.log('Error:', error));
-
-    this.closePasswordModal();
-}
-
-function logout() {
-    sessionStorage.clear();
-    localStorage.clear();
-    window.location.href = "login.html";
-}
-
-function toggleEditable(field) {
-    const inputField = document.getElementById(`${field}-input`);
-    const editButton = document.getElementById(`${field}-edit-btn`);
-
-    if (inputField.hasAttribute("readonly")) {
-        inputField.removeAttribute("readonly");
-        inputField.focus();
-        editButton.textContent = "Save Changes";
-        // editButton.setAttribute('name', `${field}-save`);
-    } else {
-        saveChanges(field);
-        // window.location.href = "login.html";
-        // editButton.setAttribute('name', `${field}-edit`);
-        editButton.textContent = "Edit";
-    }
-}
-
-async function saveChanges(field) {
-    const inputField = document.getElementById(`${field}-input`);
-    const newValue = inputField.value.trim();
-
-    if (newValue === "") {
-        alert("Field cannot be empty.");
-        return;
-    }
-
-    var data = {};
-    if (field === "username") {
-        data = { "username": newValue, "save": true };
-    }
-    else if (field === "bio") {
-        data = { "bio": newValue, "save": true };
-    }
-    console.log(data);
-    await fetch('http://localhost:8080/profile.html?', {
-        method: 'PUT',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(data)
+    .then(response => {
+        sessionStorage.clear();
+        localStorage.clear();
+        response;
     })
-    .then(response => response)
     .then(data => console.log('Success:', data))
     .catch(error => console.log('Error:', error));
-    alert(`${field.charAt(0).toUpperCase() + field.slice(1)} updated successfully!`);
-    inputField.setAttribute("readonly", "true");
-}
+    alert(`Logged out successfully!`);
+});
 
-function saveEvent(event) {
-    if (event.key === "Enter") {
-        event.preventDefault();
-        saveChanges("username");
-        document.getElementById("username-edit-btn").textContent = "Edit";
-    }
-}
+document.querySelectorAll('.can-edit').forEach(editField => {
+    console.log(editField.getAttribute("class"));
+    editField.addEventListener("click", () => {
+        const inputField = document.getElementById(`${editField.value}-input`);
+        const editButton = document.getElementById(`${editField.value}-edit-btn`);
+        const saveButton = document.getElementById(`${editField.value}-save-btn`);
+    
+        if (inputField.hasAttribute("readonly")) {
+            inputField.toggleAttribute("readonly");
+            inputField.focus();
+            editButton.toggleAttribute("hidden");
+            saveButton.toggleAttribute("hidden");        
+        } else {
+            inputField.toggleAttribute("readonly")
+        }
 
-function updateButton(event) {
+    });
+    console.log(editField.getAttribute("class"));
+});
+
+document.querySelectorAll('.can-save').forEach(saveField => {
+    console.log(saveField.getAttribute("class"));
+    saveField.addEventListener("click", async () => {
+
+    });
+});
+
+document.addEventListener("click", (event) => {
     const usernameInput = document.getElementById("username-input");
     const bioInput = document.getElementById("bio-input");
 
@@ -111,4 +65,4 @@ function updateButton(event) {
         bioInput.setAttribute("readonly", "true");
         document.getElementById("bio-edit-btn").textContent = "Edit";
     }
-}
+});

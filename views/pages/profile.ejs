@@ -7,28 +7,7 @@
   <link href="https://vjs.zencdn.net/8.16.1/video-js.css" rel="stylesheet" />
   <script type="text/javascript" src="https://vjs.zencdn.net/8.16.1/video.min.js"></script>
   <link rel="stylesheet" href="css/styles.css" type="text/css"/>
-  <script type="module" src="scripts/profileUI.js">
-    import hashCheck from './hasher.js';
-
-    document.getElementById("username-input").addEventListener("keypress", saveEvent);
-    
-    document.getElementById("bio-input").addEventListener("keypress", saveEvent);
-
-    document.getElementById('username-edit-btn').addEventListener("click", toggleEditable('username'));
-  
-    document.getElementById("bio-edit-btn").addEventListener("click", toggleEditable('bio'));
-    
-    document.getElementById('close-btn').addEventListener("click", closePasswordModal());
-    
-    document.getElementById('save-password').addEventListener("click", () => {
-      if (!hashCheck(oldPassword, hashedPassword)) {
-        alert("Old password and existing password do not match.");
-        return;
-      }
-      showPasswordModal();
-    });
-
-  </script>
+  <script type="text/javascript" src="scripts/profileUI.js" defer></script>
 </head>
 <body>
   <header>
@@ -56,7 +35,7 @@
       <form action="history.html" method="get"><button type="submit" class="sidebar-button">Watched Videos</button></form>
 
       <!-- Logout Button -->
-      <form action="profile.html" method="post"><button type="submit" name="logout" id="logout-btn" class="sidebar-button" onclick="logout()" value="true">Log Out</button></form>
+      <button type="submit" name="logout" id="logout-btn" class="sidebar-button" onclick="logout()" value="true">Log Out</button>
   </div>
 
   <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; margin-top: 50px; padding: 50px;">
@@ -74,9 +53,10 @@
       <!-- Username Section -->
       <div class="input-container">
         <div class="input-header">Username</div>
-        <input type="text" id="username-input" value="<%= user.username %>" readonly />
+        <input type="text" id="username-input" name="username" value="<%= user.username %>" readonly />
         <div class="button-container">
-          <button id="username-edit-btn" onclick="toggleEditable('username')">Edit</button>
+          <button class="can-edit" id="username-edit-btn" value="username">Edit</button>
+          <button hidden class="can-save" id="username-save-btn" value="username">Save Changes</button>
         </div>
       </div>
 
@@ -85,7 +65,7 @@
         <div class="input-header">Password</div>
         <input type="password" id="password-input" value="*****" readonly />
         <div class="button-container">
-          <button id="password-edit-btn" onclick="showPasswordModal()">Change Password</button>
+          <button id="password-edit-btn">Change Password</button>
         </div>
       </div>
 
@@ -94,7 +74,8 @@
         <div class="input-header">Bio</div>
         <textarea id="bio-input" readonly><%= user.bio %></textarea>
         <div class="button-container edit-button">
-          <button id="bio-edit-btn">Edit</button>
+          <button class="can-edit" id="bio-edit-btn" value="bio">Edit</button>
+          <button hidden class="can-save" id="bio-save-btn" value="bio">Save Changes</button>
         </div>
       </div>
 
@@ -108,17 +89,16 @@
 
   <!-- Password Change Modal -->
   <div id="passwordModal" class="modal">
-    <div class="modal-content">
-      <span class="close" id="close-btn" onclick="closePasswordModal()">&times;</span>
+    <form action="profile.html" method="put" class="modal-content">
+      <span class="close">&times;</span>
       <h2>Change Password</h2>
-      <input type="hidden" id="hashedPassword" value="<%= user.password %>">
       <label for="oldPassword">Old Password:</label>
       <input type="password" id="oldPassword" placeholder="Enter old password" required /><br><br>
       <label for="newPassword">New Password:</label>
       <input type="password" id="newPassword" placeholder="Enter new password" required /><br><br>
       <label for="confirmPassword">Confirm Password:</label>
       <input type="password" id="confirmPassword" placeholder="Confirm new password" required /><br><br>
-      <button type="button" id="save-password">Save Changes</button>
+      <button type="button" id="password-update-btn">Save Changes</button>
     </div>
   </div>
 </body>

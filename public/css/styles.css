@@ -621,7 +621,14 @@ input:focus {
     color: white;
   }
 
-  form button[type="button"] {
+  
+.can-save button {
+    background: transparent;
+    border: none;
+    display: hidden;
+}
+
+form button[type="button"] {
     background-color: maroon; 
     color: white;
     border: 1px solid maroon;

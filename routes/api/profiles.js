@@ -396,6 +396,7 @@ router.put('/profile(.html)?',  (request, response) => {
             return;
         }
         else if (typeof(request.body.save) !== "undefined" && request.body.save) {  // if save changes button is clicked (only routerears if an edit button is clicked)
+            console.log(`${request.session.user}\t${request.body.oldPassword}\t${request.body.save}\n`);
             if (typeof(request.body.username) !== "undefined" && request.body.username) {   //  if username has been changed
                 dbServer.query(`UPDATE accounts SET username='${request.body.username}' WHERE user_id=${request.session.user.user_id};`);   // update username for logged in user in the accounts table
                 request.session.user.username = request.body.username;  // update session user information with new username
@@ -408,10 +409,10 @@ router.put('/profile(.html)?',  (request, response) => {
                 console.log(`PUT request made to change password to: ${hashMake(request.body.newPassword)}.`);
                 if (!hashCheck(request.body.oldPassword, request.session.user.password)) {
                     console.log("Error: Incorrect old password.");
-                    response.render('pages/profile', {
-                        "user": request.session.user,
+                    response.status(200).send('profile.html', {
                         "badPass": true
                     });
+                    response.end();
                     return;
                 }
                 else {
