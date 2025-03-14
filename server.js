@@ -56,7 +56,7 @@ app.use(session({   // session settings found in the expressjs.com docs
 }));
 
 import { router as rootRouter} from './routes/root.js';
-import { router as apiRouter} from './routes/api/profiles.js';
+import { router as apiRouter} from './routes/api/zsquaredapi.js';
 
 app.use('/', express.static(join(__dirname, '/public')));   // Tells express to start its search in the public folder for any files requested by the client
 app.use('/', rootRouter);
