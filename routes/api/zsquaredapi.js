@@ -32,28 +32,27 @@ dbServer.connect((err) => { // open connection to database
     }
 });
 
-// all requests to index page should be get requests
-router.get('^/$|/index(.html)?', (request, response) => {     // handles all get requests made by the client for the index.html page
+router.get('/', (request, response) => {     // handles api get requests made by the client for video data
     if (typeof(request.session.flags) === "undefined") {    // create session flags as an empty object if it's not created
         request.session.flags = {};
     }
     console.log(`${request.method}\t${request.headers.origin}\t${request.url}`);    // log request details
     
     // perform a query to the videos database to get recommended videos rendered on the home page
-    dbServer.query(`SELECT video_id, v.user_id, username, title, thumbnail, t_mimetype, url, v_mimetype FROM videos v LEFT JOIN accounts a ON v.user_id=a.user_id ORDER BY released LIMIT 10;`, (error, results, fields) => {
+    dbServer.query(`SELECT video_id, title, thumbnail, url FROM videos v LEFT JOIN accounts a ON v.user_id=a.user_id ORDER BY released LIMIT 10;`, (error, results, fields) => {
         if (error)
             throw (error);
-        response.render('pages/index', {    // render the page with the videos and the username of the logged in user
+        response.status(200).json({    // render the page with the videos and the username of the logged in user
             "user": request.session.user,
             results
         });
     });
-}); // no post requests currently being made to index page
+});
 
-router.get('^/$|/search?', (request, response) => {    // handles all requests to search.html from clients
+router.get('/:search', (request, response) => {    // handles all api search requests from clients
     console.log(`${request.method}\t${request.headers.origin}\t${request.url}`);    // log request details
-    console.log(request.query.search);
-    if (typeof(request.query.search) !== "undefined" && request.query.search) { // if a search was made for something
+    // console.log(request.params.search);
+    if (typeof(request.params.search) !== "undefined" && request.params.search) { // if a search was made for something
         console.log(request.params.search);
         const searchQuery = "'%" + request.params.search + "%'";   // regex % interpreted to mean 'any character before/after' depending on prefix/suffix location
         // console.log("Search detected.")
@@ -63,7 +62,7 @@ router.get('^/$|/search?', (request, response) => {    // handles all requests t
             if (error) 
                 throw (error);
             // console.log("Rendering player page with search results...");
-            response.render('pages/search', {    // render the page with the videos and the username of the logged in user
+            response.json({    // render the page with the videos and the username of the logged in user
                 "user": request.session.user,
                 results
             }); 

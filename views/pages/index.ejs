@@ -7,7 +7,7 @@
   <link href="https://vjs.zencdn.net/8.16.1/video-js.css" rel="stylesheet" />
   <script type="text/javascript" src="https://vjs.zencdn.net/8.16.1/video.min.js"></script>
   <link rel="stylesheet" href="css/styles.css" type="text/css" />
-  <script type="text/javascript" src="scripts/index.js"></script>
+  <!-- <script type="text/javascript" src="scripts/index.js"></script> -->
 </head>
 <body>
 <header>
@@ -40,17 +40,6 @@
         <h2>Recommended Videos</h2>
         <div class="video-grid">
           <div class="recommended-videos">
-            <% for (const key in results) {%>
-              <tr>
-                <td>
-                  <hr>
-                  <div id="videoURL" value="<%= results[key].video_id %>"><%= results[key].title %></div>
-                  <br>
-                  <button id="videoID" name="video" type="submit" value="<%= results[key].video_id %>"><img id="<%= results[key].url %>" class="thumbnails" src="<%= `thumbnails/${results[key].thumbnail}`; %>" title="<%= results[key].title %>" width="480" height="320"></button>
-                  <hr>
-                </td>
-              </tr>
-            <% } %>
           </div>
         </div>
       </div>

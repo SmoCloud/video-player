@@ -26,9 +26,14 @@ a router.get() or router.post() will work just the same. router.route() is mostl
 multiple types of requests.
 */
 
+router.get('^/$|/index(.html)?', (request, response) => {
+    console.log(`${request.method}\t${request.headers.origin}\t${request.url}`);
+    response.sendFile(join(__dirname, 'views', 'index.html'));
+});
+
 router.get('/upload(.html)?', (request, response) => {    // handles get requests to the upload.html page from client
     console.log(`${request.method}\t${request.headers.origin}\t${request.url}`);    // log request details
-    response.sendFile(join(__dirname, '..', 'views', 'upload.html'));    // send upload.html file (no extra data needed to be sent as session holds user data, if user is logged in)
+    response.sendFile(join(__dirname, 'views', 'upload.html'));    // send upload.html file (no extra data needed to be sent as session holds user data, if user is logged in)
 });
 
 router.get('/login(.html)?', (request, response) => { // handles get requests to login.html

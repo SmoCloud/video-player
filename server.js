@@ -60,7 +60,7 @@ import { router as apiRouter} from './routes/api/zsquaredapi.js';
 
 app.use('/', express.static(join(__dirname, '/public')));   // Tells express to start its search in the public folder for any files requested by the client
 app.use('/', rootRouter);
-app.use('/', apiRouter);
+app.use('/api', apiRouter);
 
 
 var server = null;  // tries to read for a key and certificate for https, if not found, error is logged and execution continues using http connection

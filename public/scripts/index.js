@@ -1,24 +1,43 @@
-document.querySelectorAll("#videoID").forEach(playable => {
-    console.log(playable.value);
-    playable.addEventListener("click", async () => {
-        const url = document.getElementById("videoURL").value;
-        console.log(url);
-        data = {
-            "search": playable.value,
-            "videoID": url,
-        };
-        await fetch(`http://localhost:8080/search=${playable.value}&vID=${url}`, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-        })
-        .then(response => {
-           response.headers;
-        });
-        // .then(user => console.log('Success:', user))
-        // .catch(error => console.log('Error:', error));
-        // alert(`Logged out successfully!`);
-        console.log(playable.value);
-    });
-});
+ fetch('http://localhost:8080/api')
+    .then(response => response.json())
+    .then(data => {
+        console.log('Success:', data.results, data.results.length);
+        const recommendeds = document.getElementById('recommended');
+
+        for (var i = 0; i < data.results.length; i++) {
+            recommendeds.innerHTML += 
+    `<tr>
+        <td>
+            <hr>
+            <div id="videoURL" value="${data.results[i].video_id}">${data.results[i].title}</div>
+            <br>
+            <button id="videoID" name="video" type="submit" value="${data.results[i].video_id}"><img id="${data.results[i].url}" class="thumbnails" src="thumbnails/${data.results[i].thumbnail}" title="${data.results[i].title}" width="480" height="320"></button>
+            <hr>
+        </td>
+    </tr>`;
+        }
+    })
+    .catch(error => console.log('Error:', error));
+
+// document.querySelectorAll("#videoID").forEach(playable => {
+//     console.log(playable.value);
+//     playable.addEventListener("click", () => {
+//         const url = document.getElementById("videoURL").value;
+//         console.log(url);
+//         data = {
+//             "search": playable.value,
+//             "videoID": url,
+//         };
+//         fetch(`http://localhost:8080/api/${playable.value}`, {
+//             method: 'GET',
+//             headers: {
+//                 'Content-Type': 'application/json'
+//             },
+//         })
+//         .then(response => response.json())
+//         .then(data => console.log('Success:', data.user))
+//         .catch(error => console.log('Error:', error));
+//         // alert(`Logged out successfully!`);
+//         console.log(playable.value);
+//     });
+// });
