@@ -62,7 +62,7 @@ router.get('/:search', (request, response) => {    // handles all api search req
             if (error) 
                 throw (error);
             // console.log("Rendering player page with search results...");
-            response.json({    // render the page with the videos and the username of the logged in user
+            response.status(200).json({    // render the page with the videos and the username of the logged in user
                 "user": request.session.user,
                 results
             }); 
@@ -77,9 +77,6 @@ router.route('/player(.html)?')    // handles all requests to player.html
         if (typeof(request.session.video) === "undefined" || !request.session.video || request.session.video !== request.query.video) { // if the video in the session doesn't match the video that was selected
             request.session.video = JSON.parse(request.query.video);    // set session.video to the query.video that was selected by the user
         }
-        if (typeof(request.session.comments) !== "undefined" || !request.session.comments) {    // if there are no comments
-
-        } 
 
         // query for comments tied to the requested video
         dbServer.query(`SELECT username, comment FROM accounts a JOIN comments c ON a.user_id=c.user_id WHERE c.video_id LIKE ${request.session.video.video_id};`, (error, comments, fields) => {
