@@ -91,48 +91,37 @@ router.get('/player/:video', (request, response) => {   // get requests handles 
 
 router.post('/player', (request, response) => {  // post requests made to player.html handled here
     console.log(`${request.method}\t${request.headers.origin}\t${request.url}`);    // log request details
-    if (typeof(request.body.liked) !== "undefined" && request.body.liked) { // if the like button was clicked
+    if (typeof(request.body.liked) !== "undefined") {
         if (typeof(request.session.user) !== "undefined" && request.session.user) { // if there's a user logged in
-            request.session.flags.isLiked = true;  // this flag (will be) used to determine if a user has liked a video or not (true for liked, false for disliked, else undefined for neither)
-            
-            // check if user has previously disliked video by querying dislikes table with user id and video id
-            dbServer.query(`SELECT * FROM dislikes WHERE user_id LIKE ${request.session.user.user_id} AND disliked_videos=${request.session.video.video_id};`,(error, results, fields) => {
-                if (error)
-                    throw (error);
-                if (results.length > 0) {   // if video is disliked, delete the entry from the table
-                    console.log("Removing from dislikes...");
-                    dbServer.query(`DELETE FROM dislikes WHERE disliked_videos=${request.session.video.video_id} AND user_id=${request.session.user.user_id};`)
-                }
-            });
+            if (request.body.liked) { // if the like button was clicked
+                request.session.flags.isLiked = true;  // this flag (will be) used to determine if a user has liked a video or not (true for liked, false for disliked, else undefined for neither)
+                
+                // check if user has previously disliked video by querying dislikes table with user id and video id
+                dbServer.query(`SELECT * FROM dislikes WHERE user_id LIKE ${request.session.user.user_id} AND disliked_videos=${request.session.video.video_id};`,(error, results, fields) => {
+                    if (error)
+                        throw (error);
+                    if (results.length > 0) {   // if video is disliked, delete the entry from the table
+                        console.log("Removing from dislikes...");
+                        dbServer.query(`DELETE FROM dislikes WHERE disliked_videos=${request.session.video.video_id} AND user_id=${request.session.user.user_id};`)
+                    }
+                });
 
-            // check if user has already liked video before
-            dbServer.query(`SELECT * FROM likes WHERE user_id LIKE ${request.session.user.user_id} AND liked_videos=${request.session.video.video_id};`, (error, results, fields) => {
-                if (error)
-                    throw (error);
-                if (results.length > 0) {   // do nothing if video already in likes table tied to the current user id
-                    console.log(`${request.session.video.title} already liked by ${request.session.user.username}`);
-                }
-                else {  // else insert the video id and user id into the likes table and update the like count of the video
-                    console.log("Attempting to insert like...");
-                    dbServer.query(`INSERT INTO likes (user_id, liked_videos) VALUES (${request.session.user.user_id}, ${request.session.video.video_id});`);
-                    dbServer.query(`UPDATE videos SET likes=likes+1 WHERE video_id=${request.session.video.video_id};`);
-                }
-            });
+                // check if user has already liked video before
+                dbServer.query(`SELECT * FROM likes WHERE user_id LIKE ${request.session.user.user_id} AND liked_videos=${request.session.video.video_id};`, (error, results, fields) => {
+                    if (error)
+                        throw (error);
+                    if (results.length > 0) {   // do nothing if video already in likes table tied to the current user id
+                        console.log(`${request.session.video.title} already liked by ${request.session.user.username}`);
+                    }
+                    else {  // else insert the video id and user id into the likes table and update the like count of the video
+                        console.log("Attempting to insert like...");
+                        dbServer.query(`INSERT INTO likes (user_id, liked_videos) VALUES (${request.session.user.user_id}, ${request.session.video.video_id});`);
+                        dbServer.query(`UPDATE videos SET likes=likes+1 WHERE video_id=${request.session.video.video_id};`);
+                    }
+                });
+            }
         }
-        dbServer.query(`SELECT username, comment FROM accounts a JOIN videos v ON a.user_id=v.user_id JOIN comments c ON a.user_id=c.user_id WHERE v.video_id LIKE ${request.params.video};`, (error, comments, fields) => {
-            if (error)
-                throw (error);
-            response.json({   // render the video player with the video, its comments and send the flag to the client to render a 'liked' button
-                "user": request.session.user,
-                "vData": request.session.video,
-                "isLiked": request.session.flags.isLiked,
-                comments
-            });
-        });
-        return;
-    }
-    else if (typeof(request.body.disliked) !== "undefined" && request.body.disliked) {  // if disliked button is clicked
-        if (typeof(request.session.user) !== "undefined" && request.session.user) { // if there is a logged in user
+        else if (!request.body.liked) {  // if disliked button is clicked
             request.session.flags.isLiked = false; // set isLiked session flag to false to indicate video is disliked
             
             // check if video has been liked by user (disallow both liking and disliking a video)
@@ -145,7 +134,7 @@ router.post('/player', (request, response) => {  // post requests made to player
                     dbServer.query(`UPDATE videos SET likes=likes-1 WHERE video_id=${request.session.video.video_id};`);
                 }
             });
-
+    
             // check if video previously disliked by user
             dbServer.query(`SELECT * FROM dislikes WHERE user_id=${request.session.user.user_id} AND disliked_videos=${request.session.video.video_id};`, (error, results, fields) => {
                 if (error)
@@ -158,45 +147,27 @@ router.post('/player', (request, response) => {  // post requests made to player
                     dbServer.query(`INSERT INTO dislikes (user_id, disliked_videos) VALUES (${request.session.user.user_id}, ${request.session.video.video_id});`);
                 }
             });
-            response.render('pages/player', {   // render player page with username, video, its comments, and send isLiked flag
-                "user": request.session.user,
-                "vData": request.session.video,
-                "isLiked": request.session.flags.isLiked,
-                "comments": JSON.parse(request.body.comments)
-            });
-            return;
         }
-        response.render('pages/player', {   // render player page with username, video, and its comments
-            "user": request.session.user,
-            "vData": request.session.video,
-            "comments": JSON.parse(request.body.comments)
-        });
-        return;
-    }
-    else if (typeof(request.body.commented) !== "undefined" && request.body.commented) {    // if a comment is submitted by user
-        if (typeof(request.session.user) !== "undefined" && request.session.user) {
-            
+        else if (typeof(request.body.commented) !== "undefined" && request.body.commented) {    // if a comment is submitted by user
             // insert user id, video id, and new comment into comments table only if a user is logged in
             dbServer.query(`INSERT INTO comments (user_id, video_id, comment) VALUES (${request.session.user.user_id}, ${video.video_id}, '${request.body.commented}');`);
         }
-        response.render('pages/player', {   // rerender player page with user info, video info, isLiked flag, and comments
-            "user": request.session.user,
-            "vData": request.body.video,
-            "isLiked": request.session.flags.isLiked,
-            "comments": JSON.parse(request.body.comments)
-        });
-        return;
     }
-    console.log("Failed?"); // error catch, in case some unforseen issue occurs, render player page as normal, with user, video, and comments info
-    response.render('pages/player', { 
-        "user": request.session.user,
-        "vData": request.body.video,
-        "comments": JSON.parse(request.body.comments)
+    else {
+        console.log("Failed?"); // error catch, in case some unforseen issue occurs, render player page as normal, with user, video, and comments info
+    }
+    dbServer.query(`SELECT username, comment FROM accounts a JOIN videos v ON a.user_id=v.user_id JOIN comments c ON a.user_id=c.user_id WHERE v.video_id LIKE ${request.params.video};`, (error, comments, fields) => {
+        if (error)
+            throw (error);
+        response.json({   // render the video player with the video, its comments and send the flag to the client to render a 'liked' or 'disliked' button
+            "isLiked": request.session.flags.isLiked,
+            comments
+        });
     });
     return;
 });
 
-router.post('/upload/:upload', (request, response) => {     // handles post requests to the upload.html page from client
+router.post('/upload', (request, response) => {     // handles post requests to the upload.html page from client
     console.log(`${request.method}\t${request.headers.origin}\t${request.url}`);    // log request details
     if (typeof(request.session.user) !== "undefined" && request.session.user) { // if a user is logged in
         const form = new IncomingForm();         // create a new form with formidable to hold file details incoming from an html form
@@ -205,7 +176,7 @@ router.post('/upload/:upload', (request, response) => {     // handles post requ
                 next(err);
                 return;
             }
-
+            console.log(request);
             const allowedVideoTypes = [ // mimetypes of allowed video formats for upload
                 "video/mp4", 
                 "video/ogg",

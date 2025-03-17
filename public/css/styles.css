@@ -211,27 +211,19 @@ input:focus {
 }
 
 .comment-section {
-    width: auto; 
-    height: auto; 
+    width: fit-content;
     overflow: hidden; 
     background-color: rgba(100, 100, 100, 0.5);
     border-radius: 16px;
     box-shadow: inset 0 8px 16px rgba(0, 0, 0, 0.2);
-    margin: 20px auto; 
     padding: 20px; 
-}
-.comment-section{
-    position: absolute;
-    left: auto;
-    bottom:auto;
 }
 
 .comment-input {
     resize: none; 
-    width: 800px;
+    width: 640px;
     height: 100px;
 }
-
 
 .cat_1, .cat_2, .cat_3 {
     width: 300px; 
@@ -241,19 +233,6 @@ input:focus {
 
 .sidebar-button, .like-button, .dislike-button, .submit-comment {
 	background:maroon;
-	color: white;
-	border: none;
-	padding: 10px 20px;
-	font-size: 1em;
-	margin: 10px 0;
-	cursor: pointer;
-	border-radius: 5px;
-	width: 150px;
-	text-align: center;
-	transition: background-color 0.3s, transform 0.3s;
-}
-.like-button, .dislike-button, .submit-comment {
-    background: maroon;
 	color: white;
 	border: none;
 	padding: 10px 20px;
@@ -606,7 +585,7 @@ input:focus {
   .button-container {
     display: flex;
     justify-content: space-between;
-    width: 100%;
+    width: 640px;
     margin-top: 8px; 
   }
   .button-container button {

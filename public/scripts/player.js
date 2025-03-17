@@ -24,3 +24,7 @@ document.addEventListener("DOMContentLoaded", () => {
     })
     .catch(error => console.log('Error:', error));
 });
+
+document.getElementById("like-btn").addEventListener("click", () => {
+
+});

@@ -4,11 +4,10 @@ document.addEventListener("DOMContentLoaded", () => {
         .then(data => {
             console.log('Success:', data.results, data.results.length);
             const recommendeds = document.getElementById('recommended');
-
+            recommendeds.innerHTML += '<hr>'
             for (var i = 0; i < data.results.length; i++) {
                 recommendeds.innerHTML += 
-        `<hr>
-        <tr>
+        `<tr>
             <td>
                 <div id="videoURL" value="${data.results[i].video_id}">${data.results[i].title}</div>
                 <br>
