@@ -59,7 +59,8 @@ router.get('/login(.html)?', (request, response) => { // handles get requests to
         response.redirect(303, 'profile.html'); // redirect to profile.html with a 303 status code, which will make a GET request to the new page being redirected to
     }
     else {
-        response.sendFile(join(__dirname, 'views', 'login.html')); // else send the login.html page
+        response.sendFile(join(__dirname, 'views', 'login.html'));
+        return;
     }
 });
 

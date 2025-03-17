@@ -240,46 +240,39 @@ router.post('/upload', (request, response) => {     // handles post requests to 
     });
 });
 
-router.route('/login(.html)?')    
-.post((request, response) => {  // handles post requests to the login.html page from client
+router.get('/login/:username&:password', (request, response) => {  // handles get requests to the login.html page from client
     console.log(`${request.method}\t${request.headers.origin}\t${request.url}`);    // log request details
-    if (typeof(request.body.login) !== "undefined" && request.body.login) {    // if login button was clicked (not logged in)
-        // query database for matching username in accounts table
-        dbServer.query(`SELECT * FROM accounts WHERE username='${request.body.usr}';`, (error, users, fields) => { 
-            if (error) 
-                throw (error);
-            if (users.length > 0) { // if username is found in database
-                if (hashCheck(request.body.pwd, users[0].password)) {   // if hashed version of entered password matches hashed password in database
-                    request.session.user = users[0];    // set session user info to first row of the query (should be only row, need to add some logic to prevent creation of users with identical usernames)
-                    request.session.user.DoB = format(request.session.user.DoB, 'yyyy-MM-dd');  // re-format datetime to just date (this format is used for display of date of birth on profile page)
-                    response.redirect(303, 'index.html');   // redirect to index page w/ status code 303
-                    return;
-                } 
-                else {
-                    response.render('pages/login', {    // else password was not a match, send user matched, password failed to render of login page
-                        "usrMatch": true, 
-                        "pwdMatch": false 
-                    });
-                    return;
-                }
+    // query database for matching username in accounts table
+    dbServer.query(`SELECT * FROM accounts WHERE username='${request.params.username}';`, (error, users, fields) => { 
+        if (error) 
+            throw (error);
+        if (users.length > 0) { // if username is found in database
+            if (hashCheck(request.params.password, users[0].password)) {   // if hashed version of entered password matches hashed password in database
+                request.session.user = users[0];    // set session user info to first row of the query (should be only row, need to add some logic to prevent creation of users with identical usernames)
+                request.session.user.DoB = format(request.session.user.DoB, 'yyyy-MM-dd');  // re-format datetime to just date (this format is used for display of date of birth on profile page)
+                response.json({
+                    "user": users[0],
+                    "usrMatch": true,
+                    "pwdMatch": true
+                });   // redirect to index page w/ status code 303
+                return;
             } 
             else {
-                response.render('pages/login', {    // else username was not found, send user not matched, password failed to render of login page
-                    "usrMatch": false, 
+                response.json({    // else password was not a match, send user matched, password failed to render of login page
+                    "usrMatch": true, 
                     "pwdMatch": false 
                 });
                 return;
             }
-        });
-    }
-    else if (typeof(request.body.create) !== "undefined" && request.body.create) {  // if create account clicked on login page (not logged in)
-        response.redirect(303, 'registration.html');    // redirect to registration.html with status code 303
-        return;
-    }
-    else {
-        response.sendFile(join(__dirname, 'views', 'login.html'));
-        return;
-    }
+        } 
+        else {
+            response.json({    // else username was not found, send user not matched, password failed to render of login page
+                "usrMatch": false, 
+                "pwdMatch": false 
+            });
+            return;
+        }
+    });
 });
 
 router.post(('/registration(.html)?'), (request, response) => {  // post requests handled here
@@ -331,12 +324,14 @@ router.get('/liked(.html)?', (request, response) => { // handles all requests to
 //      left this here in case post requests to the liked page are ever made (unlikely)
 // });
 
-router.put('/profile(.html)?',  (request, response) => {
+router.put('/profile',  (request, response) => {
     console.log('Is put request being made?');
     if (typeof(request.session.user) !== "undefined" && request.session.user) { // if a user is logged in
         if (typeof(request.body.logout) !== "undefined" && request.body.logout) {   // if the logout button was clicked
             request.session.destroy();  // terminate the session
-            response.sendFile(join(__dirname, 'views', 'login.html')); // send the login page
+            response.json({
+                "logged-in": false
+            }); // send the login flag set false
             return;
         }
         else if (typeof(request.body.save) !== "undefined" && request.body.save) {  // if save changes button is clicked (only routerears if an edit button is clicked)
@@ -353,7 +348,7 @@ router.put('/profile(.html)?',  (request, response) => {
                 console.log(`PUT request made to change password to: ${hashMake(request.body.newPassword)}.`);
                 if (!hashCheck(request.body.oldPassword, request.session.user.password)) {
                     console.log("Error: Incorrect old password.");
-                    response.status(200).send('profile.html', {
+                    response.json({
                         "badPass": true
                     });
                     response.end();
@@ -366,7 +361,9 @@ router.put('/profile(.html)?',  (request, response) => {
                 }
             }
         }
-        response.redirect(303, 'profile.html'); // redirect back to profile.html with status code 303 (GET request)
+        response.json({
+            "logged-in": true
+        }); // send login flag set true
         return;
     }
 });

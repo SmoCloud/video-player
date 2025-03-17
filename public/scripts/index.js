@@ -1,23 +1,24 @@
 document.addEventListener("DOMContentLoaded", () => {
     fetch('http://localhost:8080/api')
-        .then(response => response.json())
-        .then(data => {
-            console.log('Success:', data.results, data.results.length);
-            const recommendeds = document.getElementById('recommended');
-            recommendeds.innerHTML += '<hr>'
-            for (var i = 0; i < data.results.length; i++) {
-                recommendeds.innerHTML += 
-        `<tr>
-            <td>
-                <div id="videoURL" value="${data.results[i].video_id}">${data.results[i].title}</div>
-                <br>
-                <button id="videoID" name="video" type="submit" value="${data.results[i].video_id}"><img id="${data.results[i].url}" class="thumbnails" src="thumbnails/${data.results[i].thumbnail}" title="${data.results[i].title}" width="480" height="320"></button>
-            </td>
-        </tr>
-        <hr>`;
-            }
-        })
-        .catch(error => console.log('Error:', error));
+    .then(response => response.json())
+    .then(data => {
+        console.log('Success:', data.results, data.results.length);
+        const recommendeds = document.getElementById('recommended');
+        recommendeds.innerHTML += '<hr>'
+        for (var i = 0; i < data.results.length; i++) {
+            recommendeds.innerHTML += 
+    `<tr>
+        <td>
+            <div id="videoURL" value="${data.results[i].video_id}">${data.results[i].title}</div>
+            <br>
+            <button id="videoID" name="video" type="submit" value="${data.results[i].video_id}"><img id="${data.results[i].url}" class="thumbnails" src="thumbnails/${data.results[i].thumbnail}" title="${data.results[i].title}" width="480" height="320"></button>
+        </td>
+    </tr>
+    <hr>`;
+        }
+        document.getElementById("username").textContent = JSON.parse(sessionStorage.user).username;
+    })
+    .catch(error => console.log('Error:', error));
 });
 
 // document.querySelectorAll("#videoID").forEach(playable => {

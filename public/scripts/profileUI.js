@@ -6,9 +6,9 @@ document.getElementById("password-update-btn").addEventListener("click", () => {
     document.getElementById("passwordModal").style.display = "hidden";
 });
 
-document.getElementById("logout-btn").addEventListener("click", async () => {
+document.getElementById("logout-btn").addEventListener("click", () => {
     const data = { "logout": true };
-    await fetch('http://localhost:8080/profile.html?', {
+    fetch('http://localhost:8080/api/profile', {
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json'
