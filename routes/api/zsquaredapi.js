@@ -49,7 +49,7 @@ router.get('/', (request, response) => {     // handles api get requests made by
     });
 });
 
-router.get('/:search', (request, response) => {    // handles all api search requests from clients
+router.get('/search/:search', (request, response) => {    // handles all api search requests from clients
     console.log(`${request.method}\t${request.headers.origin}\t${request.url}`);    // log request details
     // console.log(request.params.search);
     if (typeof(request.params.search) !== "undefined" && request.params.search) { // if a search was made for something
@@ -70,45 +70,26 @@ router.get('/:search', (request, response) => {    // handles all api search req
     }
 });
 
-router.route('/player(.html)?')    // handles all requests to player.html
-.get((request, response) => {   // get requests handles here
+router.get('/player/:video', (request, response) => {   // get requests handles here
     console.log(`${request.method}\t${request.headers.origin}\t${request.url}`);    // log request details
-    if (typeof(request.query.video) !== "undefined" && request.query.video) {   // if there's a video selected to play
-        if (typeof(request.session.video) === "undefined" || !request.session.video || request.session.video !== request.query.video) { // if the video in the session doesn't match the video that was selected
-            request.session.video = JSON.parse(request.query.video);    // set session.video to the query.video that was selected by the user
-        }
+    // query for comments tied to the requested video
+    dbServer.query(`SELECT video_id, username, title, url, v_mimetype FROM videos v LEFT JOIN accounts a ON v.user_id=a.user_id WHERE video_id=${request.params.video};`, (error, results, fields) => {
+        if (error)
+            throw (error);
+        request.session.video = results[0];
+    });
+    dbServer.query(`SELECT username, comment FROM accounts a JOIN videos v ON a.user_id=v.user_id JOIN comments c ON a.user_id=c.user_id WHERE v.video_id LIKE ${request.params.video};`, (error, comments, fields) => {
+        if (error)
+            throw (error);
+        response.json({   // if there is no error, render the video with its comments
+            "user": request.session.user,
+            "vData": request.session.video,
+            comments
+        });
+    });
+});
 
-        // query for comments tied to the requested video
-        dbServer.query(`SELECT username, comment FROM accounts a JOIN comments c ON a.user_id=c.user_id WHERE c.video_id LIKE ${request.session.video.video_id};`, (error, comments, fields) => {
-            if (error)
-                throw (error);
-            response.render('pages/player', {   // if there is no error, render the video with its comments
-                "user": request.session.user,
-                "vData": request.session.video,
-                comments
-            });
-        });
-        // console.log(`JSON data detected.\t${request.session.video.url}\t`);
-    } 
-    else if (typeof(request.session.video) !== "undefined" && request.session.video) {  // if the session video is set but the query is not (handles reloading the page after liking/disliking/commenting on the video)
-        // console.log("Am I making it here like I should be if I'm coming back after liking?");
-        
-        // requery for comments tied to the video saved in the session
-        dbServer.query(`SELECT username, comment FROM accounts a JOIN comments c ON a.user_id=c.user_id WHERE c.video_id LIKE ${request.session.video.video_id};`, (error, comments, fields) => {
-            if (error)
-                throw (error);
-            response.render('pages/player', {   // rerender page with video and its comments
-                "user": request.session.user,
-                "vData": request.session.video,
-                comments
-            });
-        });
-    }
-    else {
-        response.sendFile(join(__dirname, 'views', 'player.html'));    // else send the player.html file itself
-    }
-})
-.post((request, response) => {  // post requests made to player.html handled here
+router.post('/player', (request, response) => {  // post requests made to player.html handled here
     console.log(`${request.method}\t${request.headers.origin}\t${request.url}`);    // log request details
     if (typeof(request.body.liked) !== "undefined" && request.body.liked) { // if the like button was clicked
         if (typeof(request.session.user) !== "undefined" && request.session.user) { // if there's a user logged in
@@ -137,18 +118,16 @@ router.route('/player(.html)?')    // handles all requests to player.html
                     dbServer.query(`UPDATE videos SET likes=likes+1 WHERE video_id=${request.session.video.video_id};`);
                 }
             });
-            response.render('pages/player', {   // render the video player with the video, its comments and send the flag to the client to render a 'liked' button
+        }
+        dbServer.query(`SELECT username, comment FROM accounts a JOIN videos v ON a.user_id=v.user_id JOIN comments c ON a.user_id=c.user_id WHERE v.video_id LIKE ${request.params.video};`, (error, comments, fields) => {
+            if (error)
+                throw (error);
+            response.json({   // render the video player with the video, its comments and send the flag to the client to render a 'liked' button
                 "user": request.session.user,
                 "vData": request.session.video,
                 "isLiked": request.session.flags.isLiked,
-                "comments": JSON.parse(request.body.comments)
+                comments
             });
-            return;
-        }
-        response.render('pages/player', { // render page without flag if there is no user (disallows likes unless there's a logged in user)
-            "user": request.session.user,
-            "vData": request.session.video,
-            "comments": JSON.parse(request.body.comments)
         });
         return;
     }
@@ -217,7 +196,7 @@ router.route('/player(.html)?')    // handles all requests to player.html
     return;
 });
 
-router.post('/upload(.html)?', (request, response) => {     // handles post requests to the upload.html page from client
+router.post('/upload/:upload', (request, response) => {     // handles post requests to the upload.html page from client
     console.log(`${request.method}\t${request.headers.origin}\t${request.url}`);    // log request details
     if (typeof(request.session.user) !== "undefined" && request.session.user) { // if a user is logged in
         const form = new IncomingForm();         // create a new form with formidable to hold file details incoming from an html form

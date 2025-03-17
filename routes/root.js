@@ -34,10 +34,14 @@ router.get('^/$|/index(.html)?', (request, response) => {
 router.get('/search(.html)?', (request, response) => {    // handles all api search requests from clients
     console.log(`${request.method}\t${request.headers.origin}\t${request.url}`);    // log request details
     // console.log(request.params.search);
-    response.render('pages/search', {
-        
-    });
+    response.sendFile(join(__dirname, 'views', 'search.html'));
 });
+
+router.route('/player(.html)?')    // handles all requests to player.html
+.get((request, response) => {   // get requests handles here
+    console.log(`${request.method}\t${request.headers.origin}\t${request.url}`);    // log request details
+    response.sendFile(join(__dirname, 'views', 'player.html'));    // send the player.html file itself
+})
 
 router.get('/upload(.html)?', (request, response) => {    // handles get requests to the upload.html page from client
     console.log(`${request.method}\t${request.headers.origin}\t${request.url}`);    // log request details

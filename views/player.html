@@ -15,13 +15,16 @@
     </div>
     <div class="searchbar">
         <form action="index.html" method="post">
-        <input type="text" name="srch" placeholder="Search..." />
-        <button id="searchbtn" type="submit">Search</button>
+            <input type="text" name="srch" placeholder="Search..." />
+            <button id="searchbtn" type="submit">Search</button>
         </form>
     </div>
     </header>
     <div class="sidebar">
-        <form action="login.html" method="get"><button type="submit" class="sidebar-button" id="acct-btn"><img src="imgs/default_avatar.png" alt="Account Login" width="100px" height="auto"/></button></form>
+        <form action="login.html" method="get"><button type="submit" class="sidebar-button" id="acct-btn"><img src="avatars/default_avatar.png" alt="Account Login" width="100px" height="auto"/></button></form>
+        <br>
+        <p id="username" style="color:white;"></p>
+        <br>
         <form action="index.html" method="get"><button type="submit" class="sidebar-button" id="home-btn">Home</button></form>
         <form action="upload.html" method="get"><button type="submit" class="sidebar-button" id="home-btn">Upload</button></form>
         <form action="liked.html" method="get"><button type="submit" class="sidebar-button" id="liked-videos-btn">Liked Videos</button></form>
@@ -30,38 +33,41 @@
     <div class="sidebar-right">
         <button type="button" class="sidebar-button">Recommended Videos</button>
         <div class="recommended-videos">
-            <a href="video1.html" class="recommended-video">
-                <img src="imgs/ranthumb.jpg" alt="Video 1" class="recommended-thumbnail"/>
+            <a href="" class="recommended-video">
+                <img src="" alt="Video 1" class="recommended-thumbnail"/>
             </a>
-            <a href="video2.html" class="recommended-video">
-                <img src="imgs/ranthumb2.jpg" alt="Video 2" class="recommended-thumbnail"/>
+            <a href="" class="recommended-video">
+                <img src="" alt="Video 2" class="recommended-thumbnail"/>
             </a>
-            <a href="video3.html" class="recommended-video">
-                <img src="imgs/ranthumb3.jpg" alt="Video 3" class="recommended-thumbnail"/>
+            <a href="" class="recommended-video">
+                <img src="" alt="Video 3" class="recommended-thumbnail"/>
             </a>
         </div>
     </div>
     </div>
     <div id="main-content">
-    <div id="video-container" class="vjs-matrix">
-        <video id="my-video" class="video-js" controls preload="auto" width="640" height="440" data-setup="{}">
-            <source id="z-source" src="videos/cool.mp4" type="video/mp4" />
-        </video>
-    <div id="video-title">Your Video Title Here</div>
-    </div>
-    <form action="player.html" method="post">
-        <div class="button-container">
-        <button id="like-btn" name="liked" class="like-button" value="true">Like</button>
-        <button id="dislike-btn" name="disliked" class="dislike-button" value="true">Dislike</button>
+        <div id="video-container" class="vjs-matrix">
+            <video id="my-video" class="video-js" controls="controls" width="640" height="440">
+                <source id="z-source">
+            </video>
+            <div id="video-title"></div>
         </div>
-    </form>
-    <form action="player.html" method="post">
-        <div class="comment-section">
-        <h3>Comments</h3>
-        <textarea class="comment-input" placeholder="Write a comment..."></textarea>
-        <button class="submit-comment">Submit</button>
-        </div>
-    </form>
+        <form action="player.html" method="post">
+            <div class="button-container">
+                <button id="like-btn" name="liked" class="like-button" value="true">Like</button>
+                <button id="dislike-btn" name="disliked" class="dislike-button" value="true">Dislike</button>
+            </div>
+        </form>
+        <form action="player.html" method="post">
+            <div class="comment-section">
+            <h3>Comments</h3>
+                <textarea class="comment-input" placeholder="Write a comment..."></textarea>
+                <button class="submit-comment">Submit</button>
+                <div name="comments-box" id="comments-container">
+                </div>
+            </div>
+        </form>
     </div>
+    <script type="text/javascript" src="scripts/player.js"></script>
 </body>
 </html>
