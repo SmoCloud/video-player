@@ -229,9 +229,15 @@ router.post('/upload', (request, response) => {     // handles post requests to 
                     response.write('File uploaded and moved!');
                 });
             });
-            response.end(); // ends the server response to the client after all files are written
+            response.json({
+                "uploaded": true
+            }); // ends the server response to the client after all files are written
         });
     }
+    console.log("No user logged in - Upload prevented.");
+    response.json({
+        "uploaded": false
+    });
 });
 
 router.route('/login(.html)?')    

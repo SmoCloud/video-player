@@ -43,9 +43,14 @@ router.route('/player(.html)?')    // handles all requests to player.html
     response.sendFile(join(__dirname, 'views', 'player.html'));    // send the player.html file itself
 })
 
-router.get('/upload(.html)?', (request, response) => {    // handles get requests to the upload.html page from client
+router.route('/upload(.html)?')
+.get((request, response) => {    // handles get requests to the upload.html page from client
     console.log(`${request.method}\t${request.headers.origin}\t${request.url}`);    // log request details
     response.sendFile(join(__dirname, 'views', 'upload.html'));    // send upload.html file (no extra data needed to be sent as session holds user data, if user is logged in)
+})
+.post((request, response) => {
+    console.log(`${request.method}\t${request.headers.origin}\t${request.url}`);
+    response.sendFile(join(__dirname, 'views', 'upload.html'));
 });
 
 router.get('/login(.html)?', (request, response) => { // handles get requests to login.html
@@ -66,9 +71,7 @@ router.get('/registration(.html)?', (request, response) => {  // handles get req
 router.route('/profile(.html)?')
 .get((request, response) => {   // handles get requests to profile.html
     console.log(`${request.method}\t${request.headers.origin}\t${request.url}`);    // log request details
-    response.render('pages/profile', {  // render profile page with user data
-        "user": request.session.user
-    });
+    response.sendFile(join(__dirname, 'views', 'profile.html'));
 })
 .post((request, response) => {
     if (typeof(request.session.user) !== "undefined" && request.session.user) { // if a user is logged in

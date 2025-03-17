@@ -17,13 +17,13 @@
         <button id="searchButton" style="border-radius: 5px;">Search</button>
     </div>
     <div class="uploading">
-        <form action="javascript:void(0)" id="upload-form">
+        <form id="upload-form" method="post">
             Select video to upload:
             <input type="file" name="fileToUpload" id="fileToUpload">
             <input type="file" name="thumbnail" id="thumbnail">
             <input type="text" placeholder="Title of your video" name="v_title" id="v_title">
             <input type="text" placeholder="Description of your video" name="v_description" id="v_description">
-            <button value="Upload Video" name="submit" id="submit">Upload Video</button>
+            <button type="submit" value="Upload Video" name="submit" id="submit-form">Upload Video</button>
         </form>
     </div>
     <script src="scripts/upload.js"></script>
