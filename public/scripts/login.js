@@ -1,3 +1,6 @@
+if (typeof(sessionStorage.user) !== "undefined") {
+    window.location.href = "profile.html";
+}
 let username;   // stores the entered username
 let password;   // stores the entered password
 
@@ -21,10 +24,21 @@ loginBtn.onclick = () => {
         window.alert("Password field cannot be empty!");    // alert that password cannot be empty
     }
 
-    fetch(`http://localhost:8080/api/login/${username}&${password}`)
+    const dataBody = {
+        "name": username,
+        "pass": password
+    };
+
+    fetch(`http://localhost:8080/api/login`, {
+        method: "POST",
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(dataBody)
+    })
     .then(response => response.json())
     .then(data => {
-        console.log(JSON.stringify(data.user));
+        console.log(data);
         if (data.usrMatch === true && data.pwdMatch === true) {
             alert(`Login for ${username} successful!`);
             sessionStorage.user = JSON.stringify(data.user);

@@ -7,7 +7,10 @@ document.getElementById("password-update-btn").addEventListener("click", () => {
 });
 
 document.getElementById("logout-btn").addEventListener("click", () => {
-    const data = { "logout": true };
+    const data = { 
+        "loggedIn": (typeof(sessionStorage) !== "undefined") ? true : false,
+        "logout": true
+     };
     fetch('http://localhost:8080/api/profile', {
         method: 'PUT',
         headers: {
@@ -15,12 +18,13 @@ document.getElementById("logout-btn").addEventListener("click", () => {
         },
         body: JSON.stringify(data)
     })
-    .then(response => {
+    .then(response => response.json())
+    .then(data => {
         sessionStorage.clear();
         localStorage.clear();
-        response;
+        console.log('Success:', data);
+        window.location.href = 'index.html';
     })
-    .then(data => console.log('Success:', data))
     .catch(error => console.log('Error:', error));
     alert(`Logged out successfully!`);
 });

@@ -7,8 +7,6 @@
   <link href="https://vjs.zencdn.net/8.16.1/video-js.css" rel="stylesheet" />
   <script src="https://vjs.zencdn.net/8.16.1/video.min.js"></script>
   <link rel="stylesheet" href="css/styles.css" />
-   
-  <script type="text/javascript" src="scripts/profile.js"></script>
 </head>
 <body>
   <header>
@@ -26,7 +24,7 @@
   <div class="sidebar">
       <form action="login.html" method="get">
           <button type="submit" class="sidebar-button" id="acct-btn">
-              <img src="../public/imgs/default_avatar.png" alt="Account Login" width="100px" height="auto"/>
+              <img src="avatars/default_avatar.png" alt="Account Login" width="100px" height="auto"/>
           </button>
       </form>
       <br>
@@ -36,7 +34,7 @@
       <form action="history.html" method="get"><button type="submit" class="sidebar-button">Watched Videos</button></form>
 
       <!-- Logout Button -->
-      <button type="submit" name="logout" id="logout-btn" class="sidebar-button">Log Out</button>
+      <button type="button" name="logout" id="logout-btn" class="sidebar-button">Log Out</button>
   </div>
 
   <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; margin-top: 50px; padding: 50px;">
@@ -56,7 +54,7 @@
         <div class="input-header">Username</div>
         <input type="text" id="username-input" readonly />
         <div class="button-container">
-          <button id="username-edit-btn" onclick="toggleEditable('username')">Edit</button>
+          <button id="username-edit-btn">Edit</button>
         </div>
       </div>
 
@@ -65,7 +63,7 @@
         <div class="input-header">Password</div>
         <input type="password" id="password-input" value="*****" readonly />
         <div class="button-container">
-          <button id="password-edit-btn" onclick="showPasswordModal()">Change Password</button>
+          <button id="password-edit-btn">Change Password</button>
         </div>
       </div>
 
@@ -74,7 +72,7 @@
         <div class="input-header">Bio</div>
         <textarea id="bio-input" readonly></textarea>
         <div class="button-container edit-button">
-          <button id="bio-edit-btn" onclick="toggleEditable('bio')">Edit</button>
+          <button id="bio-edit-btn">Edit</button>
         </div>
       </div>
 
@@ -89,7 +87,7 @@
   <!-- Password Change Modal -->
   <div id="passwordModal" class="modal">
     <div class="modal-content">
-      <span class="close" onclick="closePasswordModal()">&times;</span>
+      <span class="close">&times;</span>
       <h2>Change Password</h2>
       <label for="oldPassword">Old Password:</label>
       <input type="password" id="oldPassword" placeholder="Enter old password" required /><br><br>
@@ -97,8 +95,9 @@
       <input type="password" id="newPassword" placeholder="Enter new password" required /><br><br>
       <label for="confirmPassword">Confirm Password:</label>
       <input type="password" id="confirmPassword" placeholder="Confirm new password" required /><br><br>
-      <button type="button" onclick="updatePassword()">Save Changes</button>
+      <button type="button" id="password-update-btn">Save Changes</button>
     </div>
   </div>
+  <script type="text/javascript" src="scripts/profileUI.js"></script>
 </body>
 </html>

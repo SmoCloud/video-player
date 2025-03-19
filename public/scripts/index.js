@@ -16,7 +16,7 @@ document.addEventListener("DOMContentLoaded", () => {
     </tr>
     <hr>`;
         }
-        document.getElementById("username").textContent = JSON.parse(sessionStorage.user).username;
+        document.getElementById("username").textContent = JSON.parse(sessionStorage.user).username !== "undefined" ? JSON.parse(sessionStorage.user).username : "";
     })
     .catch(error => console.log('Error:', error));
 });

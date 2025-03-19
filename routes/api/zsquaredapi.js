@@ -169,6 +169,7 @@ router.post('/player', (request, response) => {  // post requests made to player
 
 router.post('/upload', (request, response) => {     // handles post requests to the upload.html page from client
     console.log(`${request.method}\t${request.headers.origin}\t${request.url}`);    // log request details
+    // console.log(request.session.user);
     if (typeof(request.session.user) !== "undefined" && request.session.user) { // if a user is logged in
         const form = new IncomingForm();         // create a new form with formidable to hold file details incoming from an html form
         form.parse(request, (err, fields, files) => {       // parse incoming file from html form for upload
@@ -234,20 +235,23 @@ router.post('/upload', (request, response) => {     // handles post requests to 
             }); // ends the server response to the client after all files are written
         });
     }
-    console.log("No user logged in - Upload prevented.");
-    response.json({
-        "uploaded": false
-    });
+    else {
+        console.log("No user logged in - Upload prevented.");
+        response.json({
+            "uploaded": false
+        });
+    }
 });
 
-router.get('/login/:username&:password', (request, response) => {  // handles get requests to the login.html page from client
+router.post('/login', (request, response) => {  // handles get requests to the login.html page from client
     console.log(`${request.method}\t${request.headers.origin}\t${request.url}`);    // log request details
     // query database for matching username in accounts table
-    dbServer.query(`SELECT * FROM accounts WHERE username='${request.params.username}';`, (error, users, fields) => { 
+    console.log(request.body.name);
+    dbServer.query(`SELECT * FROM accounts WHERE username='${request.body.name}';`, (error, users, fields) => { 
         if (error) 
             throw (error);
         if (users.length > 0) { // if username is found in database
-            if (hashCheck(request.params.password, users[0].password)) {   // if hashed version of entered password matches hashed password in database
+            if (hashCheck(request.body.pass, users[0].password)) {   // if hashed version of entered password matches hashed password in database
                 request.session.user = users[0];    // set session user info to first row of the query (should be only row, need to add some logic to prevent creation of users with identical usernames)
                 request.session.user.DoB = format(request.session.user.DoB, 'yyyy-MM-dd');  // re-format datetime to just date (this format is used for display of date of birth on profile page)
                 response.json({
@@ -326,8 +330,9 @@ router.get('/liked(.html)?', (request, response) => { // handles all requests to
 
 router.put('/profile',  (request, response) => {
     console.log('Is put request being made?');
-    if (typeof(request.session.user) !== "undefined" && request.session.user) { // if a user is logged in
+    if (typeof(request.body.loggedIn) !== "undefined" && request.body.loggedIn) { // if a user is logged in
         if (typeof(request.body.logout) !== "undefined" && request.body.logout) {   // if the logout button was clicked
+            console.log("Destroying session...");
             request.session.destroy();  // terminate the session
             response.json({
                 "logged-in": false
@@ -364,6 +369,12 @@ router.put('/profile',  (request, response) => {
         response.json({
             "logged-in": true
         }); // send login flag set true
+        return;
+    }
+    else {
+        response.json({
+            "logged-in": false
+        });
         return;
     }
 });
