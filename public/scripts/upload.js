@@ -10,12 +10,18 @@ function sendData() {
     .then(response => response.json())
     .then(data => {
         console.log('Success: ', data);
+        if (data.uploaded) {
+            alert("Video uploaded.");
+        }
+        else {
+            alert("Video upload failed. Are you logged in?");
+        }
     })
     .catch(error => console.log('Error: ', error));
 }
 
 form.addEventListener("submit", event => {
     event.preventDefault();
-    console.log(form);
+    // console.log(form);
     sendData();
 });

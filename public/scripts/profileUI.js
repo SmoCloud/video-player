@@ -1,3 +1,11 @@
+document.addEventListener("DOMContentLoaded", () => {
+    // console.log(sessionStorage.user);
+    document.getElementById("username-input").value = JSON.parse(sessionStorage.user).username;
+    document.getElementById("password-input").value = JSON.parse(sessionStorage.user).password;
+    document.getElementById("bio-input").value = JSON.parse(sessionStorage.user).bio;
+    document.getElementById("dob").value = JSON.parse(sessionStorage.user).DoB;
+});
+
 document.getElementById("password-edit-btn").addEventListener("click", () => {
     document.getElementById("passwordModal").style.display = "block";
 });

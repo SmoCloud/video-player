@@ -169,7 +169,7 @@ router.post('/player', (request, response) => {  // post requests made to player
 
 router.post('/upload', (request, response) => {     // handles post requests to the upload.html page from client
     console.log(`${request.method}\t${request.headers.origin}\t${request.url}`);    // log request details
-    // console.log(request.session.user);
+    console.log(request.session.user);
     if (typeof(request.session.user) !== "undefined" && request.session.user) { // if a user is logged in
         const form = new IncomingForm();         // create a new form with formidable to hold file details incoming from an html form
         form.parse(request, (err, fields, files) => {       // parse incoming file from html form for upload
@@ -246,7 +246,7 @@ router.post('/upload', (request, response) => {     // handles post requests to 
 router.post('/login', (request, response) => {  // handles get requests to the login.html page from client
     console.log(`${request.method}\t${request.headers.origin}\t${request.url}`);    // log request details
     // query database for matching username in accounts table
-    console.log(request.body.name);
+    // console.log(request.body.name);
     dbServer.query(`SELECT * FROM accounts WHERE username='${request.body.name}';`, (error, users, fields) => { 
         if (error) 
             throw (error);
@@ -299,22 +299,21 @@ router.post(('/registration(.html)?'), (request, response) => {  // post request
     });
 });
 
-router.get('/liked(.html)?', (request, response) => { // handles all requests to liked.html
+router.get('/liked/:all', (request, response) => { // handles all requests to liked.html
     console.log(`${request.method}\t${request.headers.origin}\t${request.url}`);    // log request details
     if (typeof(request.session.user) !== "undefined" && request.session.user) { // if a user is logged in
-
         // get videos liked by user (thanks to relational tables, can join likes table and videos table on user id and pull liked videos based on the user id that liked them)
         dbServer.query(`SELECT * FROM likes l JOIN videos v ON v.video_id=l.liked_videos WHERE l.user_id=${request.session.user.user_id};`, (error, results, fields) => {
             if (error)
                 throw (error);
             if (results.length > 0) {   // if there are liked videos by the user
-                response.render('pages/liked', {    // render liked page with their liked videos
+                response.json({    // render liked page with their liked videos
                     "user": request.session.user,
                     results
                 });
             }
             else {
-                response.render('pages/liked', {    // render liked page with their liked videos
+                response.json({    // render liked page with their liked videos
                     "user": request.session.user,
                     results
                 });
@@ -322,11 +321,10 @@ router.get('/liked(.html)?', (request, response) => { // handles all requests to
         });
         return;   
     }
-    response.redirect(303, 'login.html');
+    else {
+        response.json({ "loggedIn": false });
+    }
 });
-// .post((request, response) => {   // post requests handled here (if there ever end up being any made, anyway, otherwise this will be deleted)
-//      left this here in case post requests to the liked page are ever made (unlikely)
-// });
 
 router.put('/profile',  (request, response) => {
     console.log('Is put request being made?');

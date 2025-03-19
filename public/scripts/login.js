@@ -42,7 +42,7 @@ loginBtn.onclick = () => {
         if (data.usrMatch === true && data.pwdMatch === true) {
             alert(`Login for ${username} successful!`);
             sessionStorage.user = JSON.stringify(data.user);
-            console.log(JSON.parse(sessionStorage.user).username);
+            // console.log(JSON.parse(sessionStorage.user).username);
             window.location.href = 'index.html';
         }
         else if (data.usrMatch !== true || data.pwdMatch !== true) {
