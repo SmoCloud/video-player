@@ -14,9 +14,8 @@ import errorHandler from './middleware/errorHandler.js';  // custom middleware c
 const PORTS = [     // Ports that the server listens for requests on
     process.env.PORT || 8080,   // HTTP requests port
     process.env.PORT || 8443    // HTTPS requests port
- ];
+];
 
-app.set('view engine', 'ejs');  // Allows express to render .ejs files with data sent to the client by the server
 app.use(logger);                // Tells express to use the custom logger middleware, automates the writing of requests to the requestLog
 // Cross Origin Resource Sharing (will allow for functionality in multiple browsers)
 const whitelist = [             // Contains list of valid addresses that are allowed to make a request to this server throught CORS

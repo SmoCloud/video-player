@@ -42,7 +42,7 @@ router.get('/', (request, response) => {     // handles api get requests made by
     dbServer.query(`SELECT video_id, title, thumbnail, url FROM videos v LEFT JOIN accounts a ON v.user_id=a.user_id ORDER BY released LIMIT 10;`, (error, results, fields) => {
         if (error)
             throw (error);
-        response.status(200).json({    // render the page with the videos and the username of the logged in user
+        response.json({    // render the page with the videos and the username of the logged in user
             "user": request.session.user,
             results
         });
@@ -51,7 +51,6 @@ router.get('/', (request, response) => {     // handles api get requests made by
 
 router.get('/search/:search', (request, response) => {    // handles all api search requests from clients
     console.log(`${request.method}\t${request.headers.origin}\t${request.url}`);    // log request details
-    // console.log(request.params.search);
     if (typeof(request.params.search) !== "undefined" && request.params.search) { // if a search was made for something
         console.log(request.params.search);
         const searchQuery = "'%" + request.params.search + "%'";   // regex % interpreted to mean 'any character before/after' depending on prefix/suffix location
@@ -62,7 +61,7 @@ router.get('/search/:search', (request, response) => {    // handles all api sea
             if (error) 
                 throw (error);
             // console.log("Rendering player page with search results...");
-            response.status(200).json({    // render the page with the videos and the username of the logged in user
+            response.json({    // render the page with the videos and the username of the logged in user
                 "user": request.session.user,
                 results
             }); 
@@ -185,7 +184,7 @@ router.post('/upload', (request, response) => {     // handles post requests to 
                 "video/mp3", 
                 "video/3gpp", 
                 "video/mpeg",
-                "video/quicktime"
+                "video/quicktime",
             ];
             const allowedImageTypes = ["image/jpeg", "image/png"];  // mimetypes of allowed image formats for upload (allows for unique thumbnail)
             if (!allowedVideoTypes.includes(files.fileToUpload[0].mimetype)) {  // if mimetype of file is not in the allowed video types list, reject upload of files
@@ -230,16 +229,12 @@ router.post('/upload', (request, response) => {     // handles post requests to 
                     response.write('File uploaded and moved!');
                 });
             });
-            response.json({
-                "uploaded": true
-            }); // ends the server response to the client after all files are written
+            response.json({ "uploaded": true }); // ends the server response to the client after all files are written
         });
     }
     else {
         console.log("No user logged in - Upload prevented.");
-        response.json({
-            "uploaded": false
-        });
+        response.json({ "uploaded": false });
     }
 });
 
@@ -279,24 +274,24 @@ router.post('/login', (request, response) => {  // handles get requests to the l
     });
 });
 
-router.post(('/registration(.html)?'), (request, response) => {  // post requests handled here
+router.post(('/register'), (request, response) => {  // post requests handled here
     console.log(`${request.method}\t${request.headers.origin}\t${request.url}`);    // log request details
-
     // check that count of usernames that match entered username for account creation is zero
     dbServer.query(`SELECT COUNT(*) AS count FROM accounts WHERE username='${request.body.username}';`, (error, results, fields) => {
         if (error) 
             throw (error);
         if (results[0].count === 0) {   // if username not in accounts table
-
             // insert new account information into accounts table
             dbServer.query(`INSERT INTO accounts (email, username, password, DoB) VALUES ('${request.body.email}', '${request.body.username}', '${hashMake(request.body.password)}', '${request.body.dob}');`, (error, results, fields) => {
                 if (error)
                     throw (error);
-                response.redirect(303, 'index.html');   // redirect to index page with status code 303
+                response.json({ "created-account": true });
                 return;
             });
         }
     });
+    response.json({ "created-account": false });
+    return;
 });
 
 router.get('/liked/:all', (request, response) => { // handles all requests to liked.html
@@ -323,6 +318,7 @@ router.get('/liked/:all', (request, response) => { // handles all requests to li
     }
     else {
         response.json({ "loggedIn": false });
+        return;
     }
 });
 
@@ -332,9 +328,7 @@ router.put('/profile',  (request, response) => {
         if (typeof(request.body.logout) !== "undefined" && request.body.logout) {   // if the logout button was clicked
             console.log("Destroying session...");
             request.session.destroy();  // terminate the session
-            response.json({
-                "logged-in": false
-            }); // send the login flag set false
+            response.json({ "logged-in": false }); // send the login flag set false
             return;
         }
         else if (typeof(request.body.save) !== "undefined" && request.body.save) {  // if save changes button is clicked (only routerears if an edit button is clicked)
@@ -351,10 +345,7 @@ router.put('/profile',  (request, response) => {
                 console.log(`PUT request made to change password to: ${hashMake(request.body.newPassword)}.`);
                 if (!hashCheck(request.body.oldPassword, request.session.user.password)) {
                     console.log("Error: Incorrect old password.");
-                    response.json({
-                        "badPass": true
-                    });
-                    response.end();
+                    response.json({ "badPass": true });
                     return;
                 }
                 else {
@@ -364,15 +355,11 @@ router.put('/profile',  (request, response) => {
                 }
             }
         }
-        response.json({
-            "logged-in": true
-        }); // send login flag set true
+        response.json({ "logged-in": true }); // send login flag set true
         return;
     }
     else {
-        response.json({
-            "logged-in": false
-        });
+        response.json({ "logged-in": false });
         return;
     }
 });

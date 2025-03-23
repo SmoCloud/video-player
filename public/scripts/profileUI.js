@@ -40,6 +40,7 @@ document.getElementById("logout-btn").addEventListener("click", () => {
 document.querySelectorAll('.can-edit').forEach(editField => {
     console.log(editField.getAttribute("class"));
     editField.addEventListener("click", () => {
+        console.log("Editing.");
         const inputField = document.getElementById(`${editField.value}-input`);
         const editButton = document.getElementById(`${editField.value}-edit-btn`);
         const saveButton = document.getElementById(`${editField.value}-save-btn`);
@@ -48,7 +49,7 @@ document.querySelectorAll('.can-edit').forEach(editField => {
             inputField.toggleAttribute("readonly");
             inputField.focus();
             editButton.toggleAttribute("hidden");
-            saveButton.toggleAttribute("hidden");        
+            saveButton.toggleAttribute("hidden");      
         } else {
             inputField.toggleAttribute("readonly")
         }
