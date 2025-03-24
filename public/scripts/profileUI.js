@@ -18,7 +18,7 @@ document.getElementById("logout-btn").addEventListener("click", () => {
     const data = { 
         "loggedIn": (typeof(sessionStorage) !== "undefined") ? true : false,
         "logout": true
-     };
+    };
     fetch('http://localhost:8080/api/profile', {
         method: 'PUT',
         headers: {
@@ -38,9 +38,8 @@ document.getElementById("logout-btn").addEventListener("click", () => {
 });
 
 document.querySelectorAll('.can-edit').forEach(editField => {
-    console.log(editField.getAttribute("class"));
+    console.log("Name of editfield: ", editField.value);
     editField.addEventListener("click", () => {
-        console.log("Editing.");
         const inputField = document.getElementById(`${editField.value}-input`);
         const editButton = document.getElementById(`${editField.value}-edit-btn`);
         const saveButton = document.getElementById(`${editField.value}-save-btn`);
@@ -51,17 +50,54 @@ document.querySelectorAll('.can-edit').forEach(editField => {
             editButton.toggleAttribute("hidden");
             saveButton.toggleAttribute("hidden");      
         } else {
-            inputField.toggleAttribute("readonly")
+            inputField.toggleAttribute("readonly");
         }
-
+        
     });
     console.log(editField.getAttribute("class"));
 });
 
 document.querySelectorAll('.can-save').forEach(saveField => {
     console.log(saveField.getAttribute("class"));
-    saveField.addEventListener("click", async () => {
-
+    saveField.addEventListener("click", () => {
+        console.log("Attempting to save data...");
+        const inputField = document.getElementById(`${saveField.value}-input`);
+        const editButton = document.getElementById(`${saveField.value}-edit-btn`);
+        const saveButton = document.getElementById(`${saveField.value}-save-btn`);
+    
+        if (!inputField.hasAttribute("readonly")) {
+            inputField.toggleAttribute("readonly");
+            inputField.focus();
+            editButton.toggleAttribute("hidden");
+            saveButton.toggleAttribute("hidden");      
+        } else {
+            inputField.toggleAttribute("readonly");
+        }
+        console.log(inputField.value);
+        const data = { 
+            "loggedIn": (typeof(sessionStorage) !== "undefined") ? true : false,
+            "save": true,
+        };
+        saveField.value === "username" ? data.username = inputField.value : data.bio = inputField.value;
+        console.log(data);
+        fetch('http://localhost:8080/api/profile', {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log('Success:', data);
+            if (typeof(data.username) !== "undefined" && data.username) {
+                JSON.parse(sessionStorage.user).username = data.username;
+            }
+            else {
+                JSON.parse(sessionStorage.user).bio = data.bio;
+            }
+        })
+        .catch(error => console.log('Error:', error));
     });
 });
 

@@ -323,7 +323,7 @@ router.get('/liked/:all', (request, response) => { // handles all requests to li
 });
 
 router.put('/profile',  (request, response) => {
-    console.log('Is put request being made?');
+    // console.log('Is put request being made?');
     if (typeof(request.body.loggedIn) !== "undefined" && request.body.loggedIn) { // if a user is logged in
         if (typeof(request.body.logout) !== "undefined" && request.body.logout) {   // if the logout button was clicked
             console.log("Destroying session...");
@@ -355,7 +355,8 @@ router.put('/profile',  (request, response) => {
                 }
             }
         }
-        response.json({ "logged-in": true }); // send login flag set true
+        response.json({ 
+            "logged-in": true }); // send login flag set true
         return;
     }
     else {

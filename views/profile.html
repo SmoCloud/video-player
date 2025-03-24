@@ -54,7 +54,8 @@
         <div class="input-header">Username</div>
         <input type="text" id="username-input" readonly value=""/>
         <div class="button-container">
-          <button id="username-edit-btn">Edit</button>
+          <button class="can-edit" id="username-edit-btn" value="username">Edit</button>
+          <button hidden class="can-save" id="username-save-btn" value="username">Save</button>
         </div>
       </div>
 
@@ -72,7 +73,8 @@
         <div class="input-header">Bio</div>
         <textarea id="bio-input" readonly value=""></textarea>
         <div class="button-container edit-button">
-          <button id="bio-edit-btn">Edit</button>
+          <button class="can-edit" id="bio-edit-btn" value="password">Edit</button>
+          <button hidden class="can-save" id="bio-save-btn" value="password">Save</button>
         </div>
       </div>
 
