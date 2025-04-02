@@ -1,379 +1,98 @@
-const express = require('express');
-const session = require('express-session');
-const formidable = require('formidable');
-const fs = require('fs')
-const app = express();
-const path = require('path');
-const cors = require('cors');
-const mysql = require('mysql2');
-const { randomUUID } = require('crypto');
-const { logger } = require('./middleware/logger');
-const errorHandler = require('./middleware/errorHandler')
-const { hashMake, hashCheck } = require('./public/scripts/hasher')
+import { readFileSync } from 'fs';           // allows for asynchronous reading of filesconst express = require('express')
+import { createServer } from 'https';     // allows for connection using https instead of http
+import express from 'express'; // Express framework for creating a web server
+import session from 'express-session'; // Add-on for express that creates a session attached to client requests
+const app = express();              // Declare express instance
+import { join } from 'path';       // path module deals with directory handling, has built-in variables for the root directory
+import { dirname } from "node:path";    // gives the root directory of the project
+const __dirname = dirname(process.argv[1]);
+import cors from 'cors';       // Cross-Origin Resource Sharing allows for different browsers to make requests for the web server
+import { randomUUID } from 'crypto';   // Import ability to generate a random id for the session
+import { logger } from './middleware/logger.js';  // custom middleware creates a requestLog to log requests to the server
+import errorHandler from './middleware/errorHandler.js';  // custom middleware creates a errorLog to log server errors
 
-const PORT = process.env.PORT || 8080;
+const PORTS = [     // Ports that the server listens for requests on
+    process.env.PORT || 8080,   // HTTP requests port
+    process.env.PORT || 8443    // HTTPS requests port
+];
 
-app.set('view engine', 'ejs');
-app.use(logger);
-// Cross Origin Resource Sharing (will allow for functionality in multiple browsers easier)
-const whitelist = ['https://www.google.com', 'http://127.0.0.1:8080', 'http://localhost:8080', ];
-const corsOptions = {
+app.use(logger);                // Tells express to use the custom logger middleware, automates the writing of requests to the requestLog
+// Cross Origin Resource Sharing (will allow for functionality in multiple browsers)
+const whitelist = [             // Contains list of valid addresses that are allowed to make a request to this server throught CORS
+    // 'https://www.google.com',
+    'https://127.0.0.1:8443',
+    'https://localhost:8443',
+    'http://127.0.0.1:8080',
+    'http://localhost:8080',
+];
+const corsOptions = {           // Determines if the origin address making the requesst is in the whietlist
     origin: (origin, callback) => {
-        if (whitelist.indexOf(origin) !== -1 || !origin) { // !origin must be removed before final release
+        if (whitelist.indexOf(origin) !== -1 || !origin) { // !origin used for testing to allow requests from an undefined origin, typcially localhost
             callback(null, true);
-        } else {
+        } 
+        else {
             callback(new Error('Not allowed by CORS'));
         }
     }, 
     optionsSuccessStatus: 200
-}
-app.use(cors(corsOptions));
-app.use(express.static(path.join(__dirname, '/public')));
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+};
+app.use(cors(corsOptions));     // Tells express to use the CORS module with the corsOptions set above
+app.use(express.json());        // Tells express to use json
+app.use(express.urlencoded({ extended: true }));    // Tells express that the url will be encoded
 app.use(session({   // session settings found in the expressjs.com docs
     genid               : function(req) {
-        return randomUUID();
+        return randomUUID();    // get a random unique id for the session
     },
-    secret              : 'The Power of Z-Squared.',
-    resave              : false,
+    secret              : 'The Power of Z-Squared.',    // secret passphrase
+    resave              : false, 
     saveUninitialized   : false,
     cookie: { 
         path        : '/',
-        httpOnly    : true,
+        httpOnly    : false,
         secure      : false,
         maxAge      : null,
     },
 }));
 
-const dbServer = mysql.createConnection({
-    host: 'localhost',       // Database host (use your DB host if not localhost)
-    user: 'guest',            // Your database username
-    password: '',    // Your database password
-    database: 'z_squared', // The name of your database
-    port: 3306               // The port for the database (default is 3306 for MariaDB)
-});
+import { router as rootRouter} from './routes/root.js';
+import { router as apiRouter} from './routes/api/zsquaredapi.js';
 
-dbServer.connect((err) => { // open connection to database
-    if (err) {
-        console.error("Error connecting: " + err.stack);
-        return;
-    }
-    else {
-        console.log("Connected as id " + dbServer.threadId);
-    }
-});
+app.use('/', express.static(join(__dirname, '/public')));   // Tells express to start its search in the public folder for any files requested by the client
+app.use('/', rootRouter);
+app.use('/api', apiRouter);
 
-app.route('^/$|/index(.html)?')
-    .get((request, response) => {
-        console.log(`${request.method}\t${request.headers.origin}\t${request.url}`);
-        console.log(request.body.results);
-        if (typeof(request.body.results) === "undefined" && !request.body.results) {
-            dbServer.query(`SELECT * FROM videos ORDER BY released LIMIT 10;`, (error, results, fields) => {
-                if (error)
-                    throw (error);
-                if (typeof(request.session.username) !== "undefined" && request.session.username) {
-                    console.log(results);
-                    response.render('pages/index', { "username": request.session.username, results });
-                }
-                else {
-                    response.render('pages/index', { "username": "", results });
-                }
-            });
-        } else {
-            results = JSON.parse(request.body.results);
-            response.render('pages/index', { "username": request.session.username, results });
-        }
-        // response.sendFile(path.join(__dirname, 'views', 'index.html'));
-    })
-    .post((request, response) => {
-        console.log(`${request.method}\t${request.headers.origin}\t${request.url}`);
-        if (typeof(request.body.srch) !== "undefined" && request.body.srch) {
-            const searchQuery = "'%" + request.body.srch + "%'";
-            dbServer.query(`SELECT * FROM videos WHERE title LIKE ${searchQuery};`, (error, results, fields) => {
-                if (error) 
-                    throw (error);
-                // console.log(request.session.username);
-                response.render('pages/search', { "username": request.session.username, results });
-            });
-        }
-    });
 
-app.route('/player(.html)?')
-    .get((request, response) => {
-        if (typeof(request.query.title) !== "undefined" && request.query.title) {
-            const title = request.query.title;
-            const vURL = request.query.vurl;
-            const vID = request.query.video_id;
-            console.log("Get request detected.");
-        } else if (typeof(request.session.userID) !== "undefined" && request.session.userID) {
-            dbServer.query(`SELECT * FROM likes WHERE user_id LIKE ${request.session.userID} AND liked_videos LIKE '${title}';`, (error, results, fields) => {
-                console.log("Looking for likes.");
-                if (error)
-                    throw (error);
-                if (results.length > 0) {
-                    console.log(`${title} already liked by ${request.session.username}`)
-                    response.render('pages/player', { "username": request.session.username, "title": title, "vURL": vURL, "vid": vID, "isLiked": true })
-                } else {
-                    response.render('pages/player', { "username": request.session.username, "title": title, "vURL": vURL, "vid": vID, "isLiked": false })
-                }
-            });
-        } else {
-            response.sendFile(path.join(__dirname, 'views', 'player.html'));
-        }
-    })
-    .post((request, response) => {
-        console.log(`${request.method}\t${request.headers.origin}\t${request.url}`);
-        console.log(request.session.userID);
-        if (typeof(request.body.jsonData) !== "undefined" && request.body.jsonData) {
-            const data = JSON.parse(request.body.jsonData);
-            const key = request.body.thumber;
-            const title = data[key].title;
-            const vURL = data[key].url;
-            const vID = data[key].video_id;
-            dbServer.query(`SELECT username, comment FROM accounts a JOIN comments c ON a.user_id=c.user_id WHERE c.video_id LIKE ${vID};`, (error, comments, fields) => {
-                if (error)
-                    throw (error);
-                if (comments.length > 0) {
-                    response.render('pages/player', { "username": request.session.username, "title": title,
-                        "vURL": vURL, "vid": vID, comments });
-                }
-            });
-            console.log(`JSON data detected.\t${vID}`);
-        } else if (typeof(request.body.srch) !== "undefined" && request.body.srch) {
-            const searchQuery = "'%" + request.body.srch + "%'";
-            console.log("Search detected.")
-            dbServer.query(`SELECT * FROM videos WHERE title LIKE ${searchQuery};`, (error, results, fields) => {
-                if (error) 
-                    throw (error);
-                console.log("Rendering player page with search results...");
-                comments = JSON.parse(request.body.comments);
-                response.render('pages/search', { results, "username": request.session.username, comments });
-            });
-        } else if (typeof(request.session.userID) !== "undefined" && request.session.userID) {
-            console.log("Like detected.");
-            console.log(`${typeof(request.body.liked)}`)
-            if (typeof(request.body.liked) !== "undefined" && request.body.liked) {
-                dbServer.query(`SELECT * FROM dislikes WHERE user_id LIKE ${request.session.userID} AND disliked_videos=${request.body.vid};`,(error, results, fields) => {
-                    if (error)
-                        throw (error);
-                    if (results.length > 0) {
-                        console.log("Removing from dislikes...");
-                        dbServer.query(`DELETE FROM dislikes WHERE disliked_videos=${request.body.vid};`)
-                    }
-                });
-                dbServer.query(`SELECT * FROM likes WHERE user_id LIKE ${request.session.userID} AND liked_videos=${request.body.vid};`, (error, results, fields) => {
-                    if (error)
-                        throw (error);
-                    if (results.length > 0) {
-                        console.log(`${request.body.title} already liked by ${request.session.username}`);
-                        comments = JSON.parse(request.body.comments);
-                        response.render('pages/player', { "username": request.session.username, 
-                            "title": request.body.title, "vURL": request.body.vurl, "vid": request.body.vid, "isLiked": true, comments })
-                    } else {
-                        console.log("Attempting to insert like...");
-                        dbServer.query(`INSERT INTO likes (user_id, liked_videos) VALUES (${request.session.userID}, ${request.body.vid});`);
-                        response.render('pages/player', { "username": request.session.username, 
-                            "title": request.body.title, "vURL": request.body.vurl, "vid": request.body.vid, "isLiked": false, comments });
-                    }
-                });
-            } else if (typeof(request.body.disliked) !== "undefined" && request.body.disliked) {
-                dbServer.query(`SELECT * FROM likes WHERE user_id LIKE ${request.session.userID} AND liked_videos=${request.body.vid};`,(error, results, fields) => {
-                    if (error)
-                        throw (error);
-                    if (results.length > 0) {
-                        console.log("Removing from likes...");
-                        dbServer.query(`DELETE FROM likes WHERE liked_videos=${request.body.vid};`)
-                    }
-                });
-                dbServer.query(`SELECT * FROM dislikes WHERE user_id LIKE ${request.session.userID} AND disliked_videos=${request.body.vid};`, (error, results, fields) => {
-                    if (error)
-                        throw (error);
-                    if (results.length > 0) {
-                        console.log(`${request.body.title} already disliked by ${request.session.username}`);
-                        comments = JSON.parse(request.body.comments);
-                        response.render('pages/player', { "username": request.session.username, "title": request.body.title,
-                            "vURL": request.body.vurl, "vid": request.body.vid, "isDisliked": true, comments });
-                    } else {
-                        console.log("Attempting to insert dislike...");
-                        dbServer.query(`INSERT INTO dislikes (user_id, disliked_videos) VALUES (${request.session.userID}, ${request.body.vid});`);
-                        response.render('pages/player', { "username": request.session.username, "title": request.body.title,
-                            "vURL": request.body.vurl, "vid": request.body.vid, "isDisliked": false, comments });
-                    }
-                });
-            } else if (typeof(request.body.commented) !== "undefined" && request.body.commented) {
-                console.log(`Comment received, maybe?\n${request.session.userID}\t${request.body.commented}\t${request.body.vid}`);
-                dbServer.query(`INSERT INTO comments (user_id, video_id, comment) VALUES (${request.session.userID}, ${request.body.vid}, '${request.body.commented}');`);
-                comments = JSON.parse(request.body.comments);
-                response.render('pages/player', { "username": request.session.username, "title": request.body.title,
-                    "vURL": request.body.vurl, "vid": request.body.vid, comments });
-            } else { 
-                console.log("Failed?");
-                comments = JSON.parse(request.body.comments);
-                response.render('pages/player', { "username": request.session.username, "title": request.body.title, 
-                    "vURL": request.body.vurl, "vid": request.body.vid, "isLiked": false, comments });
-            } 
-        } else { 
-            console.log("Are you logged in?");
-            comments = JSON.parse(request.body.comments);
-            response.render('pages/player', { "username": request.session.username, "title": request.body.title, "vURL": request.body.vurl,
-                "vid": request.body.vid, "isLiked": false, comments });
-        } 
-    });
-
-app.route('/upload(.html)?')
-    .get((request, response) => {
-        response.sendFile(path.join(__dirname, 'views', 'upload.html'));
-    })
-    .post((request, response) => {
-        console.log(`${request.method}\t${request.headers.origin}\t${request.url}`);
-        const form = new formidable.IncomingForm();
-        form.parse(request, (err, fields, files) => {
-            if (err) {
-              next(err);
-              return;
-            }
-
-            const allowedTypes = ["video/mp4"];
-            if (!allowedTypes.includes(files.fileToUpload[0].mimetype)) {
-                response.end("Invalid File Type");
-                return;
-            }
+var server = null;  // tries to read for a key and certificate for https, if not found, error is logged and execution continues using http connection
+try {
+    const keys = {
+        key: readFileSync('./cert/local.decrypted.key'),
+        cert: readFileSync('./cert/local.crt')
+    };
     
-            var t_path = files.fileToUpload[0].filepath;
-            var n_path = 'C:/Program Files/Ampps/www/video-player/public/videos/' + files.fileToUpload[0].originalFilename; //THIS IS DEPENDENT ON HOST MACHINE
+    server = createServer(keys, app);
+} 
+catch (error) {
+    console.log(error);
+}
 
-            dbServer.query(`INSERT INTO videos (title, description) VALUES ('${fields.v_title?.[0]}', '${fields.v_description?.[0]}');`);
-
-            fs.copyFile(t_path, n_path, function (err) {
-                if (err) throw err;
-                response.write('File uploaded and moved!');
-                response.end();
-              });
-          });
-    });
-
-
-
-app.route('/login(.html)?')
-    .get((request, response) => {
-        console.log(`${request.method}\t${request.headers.origin}\t${request.url}`);
-        if (typeof(request.session.username) !== "undefined" && request.session.username) {
-            response.render('pages/profile', { "username": request.session.username, "profilePic": "imgs/default_avatar.png", "bio": "I am guest", "dob": "mm/dd/yy" });
-        }
-        else {
-            response.render('pages/login', { "usrMatch": true, "pwdMatch": true, "results": request.body.results })
-        }
-    })
-    .post((request, response) => {
-        var usrMatch = true;
-        var pwdMatch = true;
-        console.log(`${request.method}\t${request.headers.origin}\t${request.url}`);
-        if (typeof(request.session.username) !== "undefined" && request.session.username) {
-            if (typeof(request.body.logout) !== "undefined" && request.body.logout) {
-                request.session.destroy();
-                results = JSON.parse(request.body.logout);
-                response.render('pages/login', { "usrMatch": true, "pwdMatch": true, results })
-            }
-            else if (typeof(request.body.save) !== "undefined" && request.body.save) {
-                console.log("resuest.body.username: ", request.body.username);
-                if (typeof(request.body.username) !== "undefined" && request.body.username) {
-                    dbServer.query(`UPDATE accounts SET username='${request.body.username}' WHERE user_id=${request.session.userID};`);
-                    request.session.username = request.body.username;
-                    response.render('pages/profile', { "username": request.session.username, "profilePic": "imgs/default_avatar.png", "bio": "I am guest", "dob": "yyyy-MM-dd" });
-                }
-                else if (typeof(request.body.bio) !== "undefined" && request.body.bio) {
-                    console.log(request.body.bio);
-                    dbServer.query(`UPDATE accounts SET username=${request.body.username} WHERE user_id=${request.session.userID};`);
-                    request.session.username = request.body.username;
-                }
-                response.render('pages/profile', { "username": request.session.username, "profilePic": "imgs/default_avatar.png", "bio": "I am guest", "dob": "yyyy-MM-dd" });
-            }
-            else {
-                response.render('pages/profile', { "username": request.session.username, "profilePic": "imgs/default_avatar.png", "bio": "I am guest", "dob": "yyyy-MM-dd" });
-            }
-        } 
-        else if (typeof(request.body.create) !== "undefined" && request.body.create) {
-            response.sendFile(path.join(__dirname, 'views', 'registration.html'));
-        }
-        else if (typeof(request.body.login) !== "undefined" && request.body.login) {
-            // console.log(request.headers.origin);
-            const username = request.body.usr;
-            const password = request.body.pwd;
-            dbServer.query(`SELECT * FROM accounts WHERE username='${username}';`, (error, users, fields) => {
-                if (error) 
-                    throw (error);
-                if (users.length > 0) {
-                    pwdMatch = password === hashCheck(password, users[0].password);
-                    if (hashCheck(password, users[0].password)) {
-                        request.session.username = username;
-                        request.session.userID = users[0].user_id;
-                        results = JSON.parse(request.body.jsonData);
-                        response.render('pages/index', { "username": request.session.username, results });
-                    } 
-                } else {
-                    usrMatch = false;
-                    pwdMatch = false;
-                    results = JSON.parse(request.body.jsonData);
-                    response.render('pages/login', { usrMatch, pwdMatch, results });
-                }
-            })
-        } else {
-            results = JSON.parse(request.body.jsonData);
-            // console.log(results);
-            response.render('pages/login', { "usrMatch": true, "pwdMatch": true, results })
-        }
-    });
-
-app.route('/registration(.html)?')
-    .get((request, response) => {
-        response.sendFile(path.join(__dirname, 'views', 'registration.html'));
-    })
-    .post((request, response) => {
-        console.log(`${request.method}\t${request.headers.origin}\t${request.url}`);
-        console.log(`${request.body.email}\t${request.body.username}\t`);
-        dbServer.query(`SELECT COUNT(*) AS count FROM accounts WHERE username='${request.body.username}';`, (error, results, fields) => {
-            if (error) 
-                throw (error);
-            if (results[0].count === 0) {
-                dbServer.query(`INSERT INTO accounts (email, username, password) VALUES ('${request.body.email}', '${request.body.username}', '${hashMake(request.body.password)}');`, (error, results, fields) => {
-                    if (error)
-                        throw (error);
-                    response.sendFile(path.join(__dirname, 'views', 'index.html'));
-                });
-            }
-            // console.log(results[0].count);
-        });
-    });
-
-app.route('/liked(.html)?')
-    .get((request, response) => {
-        console.log(`${request.method}\t${request.headers.origin}\t${request.url}`);
-        if (request.session.username !== "undefined" && request.session.username) {
-            dbServer.query(`SELECT * FROM likes l JOIN videos v ON v.video_id=l.liked_videos;`, (error, results, fields) => {
-                if (error)
-                    throw (error);
-                if (results.length > 0) {
-                    response.render('pages/liked', { results, "username": request.session.username })
-                }
-            })
-        }
-    })
-    .post((request, response) => {
-
-    });
-
-app.all('*', (request, response) => {
-    response.status(404);
-    if (request.accepts('html')) {
-        response.sendFile(path.join(__dirname, 'views', '404.html'));
-    } else if (request.accepts('json')) {
-        response.json({ error: "404 Not Found" });
+app.all('*', (request, response) => {   // if requests to anything not in the directory is made
+    console.log(`${request.method}\t${request.headers.origin}\t${request.url}`);    // log request details
+    response.status(404);   // respond with 404 status code
+    if (request.accepts('html')) {  // if request is for an html file
+        response.sendFile(join(__dirname, 'views', '404.html'));   // send our (patented, copyrighted, licensed, etc. all the big corporate words) generic 404.html
+    } else if (request.accepts('json')) {   // if request is for json data
+        response.json({ error: "404 Not Found" });  // respond with josn object indicating a 404 error
     } else {
-        response.type('txt').send("404 Not Found");
+        response.type('txt').send("404 Not Found"); // respond with a txt file (if all else fails, be damned) indicating a 404
     }
 });
 
-app.use(errorHandler);
+app.use(errorHandler);  // use error handler at end of routes to catch and log any errors in logs/errorLog.txt (ignored by git, each one of us will have our own)
 
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+try {   // attempt to listen on ports 8080 (HTTP) and 8443 (HTTPS) (comment out HTTPS if you're having issues with the key/cert pairing during testing, but we will need this to work before we go live)
+    app.listen(PORTS[0], () => console.log(`Server running on port ${PORTS[0]}`));
+    // server.listen(PORTS[1], () => {console.log(`Server is listening on https://localhost:${PORTS[1]}`)});
+}
+catch (error) { // log any server listening errors (e.g. the ports the server is suppose to be listening on are already being used by sonething else)
+    console.log(error);
+}

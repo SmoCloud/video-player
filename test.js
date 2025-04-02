@@ -1,1 +1,1 @@
-console.log('testing nodemon');
+console.log('testing node');

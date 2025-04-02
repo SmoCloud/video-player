@@ -16,7 +16,7 @@
         </div>
         <h1 style="text-align: center;">Register</h1>
     </section>
-    <form class="registration" action="registration.html" method="post">
+    <form class="registration" action="login.html" method="post">
         <div class="inputField">
             <table>
                 <tr>
@@ -43,7 +43,15 @@
                         <input type="password" id="confirmPassword" name="confirmPassword" required autocomplete="off">
                     </td>
                 </tr>
-                <tr><td><button type="submit" id="register-btn" name="register-btn">Register</button></td></tr>
+                <tr>
+                    <td>
+                        <label class="inputFieldLabel" for="dob">Date of Birth (xxxx-xx-xx format): </label>
+                        <input type="date" id="dob" name="dob" required autocomplete="off">
+                    </td>
+                </tr>
+                <tr>
+                    <td><button type="submit" id="register-btn" name="register-btn">Register</button></td>
+                </tr>
             </table>
         </div>
     </form>

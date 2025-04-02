@@ -1,13 +1,14 @@
-const crypto = require("crypto");
+import { createHash } from 'crypto';
 
-function hashMake(pa) {
-    const hash = crypto.createHash("sha256");
+export function hashMake(pa) {
+    // console.log(crypto);
+    const hash = createHash("sha256");
     hash.update(pa, "utf-8");
     var en_pa = hash.digest("hex");
     return en_pa;
 }
 
-function hashCheck(p1, p2) {
+export default function hashCheck(p1, p2) {
     if (hashMake(p1) == p2) {
         return true;
     }
@@ -15,5 +16,3 @@ function hashCheck(p1, p2) {
         return false;
     }
 }
-
-module.exports = {hashMake, hashCheck};

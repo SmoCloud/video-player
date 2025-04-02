@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Z<sup>2</sup></title>
+    <link rel="stylesheet" href="css/styles.css" type="text/css"/>
+</head>
+<body>
+    <header>
+        <div class="logo">
+            <img src="imgs/basicLogo.jpeg" alt="Logo" />
+        </div>
+        <div class="searchbar">
+            <form action="search.html" method="post">
+            <input type="text" name="srch" placeholder="Search..." />
+            <button id="searchbtn" type="submit">Search</button>
+            </form>
+        </div>
+    </header>
+    <div class="sidebar">
+        <form action="login.html" method="get"><button type="submit" class="sidebar-button" id="acct-btn"><img src="avatars/default_avatar.png" alt="Account Login" width="100px" height="auto"/></button></form>
+        <br>
+        <p style="color:white;"></p>
+        <br>
+        <form action="index.html" method="get"><button type="submit" class="sidebar-button" id="home-btn">Home</button></form>
+        <form action="upload.html" method="get"><button type="submit" class="sidebar-button" id="home-btn">Upload</button></form>
+        <form action="liked.html" method="get"><button type="submit" class="sidebar-button" id="liked-videos-btn">Liked Videos</button></form>
+        <form action="history.html" method="get"><button type="submit" class="sidebar-button" id="history-btn">Watched Videos</button></form>
+    </div>
+    <div id="main-content">
+        <div id="results-container" class="results">
+            <table>
+                <div class="results-loop">
+                    <form id="liked-videos" action="player.html" method="get">
+                        
+                    </form>
+                </div>
+            </table>
+        </div>
+    </div>
+</body>
+</html>
