@@ -356,7 +356,8 @@ router.put('/profile',  (request, response) => {
             }
         }
         response.json({ 
-            "logged-in": true 
+            "logged-in": true, 
+            user: request.session.user
         }); // send login flag set true
         return;
     }

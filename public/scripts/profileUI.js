@@ -90,11 +90,8 @@ document.querySelectorAll('.can-save').forEach(saveField => {
         .then(response => response.json())
         .then(data => {
             console.log('Success:', data);
-            if (typeof(data.username) !== "undefined" && data.username) {
-                JSON.parse(sessionStorage.user).username = data.username;
-            }
-            else {
-                JSON.parse(sessionStorage.user).bio = data.bio;
+            if (typeof(data.username) !== "undefined" && data.user) {
+                sessionStorage.user = data.user;
             }
         })
         .catch(error => console.log('Error:', error));
