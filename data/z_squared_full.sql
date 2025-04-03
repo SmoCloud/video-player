@@ -1,4 +1,4 @@
-CREATE DATABASE  IF NOT EXISTS `z_squared` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
+CREATE DATABASE  IF NOT EXISTS `z_squared` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_uca1400_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
 USE `z_squared`;
 -- MySQL dump 10.13  Distrib 8.0.36, for Win64 (x86_64)
 --
@@ -26,7 +26,7 @@ DROP TABLE IF EXISTS `accounts`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `accounts` (
   `user_id` int NOT NULL AUTO_INCREMENT,
-  `email` varchar(127) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs NOT NULL,
+  `email` varchar(127) CHARACTER SET utf8mb4 COLLATE utf8mb4_uca1400_as_cs NOT NULL,
   `username` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `password` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `DoB` date NOT NULL,
@@ -63,7 +63,7 @@ CREATE TABLE `comments` (
   KEY `id_videos_idx` (`video_id`),
   CONSTRAINT `id_user` FOREIGN KEY (`user_id`) REFERENCES `accounts` (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `id_videos` FOREIGN KEY (`video_id`) REFERENCES `videos` (`video_id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -85,10 +85,10 @@ DROP TABLE IF EXISTS `dislikes`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `dislikes` (
   `user_id` int NOT NULL,
-  `disliked_videos` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs NOT NULL,
+  `disliked_videos` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_uca1400_as_cs NOT NULL,
   KEY `dislike_id` (`user_id`),
   CONSTRAINT `dislike_id` FOREIGN KEY (`user_id`) REFERENCES `accounts` (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -115,7 +115,7 @@ CREATE TABLE `likes` (
   KEY `liked_idx` (`liked_videos`),
   CONSTRAINT `like_id` FOREIGN KEY (`user_id`) REFERENCES `accounts` (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `liked` FOREIGN KEY (`liked_videos`) REFERENCES `videos` (`video_id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
