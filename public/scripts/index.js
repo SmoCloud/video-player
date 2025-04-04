@@ -19,6 +19,10 @@ document.addEventListener("DOMContentLoaded", () => {
         document.getElementById("username").textContent = JSON.parse(sessionStorage.user).username !== "undefined" ? JSON.parse(sessionStorage.user).username : "";
     })
     .catch(error => console.log('Error:', error));
+
+    document.getElementById("searchbtn").addEventListener("click", () => {
+        // fetch request to search api using the content of the search input element goes here
+    });
 });
 
 // document.querySelectorAll("#videoID").forEach(playable => {
