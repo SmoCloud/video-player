@@ -21,8 +21,23 @@ document.addEventListener("DOMContentLoaded", () => {
         player.load();
     })
     .catch(error => console.log('Error:', error));
-});
 
-document.getElementById("like-btn").addEventListener("click", () => {
-
+    document.getElementById("like-btn").addEventListener("click", () => {
+        const dataBody = {
+            "liked": document.getElementById("like-btn").value
+        };
+        fetch(`http://localhost:8080/api/player`, {
+            method: "POST",
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(dataBody)
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log(data, "Video liked.");
+            // Update like button to reflect that it has been clicked
+        })
+        .catch(error => console.log('Error:', error));
+    });
 });
