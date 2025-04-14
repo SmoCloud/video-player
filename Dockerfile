@@ -4,7 +4,7 @@
 FROM ubuntu:latest@sha256:1e622c5f073b4f6bfad6632f2616c7f59ef256e96fe78bf6a595d1dc4376ac02
 
 RUN apt-get update && \
-    apt-get install -y curl gnupg2 lsb-release build-essential g++ gcc git software-properties-common apt-transport-https ca-certificates nodejs npm mariadb-server && \
+    apt-get install -y curl gnupg2 lsb-release build-essential g++ gcc git software-properties-common apt-transport-https ca-certificates nodejs npm mariadb-server-core mariadb-client-core mariadb-common && \
     apt-get upgrade && \
     service mariadb start
 # Add the NodeSource APT repository for Node.js
@@ -23,8 +23,7 @@ RUN npm install --production
 COPY . .
 # Expose the port the app runs on
 EXPOSE 8080
-# Start the application
-CMD ["npm", "run", "dev"]
+EXPOSE 3306
 # Use a non-root user to run the application
 RUN useradd -m appuser
 USER appuser
