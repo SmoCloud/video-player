@@ -27,4 +27,4 @@ RUN npm install --production
 COPY . .
 # Expose the port the app runs on
 EXPOSE 8080
-# EXPOSE 3306
+EXPOSE 3306

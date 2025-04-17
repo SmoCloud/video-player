@@ -1,0 +1,13 @@
+services:
+
+  mariadb:
+    container_name: mariadb
+    restart: always
+    image: mariadb:latest
+    environment:
+      MYSQL_ROOT_PASSWORD:  fireballs
+      MYSQL_USER: guest
+    ports:
+      - 3306:3306
+    volumes:
+      - ./data:/var/lib/mysql
