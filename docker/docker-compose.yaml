@@ -5,8 +5,7 @@ services:
     restart: always
     image: mariadb:latest
     environment:
-      MYSQL_ROOT_PASSWORD:  fireballs
-      MYSQL_USER: guest
+      MARIADB_ROOT_PASSWORD:  fireballs
     ports:
       - 3306:3306
     volumes:
