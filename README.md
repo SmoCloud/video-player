@@ -14,15 +14,16 @@ All of the node modules can be installed using powershell or git BASH. This can 
     - Node Modules :
         - All node modules can be installed by running 'npm install' from inside of the directory that contains the package.json folder (the root directory of this project).
         - List of node modules: 
-            - CORS
-            - date-fns
-            - ejs
-            - express
-            - express-session
-            - formidable
-            - mysql2
-            - uuid
-            - video.js
+            - CORS              ^2.8.5
+            - crypto            ^1.0.1
+            - date-fns          ^4.1.0
+            - ejs               ^3.1.10
+            - express           ^4.21.2
+            - express-session   ^1.18.1
+            - formidable        ^3.5.2
+            - mysql2            ^3.12.0
+            - uuid              ^11.0.2
+            - video.js          ^8.19.1
 
 # Get Started:
 - Run server.js from the command line using 'node server' or 'node --watch server' to have the server hot reload whenever any file being watched changes.
@@ -33,6 +34,9 @@ All of the node modules can be installed using powershell or git BASH. This can 
 # TODO
 - Find a place to host website and acquire unique domain name
 - Introduce some security/encryption of data passed from the front-end to the back-end and stored in database (user account passwords, video upload file names, etc.)
+- Finish building video player API (passwords and password hashing)
+- Containerize within Docker
+- Test Test Test!
 - Interact with YouTube API (likely using node.js)*
 
 

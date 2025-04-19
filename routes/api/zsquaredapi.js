@@ -72,29 +72,30 @@ router.get('/search/:search', (request, response) => {    // handles all api sea
 router.get('/player/:video', (request, response) => {   // get requests handles here
     console.log(`${request.method}\t${request.headers.origin}\t${request.url}`);    // log request details
     // query for comments tied to the requested video
-    dbServer.query(`SELECT video_id, username, title, url, v_mimetype FROM videos v LEFT JOIN accounts a ON v.user_id=a.user_id WHERE video_id=${request.params.video};`, (error, results, fields) => {
+    dbServer.query(`SELECT video_id, username, title, description, released, views, likes, url, v_mimetype FROM videos v LEFT JOIN accounts a ON v.user_id=a.user_id WHERE video_id=${request.params.video};`, (error, results, fields) => {
         if (error)
             throw (error);
         request.session.video = results[0];
     });
-    dbServer.query(`SELECT username, comment FROM accounts a JOIN videos v ON a.user_id=v.user_id JOIN comments c ON a.user_id=c.user_id WHERE v.video_id LIKE ${request.params.video};`, (error, comments, fields) => {
+    dbServer.query(`SELECT username, comment FROM accounts a JOIN videos v ON a.user_id=v.user_id JOIN comments c ON v.video_id=c.video_id WHERE v.video_id LIKE ${request.params.video};`, (error, comments, fields) => {
         if (error)
             throw (error);
         response.json({   // if there is no error, render the video with its comments
             "user": request.session.user,
             "vData": request.session.video,
-            comments
+            "comments": JSON.stringify(comments)
         });
     });
 });
 
 router.post('/player', (request, response) => {  // post requests made to player.html handled here
     console.log(`${request.method}\t${request.headers.origin}\t${request.url}`);    // log request details
-    if (typeof(request.body.liked) !== "undefined") {
+    console.log(request.body);
+    if (typeof(request.session.user) !== "undefined") {
         if (typeof(request.session.user) !== "undefined" && request.session.user) { // if there's a user logged in
             if (request.body.liked) { // if the like button was clicked
                 request.session.flags.isLiked = true;  // this flag (will be) used to determine if a user has liked a video or not (true for liked, false for disliked, else undefined for neither)
-                
+
                 // check if user has previously disliked video by querying dislikes table with user id and video id
                 dbServer.query(`SELECT * FROM dislikes WHERE user_id LIKE ${request.session.user.user_id} AND disliked_videos=${request.session.video.video_id};`,(error, results, fields) => {
                     if (error)
@@ -117,10 +118,11 @@ router.post('/player', (request, response) => {  // post requests made to player
                         dbServer.query(`INSERT INTO likes (user_id, liked_videos) VALUES (${request.session.user.user_id}, ${request.session.video.video_id});`);
                         dbServer.query(`UPDATE videos SET likes=likes+1 WHERE video_id=${request.session.video.video_id};`);
                     }
+                    request.session.video.likes += 1;
                 });
             }
         }
-        else if (!request.body.liked) {  // if disliked button is clicked
+        else if (request.body.disliked) {  // if disliked button is clicked
             request.session.flags.isLiked = false; // set isLiked session flag to false to indicate video is disliked
             
             // check if video has been liked by user (disallow both liking and disliking a video)
@@ -132,6 +134,7 @@ router.post('/player', (request, response) => {  // post requests made to player
                     dbServer.query(`DELETE FROM likes WHERE liked_videos=${request.session.video.video_id} AND user_id=${request.session.user.user_id};`)
                     dbServer.query(`UPDATE videos SET likes=likes-1 WHERE video_id=${request.session.video.video_id};`);
                 }
+                request.session.video.likes -= 1;
             });
     
             // check if video previously disliked by user
@@ -153,13 +156,14 @@ router.post('/player', (request, response) => {  // post requests made to player
         }
     }
     else {
-        console.log("Failed?"); // error catch, in case some unforseen issue occurs, render player page as normal, with user, video, and comments info
+        console.log("Not logged in?"); // error catch, in case some unforseen issue occurs, render player page as normal, with user, video, and comments info
     }
-    dbServer.query(`SELECT username, comment FROM accounts a JOIN videos v ON a.user_id=v.user_id JOIN comments c ON a.user_id=c.user_id WHERE v.video_id LIKE ${request.params.video};`, (error, comments, fields) => {
+    dbServer.query(`SELECT username, comment FROM accounts a JOIN videos v ON a.user_id=v.user_id JOIN comments c ON a.user_id=c.user_id WHERE v.video_id LIKE ${request.session.video.video_id};`, (error, comments, fields) => {
         if (error)
             throw (error);
         response.json({   // render the video player with the video, its comments and send the flag to the client to render a 'liked' or 'disliked' button
             "isLiked": request.session.flags.isLiked,
+            "likeCount": request.session.video.likes,
             comments
         });
     });
@@ -357,7 +361,7 @@ router.put('/profile',  (request, response) => {
         }
         response.json({ 
             "logged-in": true, 
-            user: request.session.user
+            user: JSON.stringify(request.session.user)
         }); // send login flag set true
         return;
     }
