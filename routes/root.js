@@ -84,4 +84,13 @@ router.route('/profile(.html)?')
     return;
 });
 
+router.get('/create_course(.html)?', (request, response) => {
+    console.log(`${request.method}\t${request.headers.origin}\t${request.url}`);
+    response.sendFile(join(__dirname, 'views', 'create_course.html'));
+})
+.post('/create_course', (request, response) => {
+    const course_name = request.body.course_title;
+    const course_desc = request.body.course_description;
+});
+
 export { router };
