@@ -49,4 +49,27 @@ document.addEventListener("DOMContentLoaded", () => {
         })
         .catch(error => console.log('Error:', error));
     });
+
+    document.getElementById("dislike-btn").addEventListener("click", () => {
+        const dataBody = {
+            "disliked": document.getElementById("dislike-btn").value
+        };
+        fetch(`http://localhost:8080/api/player`, {
+            method: "POST",
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(dataBody)
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log(data, "Video disliked");
+
+            // TODO:
+            // Update dislike button to reflect that it has been clicked
+            // Update dislike counter
+            // document.getElementById("like-counter").textCounter = data.vData.likes;
+        })
+        .catch(error => console.log('Error:', error));
+    });
 });
