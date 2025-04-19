@@ -12,11 +12,16 @@ document.addEventListener("DOMContentLoaded", () => {
         document.getElementById("z-source").src = `videos/${data.vData.url}`;
         document.getElementById("z-source").type = data.vData.v_mimetype;
         document.getElementById("video-title").textContent = data.vData.title;
+
+        // TODO: Future additions for like counter and views counter, add front-end elements
+        // document.getElementById("like-counter").textContent = data.vData.likes;
+        // document.getElementById("view-counter").textContent = data.vData.views;
+
         var player = videojs(document.getElementById("my-video"), {}, () => {
             player.src({
                 src: `videos/${data.vData.url}`,
                 type: data.vData.v_mimetype
-            })
+            });
         });
         player.load();
     })
@@ -36,7 +41,11 @@ document.addEventListener("DOMContentLoaded", () => {
         .then(response => response.json())
         .then(data => {
             console.log(data, "Video liked.");
+            
+            // TODO:
             // Update like button to reflect that it has been clicked
+            // Update like counter
+            // document.getElementById("like-counter").textCounter = data.vData.likes;
         })
         .catch(error => console.log('Error:', error));
     });
