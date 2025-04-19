@@ -77,13 +77,13 @@ router.get('/player/:video', (request, response) => {   // get requests handles 
             throw (error);
         request.session.video = results[0];
     });
-    dbServer.query(`SELECT username, comment FROM accounts a JOIN videos v ON a.user_id=v.user_id JOIN comments c ON a.user_id=c.user_id WHERE v.video_id LIKE ${request.params.video};`, (error, comments, fields) => {
+    dbServer.query(`SELECT username, comment FROM accounts a JOIN videos v ON a.user_id=v.user_id JOIN comments c ON v.video_id=c.video_id WHERE v.video_id LIKE ${request.params.video};`, (error, comments, fields) => {
         if (error)
             throw (error);
         response.json({   // if there is no error, render the video with its comments
             "user": request.session.user,
             "vData": request.session.video,
-            comments
+            "comments": JSON.stringify(comments)
         });
     });
 });

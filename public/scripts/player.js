@@ -12,6 +12,10 @@ document.addEventListener("DOMContentLoaded", () => {
         document.getElementById("z-source").src = `videos/${data.vData.url}`;
         document.getElementById("z-source").type = data.vData.v_mimetype;
         document.getElementById("video-title").textContent = data.vData.title;
+        console.log(JSON.parse(data.comments));
+        JSON.parse(data.comments).forEach(aComment => {
+            document.getElementById("comments-container").innerHTML += `<hr><p>${aComment.username}</p><pre>        ${aComment.comment}</pre>`;
+        });
 
         // TODO: Future additions for like counter and views counter, add front-end elements
         // document.getElementById("like-counter").textContent = data.vData.likes;
