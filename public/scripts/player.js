@@ -91,7 +91,12 @@ document.addEventListener("DOMContentLoaded", () => {
         .then(response => response.json())
         .then(data => {
             console.log(data, "Comment posted.");
-            document.getElementById("new-comment").innerText = null;
+            const commentInput = document.createElement("textarea");
+            commentInput.id = 'new-comment';
+            commentInput.setAttribute('class', 'comment-input');
+            commentInput.placeholder = 'Write a comment...';
+            const commentArea = document.getElementById("comment-area");
+            commentArea.replaceChild(commentInput, commentArea.children[1]);
             document.getElementById("comments-container").innerHTML = '';
             data.comments.forEach(aComment => {
                 document.getElementById("comments-container").innerHTML += `<hr><p>${aComment.username}</p><pre>        ${aComment.comment}</pre>`;
