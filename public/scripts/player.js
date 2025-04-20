@@ -76,4 +76,27 @@ document.addEventListener("DOMContentLoaded", () => {
         })
         .catch(error => console.log('Error:', error));
     });
+
+    document.getElementById("comment-submit-btn").addEventListener("click", () => {
+        const dataBody = {
+            "commented": document.getElementById("new-comment").value
+        };
+        fetch(`http://localhost:8080/api/player`, {
+            method: "POST",
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(dataBody)
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log(data, "Comment posted.");
+            document.getElementById("new-comment").innerText = null;
+            document.getElementById("comments-container").innerHTML = '';
+            data.comments.forEach(aComment => {
+                document.getElementById("comments-container").innerHTML += `<hr><p>${aComment.username}</p><pre>        ${aComment.comment}</pre>`;
+            });
+        })
+        .catch(error => console.log(error));
+    });
 });

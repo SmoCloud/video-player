@@ -38,7 +38,7 @@ loginBtn.onclick = () => {
     })
     .then(response => response.json())
     .then(data => {
-        console.log(data);
+        console.log(data.user);
         if (data.usrMatch === true && data.pwdMatch === true) {
             alert(`Login for ${username} successful!`);
             sessionStorage.user = JSON.stringify(data.user);
