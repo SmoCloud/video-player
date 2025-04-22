@@ -87,11 +87,6 @@ router.route('/profile(.html)?')
 router.get('/create_course(.html)?', (request, response) => {
     console.log(`${request.method}\t${request.headers.origin}\t${request.url}`);
     response.sendFile(join(__dirname, 'views', 'create_course.html'));
-})
-.post('/create_course', (request, response) => {
-    const course_name = request.body.course_title;
-    const course_desc = request.body.course_description;
-    dbServer.query(`INSERT INTO courses (course_name, course_desc, instructor_id) VALUES ('${course_name}', '${course_desc}', '${request.session.user.user_id}');`);
 });
 
 export { router };

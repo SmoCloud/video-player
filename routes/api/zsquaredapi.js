@@ -371,4 +371,17 @@ router.put('/profile',  (request, response) => {
     }
 });
 
+router.post('/create_course', (request, response) => {
+    const course_name = request.body.course_title;
+    const course_desc = request.body.course_description;
+    const form = new IncomingForm();         // create a new form with formidable to hold file details incoming from an html form
+        form.parse(request, (err, fields) => {       // parse incoming file from html form for upload
+            if (err) {      // uses a next() callback on the error stack to loop through errors and returns if any are found (I think?)
+                next(err);
+                return;
+            }
+            dbServer.query(`INSERT INTO courses (course_name, course_desc, instructor_id) VALUES ('${fields.course_title?.[0]}', '${fields.course_description?.[0]}', ${request.session.user.user_id});`);
+        })
+});
+
 export { router };
