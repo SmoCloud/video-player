@@ -23,27 +23,9 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("searchbtn").addEventListener("click", () => {
         // fetch request to search api using the content of the search input element goes here
     });
-});
 
-// document.querySelectorAll("#videoID").forEach(playable => {
-//     console.log(playable.value);
-//     playable.addEventListener("click", () => {
-//         const url = document.getElementById("videoURL").value;
-//         console.log(url);
-//         data = {
-//             "search": playable.value,
-//             "videoID": url,
-//         };
-//         fetch(`http://localhost:8080/api/${playable.value}`, {
-//             method: 'GET',
-//             headers: {
-//                 'Content-Type': 'application/json'
-//             },
-//         })
-//         .then(response => response.json())
-//         .then(data => console.log('Success:', data.user))
-//         .catch(error => console.log('Error:', error));
-//         // alert(`Logged out successfully!`);
-//         console.log(playable.value);
-//     });
-// });
+    if (typeof(sessionStorage.user) !== "undefined") {
+        document.getElementById("liked-videos").style.display = "flex";
+        document.getElementById("recently-watched").style.display = "flex";
+    }
+});

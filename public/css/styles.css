@@ -189,7 +189,6 @@ input:focus {
     overflow-y: auto;
 }
 
-
 .recommended-video {
     display: block;
     margin-bottom: 15px;
@@ -204,7 +203,6 @@ input:focus {
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
     transition: transform 0.3s;
 }
-
 
 .recommended-video:hover .recommended-thumbnail {
     transform: scale(1.05);
@@ -229,7 +227,6 @@ input:focus {
     width: 300px; 
     height: 600px; 
 }
-
 
 .sidebar-button, .like-button, .dislike-button, .submit-comment {
 	background:maroon;
@@ -287,7 +284,6 @@ input:focus {
     animation: fadeIn 1.5s ease-in-out;
 }
 
-
 @keyframes fadeIn {
     from {
         opacity: 0;
@@ -299,8 +295,6 @@ input:focus {
     }
 }
 
-
-
 .video-sections {
     display: flex;
     flex-direction: column;
@@ -308,7 +302,6 @@ input:focus {
     margin-top: 300px;
     padding-top: 20px;
 }
-
 
 .video-category {
     width: 50%;
@@ -319,7 +312,6 @@ input:focus {
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
 }
 
-
 .video-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -327,7 +319,6 @@ input:focus {
     justify-content: center;
     padding: 10px;
 }
-
 
 .video-item {
     text-align: center;
@@ -343,11 +334,9 @@ input:focus {
     object-fit: cover; 
 }
 
-
 .video-item:hover {
     transform: scale(1.05);
 }
-
 
 .logo img {
 	height: 40px;
@@ -686,6 +675,7 @@ form button[type="button"] {
     float: right;
     font-size: 28px;
     font-weight: bold;
+    background-color: inherit;
   }
 
   .close:hover,

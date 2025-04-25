@@ -368,7 +368,7 @@ router.put('/profile',  (request, response) => {
                 request.session.user.bio = request.body.bio;    // update session user info with new bio
             }
             else if (typeof(request.body.oldPassword) !== "undefined" && request.body.oldPassword) {
-                console.log(`PUT request made to change password to: ${hashMake(request.body.newPassword)}.`);
+                // console.log(`PUT request made to change password to: ${hashMake(request.body.newPassword)}.`);
                 if (!hashCheck(request.body.oldPassword, request.session.user.password)) {
                     console.log("Error: Incorrect old password.");
                     response.json({ "badPass": true });
@@ -377,6 +377,7 @@ router.put('/profile',  (request, response) => {
                 else {
                     // dbServer.query(`UPDATE accounts SET password='${hashMake(request.body.newPassword)}' WHERE user_id=${request.session.user.user_id};`);
                     request.session.user.password = hashMake(request.body.newPassword);
+                    dbServer.query(`UPDATE accounts SET password='${request.session.user.password}' WHERE user_id=${request.session.user.user_id};`);
                     console.log("Password updated successfully!");
                 }
             }
