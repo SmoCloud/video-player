@@ -194,7 +194,7 @@ router.post('/player', (request, response) => {  // post requests made to player
 
 router.post('/upload', (request, response) => {     // handles post requests to the upload.html page from client
     console.log(`${request.method}\t${request.headers.origin}\t${request.url}`);    // log request details
-    console.log(request.session.user);
+    // console.log(request.session.user);
     if (typeof(request.session.user) !== "undefined" && request.session.user) { // if a user is logged in
         const form = new IncomingForm();         // create a new form with formidable to hold file details incoming from an html form
         form.parse(request, (err, fields, files) => {       // parse incoming file from html form for upload
@@ -202,7 +202,7 @@ router.post('/upload', (request, response) => {     // handles post requests to 
                 next(err);
                 return;
             }
-            console.log(request);
+            // console.log(request);
             const allowedVideoTypes = [ // mimetypes of allowed video formats for upload
                 "video/mp4", 
                 "video/ogg",
@@ -311,12 +311,29 @@ router.post(('/register'), (request, response) => {  // post requests handled he
             dbServer.query(`INSERT INTO accounts (email, username, password, DoB) VALUES ('${request.body.email}', '${request.body.username}', '${hashMake(request.body.password)}', '${request.body.dob}');`, (error, results, fields) => {
                 if (error)
                     throw (error);
-                response.json({ "created-account": true });
-                return;
             });
         }
+        else {
+            response.json({
+                "created-account": false
+            });
+            return;
+        }
     });
-    response.json({ "created-account": false });
+    dbServer.query(`SELECT * FROM accounts WHERE username='${request.body.username}';`, (error, user, fields) => {
+        if (error)
+            throw (error);
+        if (user.length > 0) {
+            response.json({ 
+                "created-account": true,
+                user
+             });
+             return;
+        }
+    });
+    response.json({ 
+        "created-account": false 
+    });
     return;
 });
 

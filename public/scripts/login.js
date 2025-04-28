@@ -15,7 +15,7 @@ loginBtn.onclick = () => {
     // console.log(password);  // log password to console for testing
 
     // while username field is empty
-    if(username === ""|| username === null) {
+    if(username === "" || username === null) {
         window.alert("Username field cannot be empty!");    // alert that username cannot be empty
     }
 
