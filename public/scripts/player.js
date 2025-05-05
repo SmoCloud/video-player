@@ -76,4 +76,11 @@ document.addEventListener("DOMContentLoaded", () => {
         })
         .catch(error => console.log('Error:', error));
     });
+
+    document.getElementById('searchbtn').addEventListener('click', () => {
+        const searchTerm = document.getElementById('search').value.trim();
+        if (searchTerm) {
+            window.location.href = `/index.html?search=${encodeURIComponent(searchTerm)}`;
+        }
+    });    
 });

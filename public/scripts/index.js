@@ -21,29 +21,60 @@ document.addEventListener("DOMContentLoaded", () => {
     .catch(error => console.log('Error:', error));
 
     document.getElementById("searchbtn").addEventListener("click", () => {
-        // fetch request to search api using the content of the search input element goes here
+        const query = document.getElementById("search").value.trim();
+        if (!query) return;
+    
+        fetch(`http://localhost:8080/api/search?q=${encodeURIComponent(query)}`)
+            .then(response => response.json())
+            .then(data => {
+                console.log('Search Results:', data.results);
+                const recommendeds = document.getElementById('recommended');
+                recommendeds.innerHTML = '<hr>'; // clear current videos
+    
+                for (let i = 0; i < data.results.length; i++) {
+                    recommendeds.innerHTML += 
+        `<tr>
+            <td>
+                <div id="videoURL" value="${data.results[i].video_id}">${data.results[i].title}</div>
+                <br>
+                <button id="videoID" name="video" type="submit" value="${data.results[i].video_id}">
+                    <img id="${data.results[i].url}" class="thumbnails" src="thumbnails/${data.results[i].thumbnail}" title="${data.results[i].title}" width="480" height="320">
+                </button>
+            </td>
+        </tr>
+        <hr>`;
+                }
+            })
+            .catch(error => console.log('Search Error:', error));
     });
-});
 
-// document.querySelectorAll("#videoID").forEach(playable => {
-//     console.log(playable.value);
-//     playable.addEventListener("click", () => {
-//         const url = document.getElementById("videoURL").value;
-//         console.log(url);
-//         data = {
-//             "search": playable.value,
-//             "videoID": url,
-//         };
-//         fetch(`http://localhost:8080/api/${playable.value}`, {
-//             method: 'GET',
-//             headers: {
-//                 'Content-Type': 'application/json'
-//             },
-//         })
-//         .then(response => response.json())
-//         .then(data => console.log('Success:', data.user))
-//         .catch(error => console.log('Error:', error));
-//         // alert(`Logged out successfully!`);
-//         console.log(playable.value);
-//     });
-// });
+    document.addEventListener("DOMContentLoaded", () => {
+        const queryParams = new URLSearchParams(window.location.search);
+        const searchTerm = queryParams.get("search");
+    
+        if (searchTerm) {
+            fetch(`http://localhost:8080/api/search/${encodeURIComponent(searchTerm)}`)
+                .then(response => response.json())
+                .then(data => {
+                    console.log("Search results:", data);
+                    // Clear existing results and display new ones
+                    const container = document.getElementById("videos-container");
+                    container.innerHTML = ""; // clear existing content
+    
+                    data.forEach(video => {
+                        const div = document.createElement("div");
+                        div.innerHTML = `
+                            <h3>${video.title}</h3>
+                            <video width="320" height="240" controls>
+                                <source src="videos/${video.url}" type="${video.v_mimetype}">
+                                Your browser does not support the video tag.
+                            </video>
+                        `;
+                        container.appendChild(div);
+                    });
+                })
+                .catch(error => console.error("Error loading search results:", error));
+        }
+    });
+    
+    
