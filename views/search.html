@@ -14,10 +14,8 @@
             <img src="imgs/basicLogo.jpeg" alt="Logo" />
         </div>
         <div class="searchbar">
-            <form action="search.html" method="get">
-                <input type="text" name="srch" placeholder="Search..." />
-                <button id="searchbtn" type="submit">Search</button>
-            </form>
+            <input type="text" name="srch" placeholder="Search..." />
+            <button id="searchbtn" type="submit">Search</button>
         </div>
     </header>
     <div class="sidebar">
@@ -34,20 +32,13 @@
         <div id="results-container" class="results">
             <table>
                 <div class="results-loop">
-                    <form action="player.html" method="get">
-                        <tr>
-                            <td>
-                            <hr>
-                            <div id="videoTitle"></div>
-                            <br>
-                            <button id="video" type="submit" value=""><img id="thumb" class="thumbnails" src="" title="" width="480" height="320"></button>
-                            <hr>
-                            </td>
-                        </tr>
-                    </form>
+                    <form id="videos-container" action="player.html" method="get">
+                    
+                    </form>      
                 </div>
             </table>
         </div>
     </div>
+    <script type="text/javascript" src="scripts/search.js"></script>
 </body>
 </html>
