@@ -337,11 +337,11 @@ router.post(('/register'), (request, response) => {  // post requests handled he
     return;
 });
 
-router.get('/liked/:all', (request, response) => { // handles all requests to liked.html
+router.get('/liked/:uid', (request, response) => { // handles all requests to liked.html
     console.log(`${request.method}\t${request.headers.origin}\t${request.url}`);    // log request details
-    if (typeof(request.session.user) !== "undefined" && request.session.user) { // if a user is logged in
+    if (typeof(request.params.uid) !== "undefined" && request.params.uid) { // if a user is logged in
         // get videos liked by user (thanks to relational tables, can join likes table and videos table on user id and pull liked videos based on the user id that liked them)
-        dbServer.query(`SELECT * FROM likes l JOIN videos v ON v.video_id=l.liked_videos WHERE l.user_id=${request.session.user.user_id};`, (error, results, fields) => {
+        dbServer.query(`SELECT * FROM likes l JOIN videos v ON v.video_id=l.liked_videos WHERE l.user_id=${request.params.uid};`, (error, results, fields) => {
             if (error)
                 throw (error);
             if (results.length > 0) {   // if there are liked videos by the user
