@@ -1,4 +1,7 @@
 document.addEventListener("DOMContentLoaded", () => {
+    let timer;
+    let seconds = 0;
+    
     const videoID = window.location.href.split('?')[1].split('=')[1];
     console.log(videoID);
 
@@ -48,6 +51,7 @@ document.addEventListener("DOMContentLoaded", () => {
             
             // TODO:
             // Update like button to reflect that it has been clicked
+
             // Update like counter
             // document.getElementById("like-counter").textCounter = data.vData.likes;
         })
@@ -111,4 +115,26 @@ document.addEventListener("DOMContentLoaded", () => {
         })
         .catch(error => console.log(error));
     });
+
+    
+    let videoPlayer = document.getElementById("my-video");
+
+    function startWatchtime() {
+        if (!timer) {
+            timer = window.setInterval(() => {seconds++;}, 1000);
+        }
+        console.log(seconds);
+    }
+
+    function stopWatchtime() {
+        if (timer) {
+            clearInterval(timer);
+            timer = null;
+        }
+    }
+
+    videoPlayer.addEventListener('play', startWatchtime);
+    videoPlayer.addEventListener('pause', stopWatchtime);
+    videoPlayer.addEventListener('waiting', stopWatchtime);
+    videoPlayer.addEventListener('playing', startWatchtime);
 });
