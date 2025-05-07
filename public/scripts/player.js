@@ -116,14 +116,23 @@ document.addEventListener("DOMContentLoaded", () => {
         .catch(error => console.log(error));
     });
 
-    
     let videoPlayer = document.getElementById("my-video");
+
+    let playtime;
+
+    videoPlayer.addEventListener('loadedmetadata', ()=> {
+        playtime = videoPlayer.duration;
+        console.log(playtime);
+    });
 
     function startWatchtime() {
         if (!timer) {
             timer = window.setInterval(() => {seconds++;}, 1000);
         }
         console.log(seconds);
+        if (seconds > playtime) {
+            seconds = playtime;
+        }
     }
 
     function stopWatchtime() {
@@ -131,6 +140,9 @@ document.addEventListener("DOMContentLoaded", () => {
             clearInterval(timer);
             timer = null;
             console.log(seconds);
+        }
+        if (seconds > playtime) {
+            seconds = playtime;
         }
     }
 
