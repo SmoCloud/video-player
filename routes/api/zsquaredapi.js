@@ -148,6 +148,31 @@ router.post('/player', (request, response) => {  // post requests made to player
                 }
             });
         }
+        else if (typeof(request.body.watched) !== "undefined" && request.body.watched) {
+            // create a watch table for the user if one doesn't already exist
+            dbServer.query(`CREATE TABLE IF NOT EXISTS watched_${request.session.user.username} (
+                watch_id INT NOT NULL AUTO_INCREMENT,
+                u_id INT NOT NULL,
+                v_id INT NOT NULL,
+                FOREIGN KEY (u_id) REFERENCES accounts(user_id),
+                FOREIGN KEY (v_id) REFERENCES videos(video_id),
+                PRIMARY KEY (watch_id));`, (error, results, fields) => {
+                    if (error)
+                        return;
+                }
+            );
+            // query the table (in case it does already exist) for the video
+            dbServer.query(`SELECT COUNT(*) AS count FROM watched_${request.session.user.username} WHERE v_id=${request.session.video.video_id};`, (error, results, fields) => {
+                if (error)
+                    throw (error);
+                if (results[0].count > 0)
+                    return;
+                else {
+                    dbServer.query(`INSERT INTO watched_${request.session.user.username} (u_id, v_id) VALUES (${request.session.user.user_id}, ${request.session.video.video_id});`);
+                    dbServer.query(`UPDATE videos SET views=views+1 WHERE video_id=${request.session.video.video_id};`);
+                }
+            })
+        }
         else if (typeof(request.body.commented) !== "undefined" && request.body.commented) {    // if a comment is submitted by user
             // insert user id, video id, and new comment into comments table only if a user is logged in
             // console.log(request.body.commented, " ", request.session.user.username);

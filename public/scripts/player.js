@@ -121,7 +121,7 @@ document.addEventListener("DOMContentLoaded", () => {
     let playtime;
 
     videoPlayer.addEventListener('loadedmetadata', ()=> {
-        playtime = videoPlayer.duration;
+        playtime = Number(videoPlayer.duration);
         console.log(playtime);
     });
 
@@ -129,26 +129,62 @@ document.addEventListener("DOMContentLoaded", () => {
         if (!timer) {
             timer = window.setInterval(() => {seconds++;}, 1000);
         }
-        console.log(seconds);
         if (seconds > playtime) {
             seconds = playtime;
         }
+        console.log(seconds);
     }
 
     function stopWatchtime() {
         if (timer) {
             clearInterval(timer);
             timer = null;
-            console.log(seconds);
         }
         if (seconds > playtime) {
             seconds = playtime;
         }
+        console.log(seconds);
     }
 
-    videoPlayer.addEventListener('play', startWatchtime);
-    videoPlayer.addEventListener('pause', stopWatchtime);
-    videoPlayer.addEventListener('waiting', stopWatchtime);
-    videoPlayer.addEventListener('playing', startWatchtime);
-    videoPlayer.addEventListener('beforeunload', stopWatchtime);
+    function checkWatchtime() {
+        let dataBody = {
+            "watched": (seconds > (playtime / 4)) ? true : false
+        };
+        if (seconds > (playtime / 4)) {
+            fetch(`http://localhost:8080/api/player`, {
+                method: "POST",
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(dataBody)
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log(data, 'Video watched');
+            })
+            .catch(error => console.log(error))
+        }
+    }
+
+    videoPlayer.addEventListener('play', () => {
+        startWatchtime();
+        checkWatchtime();
+    });
+    videoPlayer.addEventListener('pause', () => {
+        stopWatchtime();
+        checkWatchtime();
+    });
+    videoPlayer.addEventListener('waiting', () => {
+        stopWatchtime();
+        checkWatchtime();
+    });
+    videoPlayer.addEventListener('playing', () => {
+        startWatchtime();
+        checkWatchtime();
+    });
+    videoPlayer.addEventListener('beforeunload', () => {
+        stopWatchtime();
+        checkWatchtime();
+        seconds = 0;
+    });
 });
