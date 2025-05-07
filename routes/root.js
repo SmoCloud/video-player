@@ -84,4 +84,10 @@ router.route('/profile(.html)?')
     return;
 });
 
+router.route('/liked(.html)?')
+.get((request, response) => {
+    console.log(`${request.method}\t${request.headers.origin}\t${request.url}`);    // log request details
+    response.sendFile(join(__dirname, 'views', 'liked.html'));
+});
+
 export { router };

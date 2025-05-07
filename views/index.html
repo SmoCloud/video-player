@@ -16,8 +16,8 @@
   </div>
   <div class="searchbar">
     <form action="search.html" method="get">
-      <input type="text" name="search" placeholder="Search..." />
-      <button id="searchbtn" type="submit">Search</button>
+      <input type="text" id="search" name="search" placeholder="Search videos...">
+      <button id="searchbtn">Search</button>
     </form>
   </div>
   </header>
@@ -46,11 +46,11 @@
           </div>
         </div>
       </div>
-      <div class="video-category">
+      <div class="video-category" id="liked-videos" style="display: none">
         <h2>Watched Videos</h2>
         <div class="video-grid"></div>
       </div>
-      <div class="video-category">
+      <div class="video-category" id="recently-watched" style="display: none">
         <h2>Liked Videos</h2>
         <div class="video-grid"></div>
       </div>

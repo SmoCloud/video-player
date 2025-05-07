@@ -15,7 +15,7 @@ loginBtn.onclick = () => {
     // console.log(password);  // log password to console for testing
 
     // while username field is empty
-    if(username === ""|| username === null) {
+    if(username === "" || username === null) {
         window.alert("Username field cannot be empty!");    // alert that username cannot be empty
     }
 
@@ -38,7 +38,7 @@ loginBtn.onclick = () => {
     })
     .then(response => response.json())
     .then(data => {
-        console.log(data);
+        console.log(data.user);
         if (data.usrMatch === true && data.pwdMatch === true) {
             alert(`Login for ${username} successful!`);
             sessionStorage.user = JSON.stringify(data.user);

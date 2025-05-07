@@ -75,7 +75,7 @@ document.querySelectorAll('.can-save').forEach(saveField => {
         }
         console.log(inputField.value);
         const data = { 
-            "loggedIn": (typeof(sessionStorage) !== "undefined") ? true : false,
+            "loggedIn": (typeof(sessionStorage.user) !== "undefined") ? true : false,
             "save": true,
         };
         saveField.value === "username" ? data.username = inputField.value : data.bio = inputField.value;
@@ -110,4 +110,33 @@ document.addEventListener("click", (event) => {
         bioInput.setAttribute("readonly", "true");
         document.getElementById("bio-edit-btn").textContent = "Edit";
     }
+});
+
+document.getElementById("password-update-btn").addEventListener("click", (event) => {
+    const data = { 
+        "loggedIn": (typeof(sessionStorage.user) !== "undefined") ? true : false,
+        "save": true,
+        "oldPassword": document.getElementById("oldPassword").value,
+        "newPassword": document.getElementById("newPassword").value
+    };
+
+    fetch("http://localhost:8080/api/profile", {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log('Success');
+        sessionStorage.clear();
+        sessionStorage.user = data.user;
+        document.getElementById("passwordModal").style.display = "none";
+    })
+    .catch(error => console.log(error));
+});
+
+document.getElementById("close-btn").addEventListener("click", (event) => {
+    document.getElementById("passwordModal").style.display = "none";
 });

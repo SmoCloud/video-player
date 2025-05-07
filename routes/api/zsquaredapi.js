@@ -77,7 +77,7 @@ router.get('/player/:video', (request, response) => {   // get requests handles 
             throw (error);
         request.session.video = results[0];
     });
-    dbServer.query(`SELECT username, comment FROM accounts a JOIN videos v ON a.user_id=v.user_id JOIN comments c ON v.video_id=c.video_id WHERE v.video_id LIKE ${request.params.video};`, (error, comments, fields) => {
+    dbServer.query(`SELECT username, comment FROM comments c JOIN videos v ON c.video_id=v.video_id JOIN accounts a ON a.user_id=c.user_id WHERE v.video_id LIKE ${request.params.video};`, (error, comments, fields) => {
         if (error)
             throw (error);
         response.json({   // if there is no error, render the video with its comments
@@ -91,36 +91,34 @@ router.get('/player/:video', (request, response) => {   // get requests handles 
 router.post('/player', (request, response) => {  // post requests made to player.html handled here
     console.log(`${request.method}\t${request.headers.origin}\t${request.url}`);    // log request details
     console.log(request.body);
-    if (typeof(request.session.user) !== "undefined") {
-        if (typeof(request.session.user) !== "undefined" && request.session.user) { // if there's a user logged in
-            if (request.body.liked) { // if the like button was clicked
-                request.session.flags.isLiked = true;  // this flag (will be) used to determine if a user has liked a video or not (true for liked, false for disliked, else undefined for neither)
+    if (typeof(request.session.user) !== "undefined" && request.session.user) { // if there's a user logged in
+        if (request.body.liked) { // if the like button was clicked
+            request.session.flags.isLiked = true;  // this flag (will be) used to determine if a user has liked a video or not (true for liked, false for disliked, else undefined for neither)
 
-                // check if user has previously disliked video by querying dislikes table with user id and video id
-                dbServer.query(`SELECT * FROM dislikes WHERE user_id LIKE ${request.session.user.user_id} AND disliked_videos=${request.session.video.video_id};`,(error, results, fields) => {
-                    if (error)
-                        throw (error);
-                    if (results.length > 0) {   // if video is disliked, delete the entry from the table
-                        console.log("Removing from dislikes...");
-                        dbServer.query(`DELETE FROM dislikes WHERE disliked_videos=${request.session.video.video_id} AND user_id=${request.session.user.user_id};`)
-                    }
-                });
+            // check if user has previously disliked video by querying dislikes table with user id and video id
+            dbServer.query(`SELECT * FROM dislikes WHERE user_id LIKE ${request.session.user.user_id} AND disliked_videos=${request.session.video.video_id};`,(error, results, fields) => {
+                if (error)
+                    throw (error);
+                if (results.length > 0) {   // if video is disliked, delete the entry from the table
+                    console.log("Removing from dislikes...");
+                    dbServer.query(`DELETE FROM dislikes WHERE disliked_videos=${request.session.video.video_id} AND user_id=${request.session.user.user_id};`)
+                }
+            });
 
-                // check if user has already liked video before
-                dbServer.query(`SELECT * FROM likes WHERE user_id LIKE ${request.session.user.user_id} AND liked_videos=${request.session.video.video_id};`, (error, results, fields) => {
-                    if (error)
-                        throw (error);
-                    if (results.length > 0) {   // do nothing if video already in likes table tied to the current user id
-                        console.log(`${request.session.video.title} already liked by ${request.session.user.username}`);
-                    }
-                    else {  // else insert the video id and user id into the likes table and update the like count of the video
-                        console.log("Attempting to insert like...");
-                        dbServer.query(`INSERT INTO likes (user_id, liked_videos) VALUES (${request.session.user.user_id}, ${request.session.video.video_id});`);
-                        dbServer.query(`UPDATE videos SET likes=likes+1 WHERE video_id=${request.session.video.video_id};`);
-                    }
-                    request.session.video.likes += 1;
-                });
-            }
+            // check if user has already liked video before
+            dbServer.query(`SELECT * FROM likes WHERE user_id LIKE ${request.session.user.user_id} AND liked_videos=${request.session.video.video_id};`, (error, results, fields) => {
+                if (error)
+                    throw (error);
+                if (results.length > 0) {   // do nothing if video already in likes table tied to the current user id
+                    console.log(`${request.session.video.title} already liked by ${request.session.user.username}`);
+                }
+                else {  // else insert the video id and user id into the likes table and update the like count of the video
+                    console.log("Attempting to insert like...");
+                    dbServer.query(`INSERT INTO likes (user_id, liked_videos) VALUES (${request.session.user.user_id}, ${request.session.video.video_id});`);
+                    dbServer.query(`UPDATE videos SET likes=likes+1 WHERE video_id=${request.session.video.video_id};`);
+                }
+                request.session.video.likes += 1;
+            });
         }
         else if (request.body.disliked) {  // if disliked button is clicked
             request.session.flags.isLiked = false; // set isLiked session flag to false to indicate video is disliked
@@ -152,13 +150,37 @@ router.post('/player', (request, response) => {  // post requests made to player
         }
         else if (typeof(request.body.commented) !== "undefined" && request.body.commented) {    // if a comment is submitted by user
             // insert user id, video id, and new comment into comments table only if a user is logged in
-            dbServer.query(`INSERT INTO comments (user_id, video_id, comment) VALUES (${request.session.user.user_id}, ${video.video_id}, '${request.body.commented}');`);
+            // console.log(request.body.commented, " ", request.session.user.username);
+            let newComment = (request.body.commented).replace(/[\0\x08\x09\x1a\n\r"'\\\%]/g, (char) => {    // found documentation for this online, to add escape sequences before certain characters known to break the sql
+                switch (char) {
+                    case "\0":
+                        return "\\0";
+                    case "\x08":
+                        return "\\b";
+                    case "\x09":
+                        return "\\t";
+                    case "\x1a":
+                        return "\\z";
+                    case "\n":
+                        return "\\n";
+                    case "\r":
+                        return "\\r";
+                    case "\"":
+                    case "'":
+                    case "\\":
+                    case "%":
+                        return "\\" + char;
+                    default:
+                        return char;
+                }
+            });
+            dbServer.query(`INSERT INTO comments (user_id, video_id, comment) VALUES (${request.session.user.user_id}, ${request.session.video.video_id}, '${newComment}');`);
         }
     }
     else {
         console.log("Not logged in?"); // error catch, in case some unforseen issue occurs, render player page as normal, with user, video, and comments info
     }
-    dbServer.query(`SELECT username, comment FROM accounts a JOIN videos v ON a.user_id=v.user_id JOIN comments c ON a.user_id=c.user_id WHERE v.video_id LIKE ${request.session.video.video_id};`, (error, comments, fields) => {
+    dbServer.query(`SELECT username, comment FROM comments c JOIN videos v ON c.video_id=v.video_id JOIN accounts a ON a.user_id=c.user_id WHERE v.video_id LIKE ${request.session.video.video_id};`, (error, comments, fields) => {
         if (error)
             throw (error);
         response.json({   // render the video player with the video, its comments and send the flag to the client to render a 'liked' or 'disliked' button
@@ -172,7 +194,7 @@ router.post('/player', (request, response) => {  // post requests made to player
 
 router.post('/upload', (request, response) => {     // handles post requests to the upload.html page from client
     console.log(`${request.method}\t${request.headers.origin}\t${request.url}`);    // log request details
-    console.log(request.session.user);
+    // console.log(request.session.user);
     if (typeof(request.session.user) !== "undefined" && request.session.user) { // if a user is logged in
         const form = new IncomingForm();         // create a new form with formidable to hold file details incoming from an html form
         form.parse(request, (err, fields, files) => {       // parse incoming file from html form for upload
@@ -180,7 +202,7 @@ router.post('/upload', (request, response) => {     // handles post requests to 
                 next(err);
                 return;
             }
-            console.log(request);
+            // console.log(request);
             const allowedVideoTypes = [ // mimetypes of allowed video formats for upload
                 "video/mp4", 
                 "video/ogg",
@@ -289,20 +311,37 @@ router.post(('/register'), (request, response) => {  // post requests handled he
             dbServer.query(`INSERT INTO accounts (email, username, password, DoB) VALUES ('${request.body.email}', '${request.body.username}', '${hashMake(request.body.password)}', '${request.body.dob}');`, (error, results, fields) => {
                 if (error)
                     throw (error);
-                response.json({ "created-account": true });
-                return;
             });
         }
+        else {
+            response.json({
+                "created-account": false
+            });
+            return;
+        }
     });
-    response.json({ "created-account": false });
+    dbServer.query(`SELECT * FROM accounts WHERE username='${request.body.username}';`, (error, user, fields) => {
+        if (error)
+            throw (error);
+        if (user.length > 0) {
+            response.json({ 
+                "created-account": true,
+                user
+             });
+             return;
+        }
+    });
+    response.json({ 
+        "created-account": false 
+    });
     return;
 });
 
-router.get('/liked/:all', (request, response) => { // handles all requests to liked.html
+router.get('/liked/:uid', (request, response) => { // handles all requests to liked.html
     console.log(`${request.method}\t${request.headers.origin}\t${request.url}`);    // log request details
-    if (typeof(request.session.user) !== "undefined" && request.session.user) { // if a user is logged in
+    if (typeof(request.params.uid) !== "undefined" && request.params.uid) { // if a user is logged in
         // get videos liked by user (thanks to relational tables, can join likes table and videos table on user id and pull liked videos based on the user id that liked them)
-        dbServer.query(`SELECT * FROM likes l JOIN videos v ON v.video_id=l.liked_videos WHERE l.user_id=${request.session.user.user_id};`, (error, results, fields) => {
+        dbServer.query(`SELECT * FROM likes l JOIN videos v ON v.video_id=l.liked_videos WHERE l.user_id=${request.params.uid};`, (error, results, fields) => {
             if (error)
                 throw (error);
             if (results.length > 0) {   // if there are liked videos by the user
@@ -346,7 +385,7 @@ router.put('/profile',  (request, response) => {
                 request.session.user.bio = request.body.bio;    // update session user info with new bio
             }
             else if (typeof(request.body.oldPassword) !== "undefined" && request.body.oldPassword) {
-                console.log(`PUT request made to change password to: ${hashMake(request.body.newPassword)}.`);
+                // console.log(`PUT request made to change password to: ${hashMake(request.body.newPassword)}.`);
                 if (!hashCheck(request.body.oldPassword, request.session.user.password)) {
                     console.log("Error: Incorrect old password.");
                     response.json({ "badPass": true });
@@ -355,6 +394,7 @@ router.put('/profile',  (request, response) => {
                 else {
                     // dbServer.query(`UPDATE accounts SET password='${hashMake(request.body.newPassword)}' WHERE user_id=${request.session.user.user_id};`);
                     request.session.user.password = hashMake(request.body.newPassword);
+                    dbServer.query(`UPDATE accounts SET password='${request.session.user.password}' WHERE user_id=${request.session.user.user_id};`);
                     console.log("Password updated successfully!");
                 }
             }
