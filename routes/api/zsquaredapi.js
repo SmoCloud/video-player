@@ -394,9 +394,10 @@ router.get('/history/:uid', (request, response) => {
     console.log(`${request.method}\t${request.headers.origin}\t${request.url}`);    // log request details
     if (typeof(request.params.uid) !== "undefined" && request.params.uid) { // if a user is logged in
         // get videos liked by user (thanks to relational tables, can join likes table and videos table on user id and pull liked videos based on the user id that liked them)
-        dbServer.query(`SELECT * FROM watched_${request.session.user.username} w JOIN videos v ON v.video_id=w.v_id WHERE w.u_id=${request.params.uid};`, (error, results, fields) => {
+        const tableName = `watched_${request.session.user.username.replace(/[^a-zA-Z0-9_]/g, '')}`; // Sanitize table name
+        const query = `SELECT * FROM ?? w JOIN videos v ON v.video_id=w.v_id WHERE w.u_id = ?;`;
+        dbServer.query(query, [tableName, request.params.uid], (error, results, fields) => {
             if (error)
-                throw (error);
             if (results.length > 0) {   // if there are watched videos by the user
                 response.json({    // render liked page with their watched videos
                     "user": request.session.user,
