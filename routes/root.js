@@ -90,4 +90,10 @@ router.route('/liked(.html)?')
     response.sendFile(join(__dirname, 'views', 'liked.html'));
 });
 
+router.route('/history(.html)?')
+.get((request, response) => {
+    console.log(`${request.method}\t${request.headers.origin}\t${request.url}`);    // log request details
+    response.sendFile(join(__dirname, 'views', 'history.html'));
+})
+
 export { router };

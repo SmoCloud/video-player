@@ -161,13 +161,13 @@ router.post('/player', (request, response) => {  // post requests made to player
                         return;
                 }
             );
-            // query the table (in case it does already exist) for the video
+            // query the table (in case it already exists) for the video
             dbServer.query(`SELECT COUNT(*) AS count FROM watched_${request.session.user.username} WHERE v_id=${request.session.video.video_id};`, (error, results, fields) => {
                 if (error)
                     throw (error);
                 if (results[0].count > 0)
                     return;
-                else {
+                else {  // if the video isn't in the watch table, add it to the watch table
                     dbServer.query(`INSERT INTO watched_${request.session.user.username} (u_id, v_id) VALUES (${request.session.user.user_id}, ${request.session.video.video_id});`);
                     dbServer.query(`UPDATE videos SET views=views+1 WHERE video_id=${request.session.video.video_id};`);
                 }
@@ -389,6 +389,34 @@ router.get('/liked/:uid', (request, response) => { // handles all requests to li
         return;
     }
 });
+
+router.get('/history/:uid', (request, response) => {
+    console.log(`${request.method}\t${request.headers.origin}\t${request.url}`);    // log request details
+    if (typeof(request.params.uid) !== "undefined" && request.params.uid) { // if a user is logged in
+        // get videos liked by user (thanks to relational tables, can join likes table and videos table on user id and pull liked videos based on the user id that liked them)
+        dbServer.query(`SELECT * FROM watched_${request.session.user.username} w JOIN videos v ON v.video_id=w.v_id WHERE w.u_id=${request.params.uid};`, (error, results, fields) => {
+            if (error)
+                throw (error);
+            if (results.length > 0) {   // if there are watched videos by the user
+                response.json({    // render liked page with their watched videos
+                    "user": request.session.user,
+                    results
+                });
+            }
+            else {
+                response.json({    // render liked page with their watched videos
+                    "user": request.session.user,
+                    results
+                });
+            }
+        });
+        return;   
+    }
+    else {
+        response.json({ "loggedIn": false });
+        return;
+    }
+})
 
 router.put('/profile',  (request, response) => {
     // console.log('Is put request being made?');
