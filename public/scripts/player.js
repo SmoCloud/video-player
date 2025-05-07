@@ -130,6 +130,7 @@ document.addEventListener("DOMContentLoaded", () => {
         if (timer) {
             clearInterval(timer);
             timer = null;
+            console.log(seconds);
         }
     }
 
@@ -137,4 +138,5 @@ document.addEventListener("DOMContentLoaded", () => {
     videoPlayer.addEventListener('pause', stopWatchtime);
     videoPlayer.addEventListener('waiting', stopWatchtime);
     videoPlayer.addEventListener('playing', startWatchtime);
+    videoPlayer.addEventListener('beforeunload', stopWatchtime);
 });
