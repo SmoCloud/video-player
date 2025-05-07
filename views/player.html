@@ -30,8 +30,11 @@
         <form action="liked.html" method="get"><button type="submit" class="sidebar-button" id="liked-videos-btn">Liked Videos</button></form>
         <form action="history.html" method="get"><button type="submit" class="sidebar-button" id="history-btn">Watched Videos</button></form>
     </div>
-    <div class="sidebar-right">
-        <button type="button" class="sidebar-button">Recommended Videos</button>
+    <div class="sidebar-right" id="sidebar-right">
+        <button type="button" id="toggle-sidebar" class="sidebar-toggle">
+            <span id="arrow-icon">⯈</span>
+            <span>| Recommended</span>
+        </button>
         <div class="recommended-videos">
             <a href="" class="recommended-video">
                 <img src="" alt="Video 1" class="recommended-thumbnail"/>
@@ -44,6 +47,9 @@
             </a>
         </div>
     </div>
+    
+    
+    
     </div>
     <div id="main-content">
         <div id="video-container" class="vjs-matrix">
@@ -63,6 +69,17 @@
             <div name="comments-box" id="comments-container"></div>
         </div>
     </div>
-    <script type="text/javascript" src="scripts/player.js"></script>
+    <script>
+        document.getElementById('toggle-sidebar').addEventListener('click', () => {
+            const sidebar = document.getElementById('sidebar-right');
+            const arrow = document.getElementById('arrow-icon');
+            sidebar.classList.toggle('collapsed');
+        
+            arrow.textContent = sidebar.classList.contains('collapsed') ? '⯇' : '⯈';
+        });
+        </script>
+        
+        
+        
 </body>
 </html>
